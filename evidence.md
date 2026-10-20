@@ -200,3 +200,33 @@ The only outstanding acceptance criterion is **R14.1**, which still fails and
 awaits a scope decision from the project owner.
 **Commit:** see git log (message references R16/R17)
 
+### 2026-10-21 — Published to GitHub
+
+**Scope:** Full project history pushed to the user's GitHub repository.
+**Test cases:** n/a (repository operation — verified directly)
+**Commands run:**
+
+    git remote add origin https://github.com/leelamohanreddy898561-cloud/Project-006.git
+    git ls-remote origin                       # remote had an existing "Initial commit" (placeholder README)
+    git pull origin main --allow-unrelated-histories --no-edit
+    git push -u origin main
+
+**Results:**
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| Remote state before push | pass | Remote had one commit (`0affa55`, placeholder README) — unrelated history |
+| Strategy | pass | **Merged** rather than force-pushed, preserving the remote's existing commit and README.md |
+| Push | pass | `0affa55..e776b1c  main -> main` |
+| Remote verification | pass | Remote HEAD = `e776b1c`; 40 files present |
+| Secret scan (pre-push) | pass | `git grep "AIza"` on tracked files: clean |
+| Secret scan (post-push) | pass | `git grep "AIza" origin/main`: clean |
+| `.env` exclusion | pass | Only `.env.example` in the remote tree; `.env` confirmed git-ignored |
+
+**Artifacts:** https://github.com/leelamohanreddy898561-cloud/Project-006
+**Evaluation:** The repository is live on GitHub with the complete history
+(7 commits + merge). No credentials were exposed — the Firebase API key exists
+only in the local, git-ignored `.env`. The remote's placeholder README was
+preserved via an unrelated-histories merge instead of a destructive force-push.
+**Commit:** subsequent evidence commit, pushed in the same operation
+
