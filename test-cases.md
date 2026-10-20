@@ -154,9 +154,16 @@ Results for each run are recorded in `evidence.md`.
 | TC-1603 | auto | Check `.env.example` exists and `git check-ignore .env` succeeds | All `VITE_FIREBASE_*` variables documented; `.env` is ignored by git |
 | TC-1604 | auto | Inspect `firebase.json` | Valid JSON; `public` is `dist`; SPA rewrite `**` → `/index.html` present |
 | TC-1605 | auto | Inspect `.firebaserc` | Valid JSON with a `projects.default` entry |
-| TC-1606 | auto | Open `/` and capture page errors | Page renders normally; no uncaught errors (Firebase absent must not break the site) |
-| TC-1607 | manual | Fill `.env` with real credentials, reload `/` | Console shows Firebase initialized; `app`, `auth`, `db`, `storage` all defined |
+| TC-1606 | auto | Open `/`, monitor network requests | Page renders, no uncaught errors, and **zero** Firebase assets requested |
+| TC-1607 | auto | Open `/`, call `window.__getFirebase()` | Resolves with `app`, `auth`, `db`, `storage` initialized against the real project |
 | TC-1608 | manual | Run `npx firebase deploy --only hosting` | Site deploys and loads from the Firebase Hosting URL |
+
+## R14 — Performance budget (updated cases)
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-1404 | auto | Open `/`, monitor network requests | No request path matches `/firebase/i` — the SDK is not in the initial load |
+| TC-1405 | auto | Run `npm run build` and sum gzipped JS | Total initial JS < 150 kB gzipped |
 
 ## R17 — Change log export
 

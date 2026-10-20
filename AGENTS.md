@@ -21,15 +21,23 @@ Follow it for **every requirement** — no reminders needed.
 7. **Evaluate** — if anything fails, fix it and re-run from step 5. Do not mark a
    requirement done with failing tests.
 8. **Commit** — only when green, with a message referencing the requirement ID
-   (e.g. `feat: R2 search and filters on AI Updates page`).
+   (e.g. `feat: R2 search and filters on AI Updates page`). Push only after the
+   green result is recorded in `evidence.md`.
 
 ## Non-negotiables
 
+- **Never commit or push with a failing acceptance criterion.** Before any commit,
+  run the verification for every requirement the change touches and record the
+  green result in `evidence.md` first. If something cannot be made green, **stop
+  and ask the project owner** — do not push "flagged but broken" code.
 - No requirement is "done" without a matching entry in `evidence.md`.
 - Never edit or delete a past evidence entry — append a new dated one.
 - Every test case is either executable or explicitly labelled `manual`.
 - Keep files consolidated by ID (see file map). Do **not** create one
   `requirements.md` per requirement.
+- **Bundle budgets are hard limits.** If a change pushes a budget over, fix the
+  change (lazy-load, split, drop) — do not raise the budget without the project
+  owner's explicit approval.
 
 ## File map
 

@@ -29,13 +29,12 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 - [x] (R16.1) Install the `firebase` SDK (v13) and approve required install scripts
 - [x] (R16.1) Create `src/lib/firebase.ts` reading config from `import.meta.env`
-- [x] (R16.1) Import the module in `main.tsx` so Firebase initializes on startup
+- [x] (R16.1, R16.4) Convert to a lazy `getFirebase()` loader; remove the eager import from `main.tsx`
 - [x] (R16.2) Create `.env.example`; add `.env` to `.gitignore`
-- [x] (R16.5) Create `firebase.json` (serve `dist/` with SPA rewrite)
-- [x] (R16.6) Create `.firebaserc` with project `project-006-e6ae1`
-- [x] (R16.8) Add remaining `.env` values from the console: `apiKey`, `messagingSenderId`, `appId`, `measurementId` — **blocked on user**
-- [x] (R16.8) Verify real initialization against the project (TC-1607) — **blocked on credentials**
-- [x] (R16.8) Deploy to Firebase Hosting (TC-1608) — live at https://project-006-e6ae1.web.app
+- [x] (R16.6) Create `firebase.json` (serve `dist/` with SPA rewrite)
+- [x] (R16.7) Create `.firebaserc` with project `project-006-e6ae1`
+- [x] (R16.9) Add real credentials to `.env` and verify initialization (TC-1607)
+- [x] (R16.8) Deploy to Firebase Hosting — live at https://project-006-e6ae1.web.app
 - [ ] Configure Firestore/Storage security rules before either is used with real data
 
 ## Phase 1c — Change log export (R17)
@@ -106,8 +105,8 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] (R12.1) Unique title + meta description per page
 - [ ] (R12.3) Open Graph tags
 - [ ] (R12.2) `sitemap.xml` and `robots.txt`
-- [ ] (R14.1) JS bundle < 150 kB gzipped
-- [ ] (R14.2) CSS bundle < 25 kB gzipped
+- [x] (R14.1) JS bundle < 150 kB gzipped — **83.32 kB** after lazy-loading Firebase
+- [x] (R14.2) CSS bundle < 25 kB gzipped — **1.38 kB**
 - [ ] (R14.3) No console errors on home page
 
 ## Phase 8 — Accessibility & responsive (R10, R11)

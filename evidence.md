@@ -230,3 +230,47 @@ only in the local, git-ignored `.env`. The remote's placeholder README was
 preserved via an unrelated-histories merge instead of a destructive force-push.
 **Commit:** subsequent evidence commit, pushed in the same operation
 
+### 2026-10-21 — Lazy Firebase init: R14.1 budget fixed (R16 revised, R14.1 green)
+
+**Scope:** Enforce the new "never push with a failing criterion" rule and fix
+the R14.1 bundle budget by making Firebase initialize on demand.
+**Test cases:** TC-1404, TC-1405, TC-1606, TC-1607, TC-1601, TC-1602
+**Commands run:**
+
+    npm run build          # tsc --noEmit && vite build
+    npm run lint
+    npx playwright test
+    Select-String dist/assets/index-*.js -Pattern "firebase"   # SDK absent from main chunk
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-1405 / TC-1401 | R14.1 | **pass** | Initial JS **83.32 kB gzipped** (was 221 kB) — under the 150 kB budget |
+| TC-1402 | R14.2 | pass | CSS 1.38 kB gzipped |
+| TC-1404 / TC-1606 | R16.4 | pass | Zero Firebase assets requested on the home page (verified via network monitoring) |
+| TC-1607 | R16.9 | pass | `getFirebase()` initializes against `project-006-e6ae1` with real credentials |
+| TC-1601 | R16.8 | pass | Build passes, strict TypeScript |
+| TC-1602 | R16.8 | pass | oxlint, zero warnings |
+| — | regression | pass | All 4 header tests and the home CTA test still pass (7 passed, 1 skipped total) |
+
+**What changed:** `src/lib/firebase.ts` rewritten as a lazy `getFirebase()`
+loader using dynamic `import()`; the eager import removed from `main.tsx`
+(replaced with a side-effect import of the ~1 kB loader, which production
+tree-shakes away entirely since nothing calls it yet); `manualChunks` removed
+from `vite.config.ts`; `vite.config.ts` no longer needs chunk surgery. A
+dev-only `window.__getFirebase` hook enables TC-1607 and is stripped from
+production builds.
+
+**One honest note on the first attempt:** removing the import from `main.tsx`
+entirely tree-shook the loader out of the production bundle *and* removed the
+dev hook, which would have made TC-1607 unverifiable. The side-effect import
+was restored — it costs nothing in production because Rollup drops the unused
+exports.
+
+**Evaluation:** R14.1 now passes with a 67 kB margin. R16's acceptance criteria
+were revised (AC16.3–AC16.5) to describe on-demand initialization, and the
+change is recorded in the decision log — the budget itself was **not** raised.
+All tests green before commit and push, per the new AGENTS.md rule.
+**Commit:** see git log (message references R14.1/R16)
+

@@ -46,6 +46,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-20 | Markdown files + `marked` for content | Author-friendly format; one small, well-maintained dependency. |
 | 2026-10-21 | Workflow: ID-based docs + Playwright + evidence | Keeps rigor without one-file-per-requirement sprawl; generated test reports are stronger proof than hand-written notes. |
 | 2026-10-21 | Add Firebase (Auth, Firestore, Storage, Analytics, Hosting) | Supersedes the earlier "no backend in v1" scope note. Content stays in markdown for now; Firebase provides auth, storage, analytics, and hosting. Config via git-ignored `.env`. |
+| 2026-10-21 | Firebase is **lazily initialized** (`getFirebase()`), not eagerly imported | Eager init put 137 kB of SDK in the initial bundle, breaking the R14.1 budget. Nothing in the app uses Firebase yet, so on-demand init restores the budget with zero feature loss. |
 
 ## 5. Out of Scope (v1)
 
@@ -186,18 +187,19 @@ A persistent header provides brand identity and primary navigation on every page
 
 ### R16 — Firebase integration
 
-The app initializes Firebase from environment configuration and exposes Auth,
-Firestore, Storage, and Analytics, without breaking the site when credentials
-are absent.
+Firebase is initialized **on demand** (lazily), so the SDK never weighs down the
+initial page load, while Auth, Firestore, Storage, and Analytics remain fully
+available to features that need them.
 
 - **AC16.1** The `firebase` SDK is installed and configuration is read from `import.meta.env.VITE_FIREBASE_*` variables — no credentials in source or git history.
 - **AC16.2** A committed `.env.example` documents every required variable; `.env` is git-ignored.
-- **AC16.3** `src/lib/firebase.ts` exports initialized `app`, `auth`, `db` (Firestore), `storage`, and `analytics` (browser-only, requires `measurementId`).
-- **AC16.4** Missing configuration fails loudly with a clear, actionable console error — and does not prevent the rest of the site from rendering.
-- **AC16.5** `firebase.json` configures Hosting to serve `dist/` with an SPA rewrite so client-side routes work.
-- **AC16.6** `.firebaserc` records the deploy target project.
-- **AC16.7** Build and lint pass with the integration in place, and the existing home page still renders.
-- **AC16.8** The app initializes successfully against the real project (requires real credentials — see evidence).
+- **AC16.3** A `getFirebase()` loader initializes Firebase on first use and returns `app`, `auth`, `db` (Firestore), `storage`, and `analytics` (browser-only, requires `measurementId`).
+- **AC16.4** No Firebase code is loaded on pages that do not use it (this is what keeps R14.1 within budget).
+- **AC16.5** Missing configuration fails loudly with a clear, actionable error — and does not prevent the rest of the site from rendering.
+- **AC16.6** `firebase.json` configures Hosting to serve `dist/` with an SPA rewrite so client-side routes work.
+- **AC16.7** `.firebaserc` records the deploy target project.
+- **AC16.8** Build and lint pass with the integration in place, and the existing home page still renders.
+- **AC16.9** `getFirebase()` initializes successfully against the real project (requires real credentials — see evidence).
 
 ### R17 — Change log export
 

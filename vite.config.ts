@@ -8,20 +8,8 @@ export default defineConfig({
     port: 5173,
   },
   build: {
-    rollupOptions: {
-      output: {
-        // Keep the Firebase SDK in its own chunk so the app chunk stays small
-        // and the vendor chunk can be cached independently.
-        manualChunks: {
-          firebase: [
-            "firebase/app",
-            "firebase/auth",
-            "firebase/firestore",
-            "firebase/storage",
-            "firebase/analytics",
-          ],
-        },
-      },
-    },
+    // The Firebase SDK is loaded via dynamic import() in src/lib/firebase.ts,
+    // so Rollup splits it into its own async chunk automatically (R14.1).
+    chunkSizeWarningLimit: 500,
   },
 });
