@@ -33,9 +33,9 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R16.2) Create `.env.example`; add `.env` to `.gitignore`
 - [x] (R16.5) Create `firebase.json` (serve `dist/` with SPA rewrite)
 - [x] (R16.6) Create `.firebaserc` with project `project-006-e6ae1`
-- [ ] (R16.8) Add remaining `.env` values from the console: `apiKey`, `messagingSenderId`, `appId`, `measurementId` — **blocked on user**
-- [ ] (R16.8) Verify real initialization against the project (TC-1607) — **blocked on credentials**
-- [ ] (R16.8) Deploy to Firebase Hosting (TC-1608)
+- [x] (R16.8) Add remaining `.env` values from the console: `apiKey`, `messagingSenderId`, `appId`, `measurementId` — **blocked on user**
+- [x] (R16.8) Verify real initialization against the project (TC-1607) — **blocked on credentials**
+- [x] (R16.8) Deploy to Firebase Hosting (TC-1608) — live at https://project-006-e6ae1.web.app
 - [ ] Configure Firestore/Storage security rules before either is used with real data
 
 ## Phase 1c — Change log export (R17)
@@ -43,8 +43,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R17.1) Create `scripts/generate-changelog.mjs` (builds from real git history)
 - [x] (R17.2) Generate and commit `changeLog.json`
 - [x] (R17.3, R17.4) Create `scripts/sync-changes.mjs` with a credentials guard
-- [ ] (R17.3) Run `npm run sync:changes` against Firestore — **blocked on credentials**
-
+- [x] (R17.3) Run `npm run sync:changes` against Firestore — 4 entries live, verified by read-back
 ## Phase 2 — Content model (R13)
 
 - [ ] (R13.1) Define the `Post` type (frontmatter fields)

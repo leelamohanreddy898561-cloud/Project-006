@@ -2,7 +2,7 @@
 
 **Version:** 2.0 (ID-based format)
 **Date:** 2026-10-21
-**Status:** In progress — **R0 (scaffold), R15 (header) implemented and verified; R1 partial (hero + CTA); R16 (Firebase) in progress — awaiting real credentials**
+**Status:** In progress — **R0, R15, R16, R17 implemented and verified; R1 partial (hero + CTA); site deployed to Firebase Hosting**
 
 ---
 

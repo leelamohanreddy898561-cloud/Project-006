@@ -12,7 +12,8 @@
     "test:headed": "playwright test --headed",
     "report": "playwright show-report",
     "changelog": "node scripts/generate-changelog.mjs",
-    "sync:changes": "node --env-file=.env scripts/sync-changes.mjs"
+    "sync:changes": "node --env-file=.env scripts/sync-changes.mjs",
+    "verify:changes": "node --env-file=.env scripts/verify-changelog.mjs"
   },
   "dependencies": {
     "firebase": "^13.0.0",

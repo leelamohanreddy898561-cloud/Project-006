@@ -164,3 +164,39 @@ credentials are still absent, so the sync script correctly refused to run. Once
 test-mode rules (or the Admin SDK with a service account) are required.
 **Commit:** see git log (message references R17)
 
+### 2026-10-21 — Firebase live: Firestore sync + Hosting deploy (R16, R17 complete)
+
+**Scope:** Credentials completed by the project owner; change log synced to
+Firestore; site deployed to Firebase Hosting and verified live.
+**Test cases:** TC-1607, TC-1608, TC-1703, TC-1704
+**Commands run:**
+
+    node --env-file=.env scripts/sync-changes.mjs
+    npm run verify:changes
+    npm run build
+    npx -y firebase-tools deploy --only hosting --project project-006-e6ae1
+    Invoke-WebRequest https://project-006-e6ae1.web.app  (+ browser render check)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-1607 | R16.8 | pass | Live site loads with **zero** Firebase console errors — credentials valid, app/auth/db/storage all initialize |
+| TC-1608 | R16.8 | pass | Deployed to **https://project-006-e6ae1.web.app** — "Deploy complete!" |
+| TC-1703 | R17.3 | pass | 4 documents written to the `changeLog` collection; read-back confirms all present |
+| TC-1704 | R17.3 | pass | Re-run adds 0 new documents (duplicate guard added) |
+| — | R16.5 | pass | SPA rewrite verified: `/blog/some-post` returns 200 |
+| — | R14.1 | **still failing** | 221 kB gzipped JS (83.9 app + 137.2 Firebase) vs 150 kB budget — decision still pending |
+
+**Artifacts:** `evidence/screenshots/r16-live-deployed.png` (live site, header +
+hero rendering correctly); Firestore document IDs:
+`omFfkKsrHiB8YC1D7TGd`, `P6cDIm3vwabZsxG4P9lA`, `n7edXawH7Gm90gepwblS`,
+`E7ycS6yambCm7vteq6NK`
+**Evaluation:** R16 and R17 are now complete and verified end-to-end: real
+credentials initialize Firebase on the live site, the change log is stored in
+Firestore, and the site is publicly deployed. The sync script was made
+idempotent (skips commits already present) after the first successful run.
+The only outstanding acceptance criterion is **R14.1**, which still fails and
+awaits a scope decision from the project owner.
+**Commit:** see git log (message references R16/R17)
+

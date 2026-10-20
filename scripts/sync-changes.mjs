@@ -16,6 +16,7 @@ import { initializeApp } from "firebase/app";
 import {
   getFirestore,
   collection,
+  getDocs,
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
@@ -50,19 +51,31 @@ const payload = JSON.parse(readFileSync("changeLog.json", "utf8"));
 const app = initializeApp(config);
 const db = getFirestore(app);
 
-console.log(
-  `[sync:changes] Writing ${payload.entries.length} entries to collection "${payload.targetCollection}"…`,
-);
+// Read what is already stored so re-running never creates duplicates.
+const existing = await getDocs(collection(db, payload.targetCollection));
+const alreadySynced = new Set();
+existing.forEach((doc) => {
+  if (doc.data().short) alreadySynced.add(doc.data().short);
+});
 
+let written = 0;
 for (const entry of payload.entries) {
+  if (alreadySynced.has(entry.short)) {
+    console.log(`  = ${entry.short} already in Firestore — skipped`);
+    continue;
+  }
+
   const ref = await addDoc(collection(db, payload.targetCollection), {
     ...entry,
     project: payload.project,
     syncedAt: serverTimestamp(),
   });
+  written += 1;
   console.log(
     `  ✓ ${entry.short} ${entry.subject.slice(0, 60)} → ${ref.id}`,
   );
 }
 
-console.log("[sync:changes] Done.");
+console.log(
+  `[sync:changes] Done. ${written} new, ${payload.entries.length - written} already present.`,
+);
