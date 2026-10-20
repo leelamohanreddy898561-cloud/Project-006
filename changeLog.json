@@ -1,21 +1,15 @@
 {
-  "generatedAt": "2026-10-20T20:54:40.782Z",
+  "generatedAt": "2026-10-20T21:35:05.146Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 4,
+    "commits": 6,
     "fileChanges": {
-      "A": 33,
-      "M": 17
+      "A": 39,
+      "M": 29
     },
-    "latestVerification": {
-      "testsPassed": 6,
-      "testsSkipped": 1,
-      "testsFailed": 0,
-      "build": "pass",
-      "lint": "pass"
-    },
+    "latestVerification": null,
     "requirementsImplemented": [
       "R0",
       "R15"
@@ -308,6 +302,100 @@
         {
           "status": "M",
           "path": "vite.config.ts"
+        }
+      ]
+    },
+    {
+      "commit": "ce7d5822fea562cf21ef20898d7e0ebba134fab6",
+      "short": "ce7d582",
+      "date": "2026-10-21T02:25:02+05:30",
+      "subject": "feat: change log export to Firestore (R17)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "A",
+          "path": "changeLog.json"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "scripts/generate-changelog.mjs"
+        },
+        {
+          "status": "A",
+          "path": "scripts/sync-changes.mjs"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        }
+      ]
+    },
+    {
+      "commit": "876bf7983c04ff295565701af88f11525f7a8385",
+      "short": "876bf79",
+      "date": "2026-10-21T03:04:56+05:30",
+      "subject": "feat: Firebase live — Firestore sync and Hosting deploy (R16, R17 complete)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "A",
+          "path": ".firebase/hosting.ZGlzdA.cache"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "A",
+          "path": "evidence/screenshots/r16-live-deployed.png"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "scripts/sync-changes.mjs"
+        },
+        {
+          "status": "A",
+          "path": "scripts/verify-changelog.mjs"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
         }
       ]
     }
