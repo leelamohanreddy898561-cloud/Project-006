@@ -2,7 +2,7 @@
 
 **Version:** 2.0 (ID-based format)
 **Date:** 2026-10-21
-**Status:** In progress — **R0 (scaffold) and R15 (header) implemented and verified; R1 partially implemented (hero + CTA only)**
+**Status:** In progress — **R0 (scaffold), R15 (header) implemented and verified; R1 partial (hero + CTA); R16 (Firebase) in progress — awaiting real credentials**
 
 ---
 
@@ -32,9 +32,10 @@ category/tag index pages). Simple and content-focused.
 | Routing | React Router |
 | Styling | Plain CSS (CSS custom properties for theming) |
 | Content | Markdown files with frontmatter, rendered with `marked` |
+| Backend | Firebase (Auth, Firestore, Storage, Analytics) |
 | Testing | Playwright (`@playwright/test`) |
 | Linting | oxlint |
-| Hosting | Static host (Netlify / Vercel / GitHub Pages) |
+| Hosting | Static host — Firebase Hosting (configured), Netlify/Vercel/GitHub Pages also viable |
 
 ## 4. Decision Log
 
@@ -44,19 +45,21 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-20 | Vite + React Router SPA over Next.js | No SSR requirement; static hosting is simpler and sufficient. |
 | 2026-10-20 | Markdown files + `marked` for content | Author-friendly format; one small, well-maintained dependency. |
 | 2026-10-21 | Workflow: ID-based docs + Playwright + evidence | Keeps rigor without one-file-per-requirement sprawl; generated test reports are stronger proof than hand-written notes. |
+| 2026-10-21 | Add Firebase (Auth, Firestore, Storage, Analytics, Hosting) | Supersedes the earlier "no backend in v1" scope note. Content stays in markdown for now; Firebase provides auth, storage, analytics, and hosting. Config via git-ignored `.env`. |
 
 ## 5. Out of Scope (v1)
 
 - Comments / discussion system.
-- User accounts, authentication, or an admin dashboard.
+- User-facing authentication UI (the Firebase Auth *integration* is in scope; sign-in screens are a later increment).
 - Server-side rendering.
 - RSS feed (candidate for v2).
-- Analytics beyond an optional embeddable script.
+- Analytics beyond the standard Firebase Analytics integration.
+- **Firestore/Storage security rules** — required before either is used with real data; configured in the Firebase console, not in this repo.
 
 ## 6. Assumptions
 
 - Content is authored as local markdown files committed to the repo.
-- No backend or database for v1.
+- No custom backend server; Firebase provides managed services.
 - Markdown content is trusted (authored in-repo); no user-generated content is rendered.
 
 ---
@@ -180,6 +183,21 @@ A persistent header provides brand identity and primary navigation on every page
 - **AC15.2** The header navigation links to Home (`/`), AI Updates (`/blog`), Categories (`/categories`), and About (`/about`).
 - **AC15.3** The nav link for the current route is visually marked as active.
 - **AC15.4** The header is present on every page as a `<header>` landmark.
+
+### R16 — Firebase integration
+
+The app initializes Firebase from environment configuration and exposes Auth,
+Firestore, Storage, and Analytics, without breaking the site when credentials
+are absent.
+
+- **AC16.1** The `firebase` SDK is installed and configuration is read from `import.meta.env.VITE_FIREBASE_*` variables — no credentials in source or git history.
+- **AC16.2** A committed `.env.example` documents every required variable; `.env` is git-ignored.
+- **AC16.3** `src/lib/firebase.ts` exports initialized `app`, `auth`, `db` (Firestore), `storage`, and `analytics` (browser-only, requires `measurementId`).
+- **AC16.4** Missing configuration fails loudly with a clear, actionable console error — and does not prevent the rest of the site from rendering.
+- **AC16.5** `firebase.json` configures Hosting to serve `dist/` with an SPA rewrite so client-side routes work.
+- **AC16.6** `.firebaserc` records the deploy target project.
+- **AC16.7** Build and lint pass with the integration in place, and the existing home page still renders.
+- **AC16.8** The app initializes successfully against the real project (requires real credentials — see evidence).
 
 ---
 

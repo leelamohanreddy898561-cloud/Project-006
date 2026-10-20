@@ -25,6 +25,19 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R0.4) Wire Playwright config (`playwright.config.ts`, `tests/`)
 - [x] (R0.4) Enable the `webServer` block once a `dev` script exists
 
+## Phase 1b — Firebase integration (R16)
+
+- [x] (R16.1) Install the `firebase` SDK (v13) and approve required install scripts
+- [x] (R16.1) Create `src/lib/firebase.ts` reading config from `import.meta.env`
+- [x] (R16.1) Import the module in `main.tsx` so Firebase initializes on startup
+- [x] (R16.2) Create `.env.example`; add `.env` to `.gitignore`
+- [x] (R16.5) Create `firebase.json` (serve `dist/` with SPA rewrite)
+- [x] (R16.6) Create `.firebaserc` with project `project-006-e6ae1`
+- [ ] (R16.8) Add remaining `.env` values from the console: `apiKey`, `messagingSenderId`, `appId`, `measurementId` — **blocked on user**
+- [ ] (R16.8) Verify real initialization against the project (TC-1607) — **blocked on credentials**
+- [ ] (R16.8) Deploy to Firebase Hosting (TC-1608)
+- [ ] Configure Firestore/Storage security rules before either is used with real data
+
 ## Phase 2 — Content model (R13)
 
 - [ ] (R13.1) Define the `Post` type (frontmatter fields)

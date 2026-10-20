@@ -9,6 +9,10 @@ playwright-report/
 test-results/
 blob-report/
 
+# Local environment / secrets
+.env
+.env.*.local
+
 # Logs
 *.log
 npm-debug.log*

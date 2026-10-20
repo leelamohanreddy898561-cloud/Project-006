@@ -144,3 +144,16 @@ Results for each run are recorded in `evidence.md`.
 | TC-1502 | auto | Open `/` | Nav links: Home→`/`, AI Updates→`/blog`, Categories→`/categories`, About→`/about` |
 | TC-1503 | auto | Open `/` | Exactly one nav link is active, matching the current route |
 | TC-1504 | auto | Open `/` | Exactly one `<header>` landmark on the page |
+
+## R16 — Firebase integration
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-1601 | auto | Run `npm run build` | Passes; `firebase.ts` type-checks under strict mode |
+| TC-1602 | auto | Run `npm run lint` | Zero warnings |
+| TC-1603 | auto | Check `.env.example` exists and `git check-ignore .env` succeeds | All `VITE_FIREBASE_*` variables documented; `.env` is ignored by git |
+| TC-1604 | auto | Inspect `firebase.json` | Valid JSON; `public` is `dist`; SPA rewrite `**` → `/index.html` present |
+| TC-1605 | auto | Inspect `.firebaserc` | Valid JSON with a `projects.default` entry |
+| TC-1606 | auto | Open `/` and capture page errors | Page renders normally; no uncaught errors (Firebase absent must not break the site) |
+| TC-1607 | manual | Fill `.env` with real credentials, reload `/` | Console shows Firebase initialized; `app`, `auth`, `db`, `storage` all defined |
+| TC-1608 | manual | Run `npx firebase deploy --only hosting` | Site deploys and loads from the Firebase Hosting URL |

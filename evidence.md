@@ -89,3 +89,48 @@ CSS gzipped). R15 and R0 are complete; R1 remains partial (featured, latest,
 and category sections not yet built).
 **Commit:** see git log (message references R15/R1)
 
+### 2026-10-21 — Firebase integration (R16)
+
+**Scope:** Firebase SDK installed; config module, env template, Hosting config,
+and deploy target for project `project-006-e6ae1`. Content stays in markdown.
+**Test cases:** TC-1601 … TC-1606 (auto), TC-1607, TC-1608 (manual — blocked)
+**Commands run:**
+
+    npm install firebase            # plus approving esbuild, protobufjs, @firebase/util install scripts
+    npm run build
+    npm run lint
+    npx playwright test
+    git check-ignore .env
+    Get-Content firebase.json / .firebaserc | ConvertFrom-Json   # JSON validity
+    browser console capture on http://127.0.0.1:5173/
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-1601 | R16.1, R16.7 | pass | `tsc --noEmit && vite build` — 0 errors; `firebase.ts` type-checks strict |
+| TC-1602 | R16.7 | pass | oxlint — 0 warnings |
+| TC-1603 | R16.2 | pass | `.env.example` exists and lists all 7 `VITE_FIREBASE_*` vars; `.env` is git-ignored |
+| TC-1604 | R16.5 | pass | `firebase.json` valid: `public: dist`, rewrite `**` → `/index.html` |
+| TC-1605 | R16.6 | pass | `.firebaserc` valid: `projects.default = project-006-e6ae1` |
+| TC-1606 | R16.4, R16.7 | pass | Page renders, no uncaught errors; console shows the clear "not configured" message |
+| TC-1401 | R14.1 | **fail** | Total initial JS is **221 kB gzipped** (83.8 app + 137.2 Firebase) vs the 150 kB budget — see evaluation |
+| TC-1607 | R16.8 | blocked | Requires `apiKey`, `messagingSenderId`, `appId`, `measurementId` from the console |
+| TC-1608 | R16.8 | blocked | Hosting deploy requires credentials + `firebase-tools` login |
+
+**Artifacts:** `evidence/screenshots/r16-firebase-integrated.png`
+**Evaluation:** The integration is complete and does not break the site when
+credentials are absent — the guard logs an actionable error and the home page
+still renders. **One acceptance criterion fails: R14.1.** Importing all five
+Firebase products at startup costs ~137 kB gzipped; the 150 kB budget was
+written before Firebase existed. Options: (a) revise AC14.1 to ~250 kB,
+(b) lazy-initialize Firebase only when a feature needs it (restores ~85 kB),
+(c) drop unused products. This is a scope decision for the project owner — the
+budget was **not** changed unilaterally.
+
+**Still required from the project owner** (paste into `.env`, then restart):
+`VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_MESSAGING_SENDER_ID`,
+`VITE_FIREBASE_APP_ID`, `VITE_FIREBASE_MEASUREMENT_ID`. The `authDomain` and
+`storageBucket` currently in `.env` are derived from Firebase's standard naming
+for `project-006-e6ae1` and should be confirmed in the console.
+
