@@ -32,4 +32,27 @@ Artifacts (screenshots, downloaded reports) are stored under `evidence/`.
 
 ## Runs
 
-_No verification runs yet. The first entry will be added when R0 is executed._
+### 2026-10-21 — Workflow foundation (partial R0)
+
+**Scope:** Toolchain setup only — no application code yet.
+**Test cases:** TC-004, TC-005
+**Commands run:**
+
+    npm install -D @playwright/test
+    npx playwright install chromium
+    npx playwright test
+    git log --oneline
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-004 | R0.4 | pass | `npx playwright test` ran, 1 skipped (template spec), HTML report written to `playwright-report/` |
+| TC-005 | R0.5 | pass | Initial commit `2b4b480` contains AGENTS.md, requirements.md, checklist.md, test-cases.md, evidence.md, playwright config |
+
+**Artifacts:** `playwright-report/index.html` (git-ignored, regenerated per run)
+**Evaluation:** The Playwright toolchain and repository are working. R0.1–R0.3
+(dev server, build, lint) cannot be verified until the application scaffold
+exists — they will be executed with the R0 implementation.
+**Commit:** 2b4b480
+
