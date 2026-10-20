@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-20T21:42:31.193Z",
+  "generatedAt": "2026-10-20T22:00:50.294Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 10,
+    "commits": 12,
     "fileChanges": {
-      "M": 31,
+      "M": 41,
       "A": 40
     },
     "latestVerification": null,
@@ -451,6 +451,68 @@
         {
           "status": "M",
           "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "c0b0986f3723482073d92719654f1ec43c9bdc65",
+      "short": "c0b0986",
+      "date": "2026-10-21T03:13:43+05:30",
+      "subject": "chore: regenerate changeLog.json (10 commits, includes GitHub publish)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "b8ad292c1a56fcd9ec664af5d6c825d3f3084da1",
+      "short": "b8ad292",
+      "date": "2026-10-21T03:29:39+05:30",
+      "subject": "perf: lazy-load Firebase to fix R14.1 bundle budget (R16 revised)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/firebase.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/main.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r16-firebase.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "vite.config.ts"
         }
       ]
     }
