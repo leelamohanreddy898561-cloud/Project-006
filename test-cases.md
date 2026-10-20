@@ -157,3 +157,11 @@ Results for each run are recorded in `evidence.md`.
 | TC-1606 | auto | Open `/` and capture page errors | Page renders normally; no uncaught errors (Firebase absent must not break the site) |
 | TC-1607 | manual | Fill `.env` with real credentials, reload `/` | Console shows Firebase initialized; `app`, `auth`, `db`, `storage` all defined |
 | TC-1608 | manual | Run `npx firebase deploy --only hosting` | Site deploys and loads from the Firebase Hosting URL |
+
+## R17 — Change log export
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-1701 | auto | Run `npm run changelog` | Valid JSON; every commit in `git log` is present; file lists match `git show --name-status` |
+| TC-1702 | auto | Run the sync script with no credentials | Exits non-zero with a clear "missing credentials" message |
+| TC-1703 | manual | Fill `.env`, run `npm run sync:changes` | Documents appear in the Firestore `changeLog` collection |

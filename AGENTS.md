@@ -42,6 +42,9 @@ Follow it for **every requirement** — no reminders needed.
 | `AGENTS.md` | This workflow |
 | `tests/*.spec.ts` | Playwright specs, one file per requirement area |
 | `playwright.config.ts` | Playwright configuration |
+| `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
+| `scripts/sync-changes.mjs` | Writes `changeLog.json` to Firestore |
+| `changeLog.json` | Committed record of all changes (reviewable without Firebase) |
 
 ## Testing
 

@@ -1,0 +1,315 @@
+{
+  "generatedAt": "2026-10-20T20:54:40.782Z",
+  "project": "signal-and-noise",
+  "firebaseProjectId": "project-006-e6ae1",
+  "targetCollection": "changeLog",
+  "summary": {
+    "commits": 4,
+    "fileChanges": {
+      "A": 33,
+      "M": 17
+    },
+    "latestVerification": {
+      "testsPassed": 6,
+      "testsSkipped": 1,
+      "testsFailed": 0,
+      "build": "pass",
+      "lint": "pass"
+    },
+    "requirementsImplemented": [
+      "R0",
+      "R15"
+    ],
+    "requirementsPartial": [
+      "R1"
+    ],
+    "requirementsBlockedOnCredentials": [
+      "R16",
+      "R17"
+    ],
+    "knownIssues": [
+      "R14.1 performance budget exceeded: 221 kB gzipped JS (83.8 app + 137.2 Firebase) vs 150 kB budget — decision pending",
+      "Firebase credentials incomplete: apiKey, messagingSenderId, appId, measurementId missing from .env"
+    ]
+  },
+  "entries": [
+    {
+      "commit": "2b4b48042efb0b742d70e3ffd8eeef7745d8c087",
+      "short": "2b4b480",
+      "date": "2026-10-21T00:59:04+05:30",
+      "subject": "docs: workflow foundation (R0.5)",
+      "requirements": [
+        "R0"
+      ],
+      "verification": {
+        "testsPassed": 0,
+        "testsSkipped": 1,
+        "testsFailed": 0,
+        "build": "pass",
+        "lint": "pass"
+      },
+      "notes": "Workflow foundation: AGENTS.md standing loop, requirements.md (R0–R15), test-cases.md, evidence.md format, ID-tagged checklist.md, Playwright config and template spec.",
+      "files": [
+        {
+          "status": "A",
+          "path": ".gitattributes"
+        },
+        {
+          "status": "A",
+          "path": ".gitignore"
+        },
+        {
+          "status": "A",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "A",
+          "path": "checklist.md"
+        },
+        {
+          "status": "A",
+          "path": "evidence.md"
+        },
+        {
+          "status": "A",
+          "path": "package-lock.json"
+        },
+        {
+          "status": "A",
+          "path": "package.json"
+        },
+        {
+          "status": "A",
+          "path": "playwright.config.ts"
+        },
+        {
+          "status": "A",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/example.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "d434294fa294ba074d83bd8cfdf06b66fb7f8f83",
+      "short": "d434294",
+      "date": "2026-10-21T00:59:24+05:30",
+      "subject": "docs: evidence entry for workflow foundation (partial R0)",
+      "requirements": [
+        "R0"
+      ],
+      "verification": {
+        "testsPassed": 0,
+        "testsSkipped": 1,
+        "testsFailed": 0,
+        "build": "pass",
+        "lint": "pass"
+      },
+      "notes": "First evidence entry: Playwright runner executes (TC-004), initial commit present (TC-005).",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "c6e604d58290e75fa48326b319c374984484fe7a",
+      "short": "c6e604d",
+      "date": "2026-10-21T01:30:12+05:30",
+      "subject": "feat: site header and home page button (R15, R1 partial, R0)",
+      "requirements": [
+        "R0",
+        "R15",
+        "R1"
+      ],
+      "verification": {
+        "testsPassed": 5,
+        "testsSkipped": 1,
+        "testsFailed": 0,
+        "build": "pass",
+        "lint": "pass"
+      },
+      "notes": "App scaffold (Vite + React 19 + TS strict + React Router), design tokens, site header (R15), home hero with CTA button (R1 partial). TC-001–TC-004, TC-101, TC-1501–TC-1504 all pass.",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "A",
+          "path": "evidence/screenshots/r1-home-hero.png"
+        },
+        {
+          "status": "A",
+          "path": "index.html"
+        },
+        {
+          "status": "M",
+          "path": "package-lock.json"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "playwright.config.ts"
+        },
+        {
+          "status": "A",
+          "path": "public/favicon.svg"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Header.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Header.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/index.css"
+        },
+        {
+          "status": "A",
+          "path": "src/main.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Home.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Home.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/styles/base.css"
+        },
+        {
+          "status": "A",
+          "path": "src/styles/tokens.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r1-home.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r15-header.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tsconfig.json"
+        },
+        {
+          "status": "A",
+          "path": "vite.config.ts"
+        }
+      ]
+    },
+    {
+      "commit": "b75cd0267a57bc0e8bbe50281bbf0ec6863f4359",
+      "short": "b75cd02",
+      "date": "2026-10-21T02:18:04+05:30",
+      "subject": "feat: Firebase integration (R16)",
+      "requirements": [
+        "R16"
+      ],
+      "verification": {
+        "testsPassed": 6,
+        "testsSkipped": 1,
+        "testsFailed": 0,
+        "build": "pass",
+        "lint": "pass"
+      },
+      "notes": "Firebase SDK v13 integration: src/lib/firebase.ts (guarded init), .env.example, firebase.json, .firebaserc (project-006-e6ae1), Firebase chunk split. R14.1 budget FAILED (221 kB vs 150 kB) — flagged, not silently changed. TC-1607/1608 blocked on credentials.",
+      "files": [
+        {
+          "status": "A",
+          "path": ".env.example"
+        },
+        {
+          "status": "A",
+          "path": ".firebaserc"
+        },
+        {
+          "status": "M",
+          "path": ".gitignore"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "A",
+          "path": "evidence/screenshots/r16-firebase-integrated.png"
+        },
+        {
+          "status": "A",
+          "path": "firebase.json"
+        },
+        {
+          "status": "M",
+          "path": "package-lock.json"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/firebase.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/main.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r16-firebase.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "vite.config.ts"
+        }
+      ]
+    }
+  ]
+}

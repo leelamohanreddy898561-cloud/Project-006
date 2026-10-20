@@ -134,3 +134,33 @@ budget was **not** changed unilaterally.
 `storageBucket` currently in `.env` are derived from Firebase's standard naming
 for `project-006-e6ae1` and should be confirmed in the console.
 
+### 2026-10-21 — Change log export (R17)
+
+**Scope:** A reviewable record of every change so far, generated from real git
+history, plus the Firestore sync that publishes it.
+**Test cases:** TC-1701, TC-1702 (auto), TC-1703 (manual — blocked)
+**Commands run:**
+
+    npm run changelog
+    node --env-file=.env scripts/sync-changes.mjs
+    node --check scripts/generate-changelog.mjs scripts/sync-changes.mjs
+    git show --name-status b75cd02   # cross-check against changeLog.json
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-1701 | R17.1, R17.2 | pass | Valid JSON; 4 commits; file lists match `git show --name-status` exactly |
+| TC-1702 | R17.4 | pass | Exits 1 with: "Missing required environment variables: VITE_FIREBASE_API_KEY, VITE_FIREBASE_APP_ID" |
+| — | — | pass | Both scripts pass `node --check` |
+| TC-1703 | R17.3 | blocked | Requires credentials + Firestore rules permitting writes |
+
+**Artifacts:** `changeLog.json` (committed — reviewable without Firebase)
+**Evaluation:** The change log is generated from real git data and is committed,
+so it can be reviewed immediately. The Firestore write could not be executed:
+credentials are still absent, so the sync script correctly refused to run. Once
+`.env` is complete, `npm run sync:changes` publishes all entries to the
+`changeLog` collection. Note: Firestore's default locked rules deny writes —
+test-mode rules (or the Admin SDK with a service account) are required.
+**Commit:** see git log (message references R17)
+

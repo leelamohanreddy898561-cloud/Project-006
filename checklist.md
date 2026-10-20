@@ -38,6 +38,13 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] (R16.8) Deploy to Firebase Hosting (TC-1608)
 - [ ] Configure Firestore/Storage security rules before either is used with real data
 
+## Phase 1c — Change log export (R17)
+
+- [x] (R17.1) Create `scripts/generate-changelog.mjs` (builds from real git history)
+- [x] (R17.2) Generate and commit `changeLog.json`
+- [x] (R17.3, R17.4) Create `scripts/sync-changes.mjs` with a credentials guard
+- [ ] (R17.3) Run `npm run sync:changes` against Firestore — **blocked on credentials**
+
 ## Phase 2 — Content model (R13)
 
 - [ ] (R13.1) Define the `Post` type (frontmatter fields)

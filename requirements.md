@@ -199,6 +199,16 @@ are absent.
 - **AC16.7** Build and lint pass with the integration in place, and the existing home page still renders.
 - **AC16.8** The app initializes successfully against the real project (requires real credentials — see evidence).
 
+### R17 — Change log export
+
+A complete record of project changes is generated from real repository data,
+reviewable without Firebase, and syncced to Firestore once credentials exist.
+
+- **AC17.1** `npm run changelog` regenerates `changeLog.json` from actual git history — commits, changed files, and per-change verification results.
+- **AC17.2** `changeLog.json` is committed, so changes are reviewable without any Firebase access.
+- **AC17.3** A sync script writes the change log to the Firestore `changeLog` collection, using credentials from `.env`.
+- **AC17.4** The sync script fails with a clear, actionable message when credentials are missing.
+
 ---
 
 ## 8. Open Questions
