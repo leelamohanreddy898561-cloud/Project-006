@@ -135,3 +135,12 @@ Results for each run are recorded in `evidence.md`.
 | TC-1401 | auto | Run `npm run build` | JS bundle < 150 kB gzipped (reported in build output) |
 | TC-1402 | auto | Run `npm run build` | CSS bundle < 25 kB gzipped |
 | TC-1403 | auto | Load `/` with console capture | No console errors |
+
+## R15 — Site header
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-1501 | auto | Open `/` | `<header>` landmark visible; site brand links to `/` |
+| TC-1502 | auto | Open `/` | Nav links: Home→`/`, AI Updates→`/blog`, Categories→`/categories`, About→`/about` |
+| TC-1503 | auto | Open `/` | Exactly one nav link is active, matching the current route |
+| TC-1504 | auto | Open `/` | Exactly one `<header>` landmark on the page |

@@ -17,13 +17,13 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 ## Phase 1 — Project scaffold (R0)
 
-- [ ] (R0.1) Scaffold Vite + React + TypeScript project
-- [ ] (R0.1) Enable TypeScript strict mode
-- [ ] (R0.1) Configure `dev` script on 127.0.0.1:5173
-- [ ] (R0.2) Verify `npm run build` passes with zero errors
-- [ ] (R0.3) Configure and verify `npm run lint` with zero warnings
-- [ ] (R0.4) Wire Playwright config (`playwright.config.ts`, `tests/`)
-- [ ] (R0.4) Enable the `webServer` block once a `dev` script exists
+- [x] (R0.1) Scaffold Vite + React + TypeScript project
+- [x] (R0.1) Enable TypeScript strict mode
+- [x] (R0.1) Configure `dev` script on 127.0.0.1:5173
+- [x] (R0.2) Verify `npm run build` passes with zero errors
+- [x] (R0.3) Configure and verify `npm run lint` with zero warnings
+- [x] (R0.4) Wire Playwright config (`playwright.config.ts`, `tests/`)
+- [x] (R0.4) Enable the `webServer` block once a `dev` script exists
 
 ## Phase 2 — Content model (R13)
 
@@ -38,17 +38,17 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 ## Phase 3 — Design tokens & global styles (R1, R9, R10, R11)
 
-- [ ] Define CSS custom properties: colors, spacing, typography, radii, shadows
-- [ ] Light and dark theme values from the same tokens (R9)
-- [ ] Global reset and base element styles
-- [ ] Responsive breakpoint conventions (R10)
-- [ ] Visible `:focus-visible` styles (R11.2)
-- [ ] Reusable button, card, and badge styles
+- [x] Define CSS custom properties: colors, spacing, typography, radii, shadows
+- [x] Light and dark theme values from the same tokens (R9)
+- [x] Global reset and base element styles
+- [x] Responsive breakpoint conventions (R10)
+- [x] Visible `:focus-visible` styles (R11.2)
+- [ ] Reusable button, card, and badge styles (buttons done; cards/badges pending)
 
 ## Phase 4 — Core components
 
-- [ ] (R1) `Layout` with skip link and landmarks (R11.1, R11.3)
-- [ ] (R1) `Header` with brand, navigation, theme toggle
+- [ ] (R1, R11) `Layout` wrapper with skip link (R11.1) and landmarks (R11.3)
+- [x] (R15) `Header` with brand and navigation
 - [ ] (R9) `ThemeToggle` with `localStorage` persistence
 - [ ] (R1) `Footer` with navigation and copyright
 - [ ] (R1) `PostCard` (title, excerpt, date, reading time, tags)
@@ -61,8 +61,9 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 ## Phase 5 — Routing & pages
 
-- [ ] Configure React Router route table
-- [ ] (R1) Home: hero, featured, latest, categories
+- [x] Configure React Router route table
+- [x] (R1) Home: hero + primary CTA button
+- [ ] (R1) Home: featured, latest, and category sections
 - [ ] (R2) AI Updates list with search + filters
 - [ ] (R3) Post detail with TOC, prev/next, related
 - [ ] (R4) Categories index

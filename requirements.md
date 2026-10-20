@@ -2,7 +2,7 @@
 
 **Version:** 2.0 (ID-based format)
 **Date:** 2026-10-21
-**Status:** Approved — **not yet implemented** (previous implementation was discarded on 2026-10-21)
+**Status:** In progress — **R0 (scaffold) and R15 (header) implemented and verified; R1 partially implemented (hero + CTA only)**
 
 ---
 
@@ -171,6 +171,15 @@ A post is readable, navigable, and connected to related content.
 - **AC14.1** Production build JavaScript is under 150 kB gzipped.
 - **AC14.2** Production build CSS is under 25 kB gzipped.
 - **AC14.3** The home page renders its main content without console errors.
+
+### R15 — Site header
+
+A persistent header provides brand identity and primary navigation on every page.
+
+- **AC15.1** The header displays the site brand, linking to `/`.
+- **AC15.2** The header navigation links to Home (`/`), AI Updates (`/blog`), Categories (`/categories`), and About (`/about`).
+- **AC15.3** The nav link for the current route is visually marked as active.
+- **AC15.4** The header is present on every page as a `<header>` landmark.
 
 ---
 
