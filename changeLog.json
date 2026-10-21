@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-21T13:12:08.874Z",
+  "generatedAt": "2026-10-21T13:59:47.525Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 20,
+    "commits": 22,
     "fileChanges": {
-      "M": 80,
-      "A": 57,
+      "M": 91,
+      "A": 70,
       "D": 1
     },
     "latestVerification": null,
@@ -830,6 +830,124 @@
         {
           "status": "M",
           "path": "tests/r16-firebase.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "0c083f8d80f9ba774b8bc88bc9906a546b41ffe3",
+      "short": "0c083f8",
+      "date": "2026-10-21T18:44:17+05:30",
+      "subject": "chore: regenerate changeLog.json (20 commits)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "2e1546a6655eaa5bf9953d4d1bbc7eeea61ceb60",
+      "short": "2e1546a",
+      "date": "2026-10-21T19:02:42+05:30",
+      "subject": "feat: home main content layout - article grid + sidebar (R19)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
+        },
+        {
+          "status": "A",
+          "path": "public/covers/cover-1.svg"
+        },
+        {
+          "status": "A",
+          "path": "public/covers/cover-2.svg"
+        },
+        {
+          "status": "A",
+          "path": "public/covers/cover-3.svg"
+        },
+        {
+          "status": "A",
+          "path": "public/covers/cover-4.svg"
+        },
+        {
+          "status": "A",
+          "path": "public/covers/cover-5.svg"
+        },
+        {
+          "status": "A",
+          "path": "public/covers/cover-6.svg"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "src/components/BlogCard.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/BlogCard.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Sidebar.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Sidebar.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/icons.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/data/posts.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/Home.css"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/Home.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/types/post.ts"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r19-home-layout.spec.ts"
         }
       ]
     }
