@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-21T13:02:34.222Z",
+  "generatedAt": "2026-10-21T13:12:08.874Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 18,
+    "commits": 20,
     "fileChanges": {
-      "M": 71,
+      "M": 80,
       "A": 57,
       "D": 1
     },
@@ -772,6 +772,64 @@
         {
           "status": "M",
           "path": "tests/r18-header.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "26484e5058bb318ff1992583c72f609a378a4023",
+      "short": "26484e5",
+      "date": "2026-10-21T18:34:49+05:30",
+      "subject": "chore: regenerate changeLog.json (18 commits, includes hero section)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "d611f4eb5dc96a3c32598b2a7c45d75d40ce4109",
+      "short": "d611f4e",
+      "date": "2026-10-21T18:41:43+05:30",
+      "subject": "test: verify the deployed artifact, mark dev-only case (R1)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": ".firebase/hosting.ZGlzdA.cache"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
+        },
+        {
+          "status": "M",
+          "path": "playwright.config.ts"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r16-firebase.spec.ts"
         }
       ]
     }
