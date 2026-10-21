@@ -1,13 +1,14 @@
 {
-  "generatedAt": "2026-10-20T22:00:50.294Z",
+  "generatedAt": "2026-10-21T12:48:53.617Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 12,
+    "commits": 15,
     "fileChanges": {
-      "M": 41,
-      "A": 40
+      "M": 57,
+      "A": 51,
+      "D": 1
     },
     "latestVerification": null,
     "requirementsImplemented": [
@@ -513,6 +514,151 @@
         {
           "status": "M",
           "path": "vite.config.ts"
+        }
+      ]
+    },
+    {
+      "commit": "59ab09e88866aa27c28eb752382578f1b3acfb58",
+      "short": "59ab09e",
+      "date": "2026-10-21T03:33:05+05:30",
+      "subject": "chore: regenerate changeLog.json (12 commits)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": ".firebase/hosting.ZGlzdA.cache"
+        },
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "229e2d4a2f58c5af5fadf6b49aefb1e7f50e48e8",
+      "short": "229e2d4",
+      "date": "2026-10-21T17:36:21+05:30",
+      "subject": "docs: full role and workflow definition in AGENTS.md",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        }
+      ]
+    },
+    {
+      "commit": "2f7cb8c59f6a2f0e843b122d48daf39cc1629c2e",
+      "short": "2f7cb8c",
+      "date": "2026-10-21T18:07:50+05:30",
+      "subject": "feat: glassmorphism header with AI Pulse brand (R18, supersedes R15)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-home-hero.png"
+        },
+        {
+          "status": "A",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "A",
+          "path": "evidence/screenshots/r18-header-light.png"
+        },
+        {
+          "status": "M",
+          "path": "index.html"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Header.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Header.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Logo.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Logo.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/ThemeToggle.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/ThemeToggle.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/icons.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/hooks/useTheme.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/Home.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Placeholder.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Placeholder.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/styles/base.css"
+        },
+        {
+          "status": "M",
+          "path": "src/styles/tokens.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r1-home.spec.ts"
+        },
+        {
+          "status": "D",
+          "path": "tests/r15-header.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r18-header.spec.ts"
         }
       ]
     }
