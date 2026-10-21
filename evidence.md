@@ -323,3 +323,31 @@ budgets. R18 is complete pending the owner's visual review; R9 (theme toggle)
 is delivered by this work.
 **Commit:** local only — **awaiting owner approval before push/deploy**
 
+### 2026-10-21 — R18 published after owner approval
+
+**Scope:** Owner visually reviewed the glassmorphism header locally and gave
+the OK. All three publish actions then ran.
+**Test cases:** n/a (publish operation — verified directly)
+**Commands run:**
+
+    git push origin main
+    npm run changelog && npm run sync:changes && npm run verify:changes
+    npm run build && npx firebase-tools deploy --only hosting --project project-006-e6ae1
+
+**Results:**
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| Secret scan (pre-push) | pass | Real API key absent from all tracked files and from the remote tree; `.env` not on GitHub |
+| GitHub push | pass | `59ab09e..2f7cb8c` then `2f7cb8c..7aac76f` |
+| Firestore sync | pass | 3 new documents (15 total), read-back verified |
+| Hosting deploy | pass | "Deploy complete!" |
+| Live site verification | pass | Brand "AI Pulse", nav Home/Topics/Blogs/About, search, theme toggle, Sign In/Sign Up, glass blur, and logo glow all confirmed on the deployed URL; single JS chunk (84.4 kB gzipped) |
+
+**Artifacts:** `evidence/screenshots/r18-live-deployed.png`
+**Evaluation:** R18 is published end-to-end. One note on the secret scan: it
+initially flagged `evidence.md`, which turned out to be a false positive — the
+file contains the literal text `git grep "AIza"` from documenting earlier
+scans, not the key itself. Verified before and after the push.
+**Commit:** `7aac76f` (change log regeneration; this entry follows it)
+
