@@ -182,7 +182,7 @@ Results for each run are recorded in `evidence.md`.
 | TC-1604 | auto | Inspect `firebase.json` | Valid JSON; `public` is `dist`; SPA rewrite `**` → `/index.html` present |
 | TC-1605 | auto | Inspect `.firebaserc` | Valid JSON with a `projects.default` entry |
 | TC-1606 | auto | Open `/`, monitor network requests | Page renders, no uncaught errors, and **zero** Firebase assets requested |
-| TC-1607 | auto | Open `/`, call `window.__getFirebase()` | Resolves with `app`, `auth`, `db`, `storage` initialized against the real project |
+| TC-1607 | auto | Open `/`, call `window.__getFirebase()` | Resolves with `app`, `auth`, `db`, `storage` initialized against the real project. **Dev-server only** — the hook is stripped from production builds |
 | TC-1608 | manual | Run `npx firebase deploy --only hosting` | Site deploys and loads from the Firebase Hosting URL |
 
 ## R14 — Performance budget (updated cases)

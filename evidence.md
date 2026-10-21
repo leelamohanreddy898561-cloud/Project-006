@@ -392,3 +392,52 @@ the requirement changed.
 post counts are placeholders until the content model (R13) lands.
 **Commit:** local only — **awaiting owner approval before push/deploy**
 
+### 2026-10-21 — R1 hero published + production verification (owner approved)
+
+**Scope:** Owner approved the hero section. Published to GitHub, synced to
+Firestore, deployed to Hosting. Also closed a verification gap: the deployed
+artifact is now tested directly.
+**Test cases:** full suite, run twice — once against the dev server, once
+against the live site
+**Commands run:**
+
+    git push origin main
+    npm run changelog && npm run sync:changes && npm run verify:changes
+    npm run build && npx firebase-tools deploy --only hosting --project project-006-e6ae1
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npx playwright test
+
+**Results:**
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| Secret scan | pass | Real API key absent from tracked files |
+| GitHub push | pass | `07964b7..5aa5de8`, then `5aa5de8..26484e5` |
+| Firestore sync | pass | 3 new documents (18 total), read-back verified |
+| Hosting deploy | pass | "Deploy complete!" |
+| Suite vs **dev server** | pass | 19 passed, 1 skipped |
+| Suite vs **live production** | pass | 18 passed, 2 skipped |
+
+**A verification gap found and closed.** Checking the live site through the
+browser tools reported a blank canvas (0 non-zero pixel samples, no change).
+Investigation showed the cause was environmental, not a defect: the browser tab
+reports `visibilityState: "hidden"`, and `requestAnimationFrame` is suspended
+in hidden tabs, so the network never drew. **Rather than assume, the deployed
+artifact was tested with Playwright** — whose browser runs rAF normally. All six
+hero cases passed against production, including TC-102 (canvas animating) and
+TC-103 (card floating and rotating).
+
+**New capability:** `playwright.config.ts` now honours `PLAYWRIGHT_BASE_URL`.
+Setting it runs the whole suite against any deployed URL and skips starting a
+local server — so the shipped build, not just the dev server, can be verified.
+
+**One test made explicitly dev-only:** TC-1607 relies on `window.__getFirebase`,
+which is stripped from production builds by design (that is what keeps Firebase
+out of the bundle). It now skips with that reason when a remote base URL is set,
+instead of failing misleadingly.
+
+**Artifacts:** `evidence/screenshots/r1-hero.png`
+**Evaluation:** R1 hero is published and verified in both environments. Bundle
+85.5 kB JS / 2.6 kB CSS gzipped. The topic card's post counts remain
+placeholders until R13 (content model).
+**Commit:** see git log (message references R1)
+

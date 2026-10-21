@@ -59,6 +59,13 @@ test.describe("R16 — Firebase integration (lazy)", () => {
   test("TC-1607: getFirebase() initializes on demand with real credentials", async ({
     page,
   }) => {
+    // The verification hook is dev-only by design and is stripped from
+    // production builds, so this case only runs against the dev server.
+    test.skip(
+      Boolean(process.env.PLAYWRIGHT_BASE_URL),
+      "dev-only hook is not present in production builds",
+    );
+
     await page.goto("/");
 
     const hook = await page.evaluate(() => typeof window.__getFirebase);
