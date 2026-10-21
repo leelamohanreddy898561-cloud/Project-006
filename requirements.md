@@ -2,7 +2,7 @@
 
 **Version:** 2.0 (ID-based format)
 **Date:** 2026-10-21
-**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17 implemented and verified; R1 partial; R18 in progress**
+**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17, R18, R1 (hero) and R19 implemented, verified and published; R2–R13 not started**
 
 ---
 

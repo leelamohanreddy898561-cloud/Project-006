@@ -184,11 +184,12 @@ necessary but never sufficient** — your visual approval is the gate.
 
 ## 9. Current state (updated as work lands)
 
-- **Implemented and verified:** R0 (scaffold), R14 (performance budget),
-  R15 (header), R16 (Firebase), R17 (change log export)
-- **Partial:** R1 (home page — hero and CTA button only)
-- **Not yet built:** R2–R13 (AI Updates list, post detail, categories, tags,
-  about, 404, theme toggle, responsive, accessibility, SEO, content model)
+- **Implemented and verified and published:** R0 (scaffold), R1 (home hero),
+  R14 (performance budget), R15 (header — superseded by R18), R16 (Firebase),
+  R17 (change log export), R18 (glassmorphism header), R19 (home main content
+  layout — article grid + discovery sidebar)
+- **Not yet built:** R2–R13 (post list, post detail, topic pages, about, 404,
+  theme toggle wiring, responsive pass, accessibility pass, SEO, content model)
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
 - **Known open item:** Firestore/Storage security rules must be tightened

@@ -58,7 +58,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R18.11) `prefers-reduced-motion` disables the logo glow (and all transitions)
 - [x] (R18) Brand rename in `index.html` (title, meta, OG) and home hero copy
 - [x] (R18) Execute TC-1801–TC-1812; verify contrast in both themes
-- [x] (R18) Evidence entry + local commit; **awaiting owner visual approval before push/deploy**
+- [x] (R18) Evidence entry + local commit; published after owner approval
 ## Phase 2 — Content model (R13)
 
 - [ ] (R13.1) Define the `Post` type (frontmatter fields)
@@ -115,7 +115,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R19.12) Empty state when nothing matches
 - [x] (R19.3, R19.8) Single column on mobile; AA contrast in both themes
 - [x] Seed post data + local AI-themed cover art (placeholder until R13)
-- [x] Execute TC-1901–TC-1912; evidence entry; local commit; **awaiting owner approval**
+- [x] Execute TC-1901–TC-1912; evidence entry; local commit; published after owner approval (2026-10-21)
 
 ## Phase 5 — Routing & pages
 

@@ -487,5 +487,55 @@ search, and quick filters. Supersedes R1.7–R1.9.
 **Artifacts:** none new (no screenshots captured this run)
 **Evaluation:** R19 complete and green. Search and quick filters operate on the
 home grid; R2 will add the dedicated `/blog` list page with URL-driven filters.
-**Commit:** local only — **awaiting owner approval before push/deploy**
+**Commit:** `2e1546a` (local at time of this entry)
+
+---
+
+### 2026-10-21 — R19 published to GitHub, Firestore, and Firebase Hosting
+
+**Gate:** owner replied **"ok"** after reviewing http://127.0.0.1:5173/
+**Commands run:**
+
+    git push origin main
+    npm run changelog
+    npm run sync:changes
+    npm run verify:changes
+    npm run build
+    npx firebase-tools deploy --only hosting --project project-006-e6ae1 --non-interactive
+    set PLAYWRIGHT_BASE_URL=https://project-006-e6ae1.web.app && npx playwright test
+    git push origin main
+
+**Results:**
+
+| Step | Result | Notes |
+| --- | --- | --- |
+| Secret scan (`git grep` for the Firebase API key) | clean | Key exists only in git-ignored `.env` |
+| Push to GitHub | pass | `0c083f8..2e1546a`, exit 0 |
+| Change log regeneration | pass | 22 commits, 91 modified / 70 added / 1 deleted |
+| Firestore sync | pass | 2 new, 20 already present — no duplicates |
+| Firestore read-back (`verify:changes`) | pass | Every `changeLog.json` entry present in Firestore |
+| Build | pass | 87.9 kB JS gzipped / 3.4 kB CSS gzipped (budgets 150 / 25 kB) |
+| Hosting deploy | pass | 10 files, version finalized, release complete |
+| **Production suite** | **30 passed, 2 skipped** | Against the live URL via `PLAYWRIGHT_BASE_URL` |
+| Changelog commit + push | pass | `2e1546a..cc67920`, `origin/main` in sync (0 ahead) |
+
+**Production run detail** — every R19 test case passed against the deployed
+site, not just locally: TC-1901 (column ratio), TC-1902 (grid + order),
+TC-1903 (card parts + image actually loaded), TC-1904 (hover lift + zoom),
+TC-1905 (no lift under reduced motion), TC-1906 (sidebar sections),
+TC-1907 (search filters), TC-1908 (quick filter), TC-1909 (bookmark),
+TC-1910 (empty state), TC-1911 (360px single column, no overflow),
+TC-1912 (AA contrast both themes).
+The 2 skips are TC-1607 and the dev-only r16 hook, which are excluded
+against remote URLs by design.
+
+**Artifacts:**
+- GitHub: https://github.com/leelamohanreddy898561-cloud/Project-006 (commit `cc67920`)
+- Live: https://project-006-e6ae1.web.app
+- Firestore `changeLog`: 22 documents verified
+
+**Evaluation:** R19 fully published. The approval gate was observed — the
+deploy and both pushes happened only after the owner's "ok".
+
+**Commit:** pending this evidence entry (next commit, pushed immediately after)
 
