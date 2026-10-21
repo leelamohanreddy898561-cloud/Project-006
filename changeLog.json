@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-21T12:48:53.617Z",
+  "generatedAt": "2026-10-21T13:02:34.222Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 15,
+    "commits": 18,
     "fileChanges": {
-      "M": 57,
-      "A": 51,
+      "M": 71,
+      "A": 57,
       "D": 1
     },
     "latestVerification": null,
@@ -658,6 +658,119 @@
         },
         {
           "status": "A",
+          "path": "tests/r18-header.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "7aac76fdbb02c523a9d2e3702eaf46893bc8f89b",
+      "short": "7aac76f",
+      "date": "2026-10-21T18:21:12+05:30",
+      "subject": "chore: regenerate changeLog.json (15 commits, includes R18)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "07964b7a1ee26725d364d63dc25f910d5fceae2a",
+      "short": "07964b7",
+      "date": "2026-10-21T18:23:24+05:30",
+      "subject": "docs: evidence entry for R18 publish (approved by owner)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": ".firebase/hosting.ZGlzdA.cache"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "5aa5de894e8a390f7e8b6ad9770145617c413684",
+      "short": "5aa5de8",
+      "date": "2026-10-21T18:29:03+05:30",
+      "subject": "feat: hero section with AI network effect and floating topic card (R1.1-R1.6)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "A",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "src/components/hero/NetworkBackground.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/hero/NetworkBackground.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/hero/TopicCard.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/hero/TopicCard.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/icons.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/Home.css"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/Home.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/helpers/contrast.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r1-home.spec.ts"
+        },
+        {
+          "status": "M",
           "path": "tests/r18-header.spec.ts"
         }
       ]
