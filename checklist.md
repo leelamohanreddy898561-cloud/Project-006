@@ -43,6 +43,22 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R17.2) Generate and commit `changeLog.json`
 - [x] (R17.3, R17.4) Create `scripts/sync-changes.mjs` with a credentials guard
 - [x] (R17.3) Run `npm run sync:changes` against Firestore — 4 entries live, verified by read-back
+
+## Phase 1d — Glassmorphism header (R18, supersedes R15)
+
+- [x] (R18) Add R18 to `requirements.md`; mark R15 superseded; rename Categories→Topics, AI Updates→Blogs
+- [x] (R18) Add TC-1801–TC-1812 to `test-cases.md`
+- [x] (R18.1) Glass treatment: translucent background, backdrop blur, subtle border, both themes
+- [x] (R18.2) Glowing AI logo + "AI Pulse" brand linking to `/`
+- [x] (R18.3) Nav: Home / Topics / Blogs / About with smooth gradient hover
+- [x] (R18.4) Search icon → `/blog`; Sign In → `/signin`; Sign Up → `/signup`
+- [x] (R9, R18.5, R18.6) Theme toggle: switch, persist, respect system preference
+- [x] (R18.8) Placeholder pages for `/signin`, `/signup`, `/topics`, `/blog`, `/about`
+- [x] (R18.9) Active-route highlighting
+- [x] (R18.11) `prefers-reduced-motion` disables the logo glow (and all transitions)
+- [x] (R18) Brand rename in `index.html` (title, meta, OG) and home hero copy
+- [x] (R18) Execute TC-1801–TC-1812; verify contrast in both themes
+- [x] (R18) Evidence entry + local commit; **awaiting owner visual approval before push/deploy**
 ## Phase 2 — Content model (R13)
 
 - [ ] (R13.1) Define the `Post` type (frontmatter fields)
@@ -66,8 +82,8 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 ## Phase 4 — Core components
 
 - [ ] (R1, R11) `Layout` wrapper with skip link (R11.1) and landmarks (R11.3)
-- [x] (R15) `Header` with brand and navigation
-- [ ] (R9) `ThemeToggle` with `localStorage` persistence
+- [x] (R18) Glassmorphism `Header`: brand, navigation, search, theme toggle, auth buttons
+- [x] (R9, R18) `ThemeToggle` with `localStorage` persistence and system-preference default
 - [ ] (R1) `Footer` with navigation and copyright
 - [ ] (R1) `PostCard` (title, excerpt, date, reading time, tags)
 - [ ] (R2) `PostList` / grid with empty state (R2.5)

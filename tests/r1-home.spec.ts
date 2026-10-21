@@ -11,13 +11,11 @@ test.describe("R1 — Home page (partial)", () => {
   }) => {
     await page.goto("/");
 
-    await expect(page.locator(".hero__eyebrow")).toHaveText(
-      /signal & noise/i,
-    );
+    await expect(page.locator(".hero__eyebrow")).toHaveText(/ai pulse/i);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator(".hero__lead")).toBeVisible();
 
-    const cta = page.getByRole("link", { name: /read ai updates/i });
+    const cta = page.getByRole("link", { name: /read blogs/i });
     await expect(cta).toHaveAttribute("href", "/blog");
 
     // Evidence artifact for this run.

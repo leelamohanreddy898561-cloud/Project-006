@@ -1,0 +1,35 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  border-radius: var(--radius-md);
+  background-image: var(--gradient-brand);
+  color: #ffffff;
+  animation: logo-glow 2.5s ease-in-out infinite;
+}
+
+.logo__svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+@keyframes logo-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px var(--glow-color);
+  }
+  50% {
+    box-shadow: 0 0 22px var(--glow-color), 0 0 44px var(--glow-soft);
+  }
+}
+
+/* R18.11 — respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .logo {
+    animation: none;
+    box-shadow: 0 0 12px var(--glow-color);
+  }
+}

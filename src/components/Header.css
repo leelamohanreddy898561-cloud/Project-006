@@ -1,17 +1,25 @@
+/* ==========================================================================
+   R18 — Glassmorphism header
+   ========================================================================== */
+
 .site-header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
+  background-color: var(--glass-fill);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .site-header__inner {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-height: var(--header-height);
 }
+
+/* Brand ------------------------------------------------------------------- */
 
 .site-header__brand {
   display: inline-flex;
@@ -23,22 +31,12 @@
   white-space: nowrap;
 }
 
-.site-header__mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-md);
-  background-color: var(--color-accent);
-  color: var(--color-accent-contrast);
-  font-size: var(--text-xs);
-  font-weight: 800;
-}
-
 .site-header__title {
   font-size: var(--text-lg);
+  letter-spacing: -0.01em;
 }
+
+/* Navigation -------------------------------------------------------------- */
 
 .site-header__nav {
   display: flex;
@@ -48,6 +46,7 @@
 }
 
 .site-nav__link {
+  position: relative;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
   color: var(--color-text-muted);
@@ -55,21 +54,72 @@
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  transition: color var(--transition-fast),
-    background-color var(--transition-fast);
+  transition: color var(--transition-base);
 }
 
+/* Gradient underline that sweeps in on hover */
+.site-nav__link::after {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 3px;
+  height: 2px;
+  border-radius: var(--radius-full);
+  background-image: var(--gradient-brand);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--transition-base);
+}
+
+/* Gradient text fill on hover */
 .site-nav__link:hover {
-  color: var(--color-text);
-  background-color: var(--color-surface-2);
+  background-image: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
+}
+
+.site-nav__link:hover::after {
+  transform: scaleX(1);
 }
 
 .site-nav__link.is-active {
-  color: var(--color-accent);
+  color: var(--color-text);
   background-color: var(--color-accent-soft);
 }
 
-@media (max-width: 640px) {
+/* Actions ----------------------------------------------------------------- */
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--glass-fill);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.icon-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Responsive -------------------------------------------------------------- */
+
+@media (max-width: 900px) {
   .site-header__title {
     display: none;
   }
@@ -81,5 +131,24 @@
   .site-nav__link {
     padding: var(--space-2);
     font-size: var(--text-xs);
+  }
+
+  .site-header__actions .btn--sm {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header__inner {
+    flex-wrap: wrap;
+    padding-block: var(--space-2);
+  }
+
+  .site-header__nav {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 }

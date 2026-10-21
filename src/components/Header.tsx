@@ -1,24 +1,25 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { Logo } from "./Logo";
+import { ThemeToggle } from "./ThemeToggle";
+import { SearchIcon } from "./icons";
 import "./Header.css";
 
 const NAV_ITEMS = [
   { to: "/", label: "Home" },
-  { to: "/blog", label: "AI Updates" },
-  { to: "/categories", label: "Categories" },
+  { to: "/topics", label: "Topics" },
+  { to: "/blog", label: "Blogs" },
   { to: "/about", label: "About" },
 ];
 
-/** R15 — persistent site header with brand and primary navigation. */
+/** R18 — glassmorphism site header (supersedes the flat R15 header). */
 export function Header() {
   return (
     <header className="site-header">
       <div className="container site-header__inner">
-        <NavLink to="/" className="site-header__brand" end>
-          <span className="site-header__mark" aria-hidden="true">
-            S&amp;N
-          </span>
-          <span className="site-header__title">Signal &amp; Noise</span>
-        </NavLink>
+        <Link to="/" className="site-header__brand" aria-label="AI Pulse — home">
+          <Logo />
+          <span className="site-header__title">AI Pulse</span>
+        </Link>
 
         <nav className="site-header__nav" aria-label="Main navigation">
           {NAV_ITEMS.map((item) => (
@@ -34,6 +35,24 @@ export function Header() {
             </NavLink>
           ))}
         </nav>
+
+        <div className="site-header__actions">
+          <Link
+            to="/blog"
+            className="icon-btn"
+            aria-label="Search posts"
+            title="Search posts"
+          >
+            <SearchIcon />
+          </Link>
+          <ThemeToggle />
+          <Link to="/signin" className="btn btn--primary btn--sm">
+            Sign In
+          </Link>
+          <Link to="/signup" className="btn btn--outline btn--sm">
+            Sign Up
+          </Link>
+        </div>
       </div>
     </header>
   );

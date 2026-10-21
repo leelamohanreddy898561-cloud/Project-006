@@ -4,11 +4,33 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Signal &amp; Noise — An AI Blog</title>
+    <title>AI Pulse — An AI Blog</title>
     <meta
       name="description"
-      content="A small blog tracking the latest developments in artificial intelligence — model releases, research, and practical guides."
+      content="AI Pulse is a small blog tracking the latest developments in artificial intelligence — model releases, research, and practical guides."
     />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AI Pulse — An AI Blog" />
+    <meta
+      property="og:description"
+      content="A small blog tracking the latest developments in artificial intelligence."
+    />
+    <!-- Apply the stored/system theme before first paint to avoid a flash. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)",
+          ).matches;
+          document.documentElement.dataset.theme =
+            stored || (prefersDark ? "dark" : "light");
+        } catch (e) {
+          /* localStorage unavailable — keep the default light theme */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

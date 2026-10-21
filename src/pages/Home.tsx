@@ -5,9 +5,9 @@ import "./Home.css";
 export function Home() {
   return (
     <section className="hero container">
-      <p className="hero__eyebrow">Signal &amp; Noise — an AI blog</p>
+      <p className="hero__eyebrow">AI Pulse — an AI blog</p>
       <h1 className="hero__title">
-        Making sense of AI, <span>one signal at a time</span>.
+        Making sense of AI, <span>one pulse at a time</span>.
       </h1>
       <p className="hero__lead">
         We track what actually matters in artificial intelligence — model
@@ -15,7 +15,7 @@ export function Home() {
         endless takes.
       </p>
       <Link to="/blog" className="btn btn--primary hero__cta">
-        Read AI Updates
+        Read Blogs
       </Link>
     </section>
   );

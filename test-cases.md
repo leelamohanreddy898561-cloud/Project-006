@@ -136,7 +136,7 @@ Results for each run are recorded in `evidence.md`.
 | TC-1402 | auto | Run `npm run build` | CSS bundle < 25 kB gzipped |
 | TC-1403 | auto | Load `/` with console capture | No console errors |
 
-## R15 — Site header
+## R15 — Site header (SUPERSEDED by R18 — cases below are historical)
 
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
@@ -144,6 +144,23 @@ Results for each run are recorded in `evidence.md`.
 | TC-1502 | auto | Open `/` | Nav links: Home→`/`, AI Updates→`/blog`, Categories→`/categories`, About→`/about` |
 | TC-1503 | auto | Open `/` | Exactly one nav link is active, matching the current route |
 | TC-1504 | auto | Open `/` | Exactly one `<header>` landmark on the page |
+
+## R18 — Glassmorphism header
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-1801 | auto | Inspect `.site-header` computed style | `backdrop-filter` includes a blur; background-color is semi-transparent; a border is present |
+| TC-1802 | auto | Open `/` | Logo mark plus brand text "AI Pulse" visible, linking to `/` |
+| TC-1803 | auto | Open `/` | Nav links Home→`/`, Topics→`/topics`, Blogs→`/blog`, About→`/about`; a `:hover` rule with a gradient exists for nav links |
+| TC-1804 | auto | Open `/` | Search control links to `/blog` |
+| TC-1805 | auto | Click the theme toggle | `data-theme` flips; body background color changes; choice persists after reload |
+| TC-1806 | auto | First visit with no stored theme, OS set to dark | Page renders in dark theme (manual variant TC-903) |
+| TC-1807 | auto | Open `/` | Sign In links to `/signin`, Sign Up links to `/signup` |
+| TC-1808 | auto | Visit `/signin`, `/signup`, `/topics`, `/blog`, `/about` | Each renders a real page with a heading — none is blank |
+| TC-1809 | auto | Open `/` in both themes | Nav link text contrast ≥ 4.5:1 against the page background |
+| TC-1810 | auto | Open `/` | Exactly one nav link is active, matching the current route |
+| TC-1811 | auto | Inspect the logo's CSS | A glow animation is defined, and a `prefers-reduced-motion` rule disables it |
+| TC-1812 | auto | Run `npm run build` and `npm run lint` | Both pass; the home page test still passes |
 
 ## R16 — Firebase integration
 

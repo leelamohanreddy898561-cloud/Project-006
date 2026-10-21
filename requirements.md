@@ -2,7 +2,7 @@
 
 **Version:** 2.0 (ID-based format)
 **Date:** 2026-10-21
-**Status:** In progress — **R0, R15, R16, R17 implemented and verified; R1 partial (hero + CTA); site deployed to Firebase Hosting**
+**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17 implemented and verified; R1 partial; R18 in progress**
 
 ---
 
@@ -18,7 +18,7 @@ category/tag index pages). Simple and content-focused.
 ## 2. Goals
 
 - Publish and browse AI articles with a fast, readable experience.
-- Make content easy to find via search, tags, and categories.
+- Make content easy to find via search, tags, and topics.
 - Keep the site lightweight and easy to deploy as static files.
 - Keep the codebase simple, typed, and maintainable.
 
@@ -47,6 +47,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-21 | Workflow: ID-based docs + Playwright + evidence | Keeps rigor without one-file-per-requirement sprawl; generated test reports are stronger proof than hand-written notes. |
 | 2026-10-21 | Add Firebase (Auth, Firestore, Storage, Analytics, Hosting) | Supersedes the earlier "no backend in v1" scope note. Content stays in markdown for now; Firebase provides auth, storage, analytics, and hosting. Config via git-ignored `.env`. |
 | 2026-10-21 | Firebase is **lazily initialized** (`getFirebase()`), not eagerly imported | Eager init put 137 kB of SDK in the initial bundle, breaking the R14.1 budget. Nothing in the app uses Firebase yet, so on-demand init restores the budget with zero feature loss. |
+| 2026-10-21 | Brand renamed to **AI Pulse**; nav becomes Home / Topics / Blogs / About; flat header replaced by a glassmorphism design (R18 supersedes R15) | Project owner's new direction. "Categories" renamed to "Topics" everywhere; "AI Updates" relabelled "Blogs". Auth UI (Sign In / Sign Up) enters scope as header controls, backed by the already-integrated Firebase Auth. |
 
 ## 5. Out of Scope (v1)
 
@@ -89,14 +90,14 @@ Visitors immediately understand what the site is and can reach the latest conten
 - **AC1.3** A "Latest updates" section shows the most recent posts, newest first.
 - **AC1.4** A "Browse by category" section lists every category with its post count, each linking to its category page.
 
-### R2 — AI Updates list with search and filters
+### R2 — Blogs list with search and filters
 
 Readers can find any post from the main index.
 
 - **AC2.1** `/blog` lists all posts, newest first, showing title, excerpt, date, reading time, category, and tags.
 - **AC2.2** Typing in the search box filters posts by title, excerpt, category, and tags (case-insensitive, all terms must match).
-- **AC2.3** Clicking a category chip filters to that category; clicking "All" clears it.
-- **AC2.4** Filters are reflected in the URL (`?q=`, `?category=`, `?tag=`) so a filtered view is shareable.
+- **AC2.3** Clicking a topic chip filters to that topic; clicking "All" clears it.
+- **AC2.4** Filters are reflected in the URL (`?q=`, `?topic=`, `?tag=`) so a filtered view is shareable.
 - **AC2.5** When no posts match, an empty-state message is shown.
 - **AC2.6** The result count ("N posts") matches the number of cards rendered.
 
@@ -111,16 +112,16 @@ A post is readable, navigable, and connected to related content.
 - **AC3.5** A "Related posts" section shows up to 2 posts sharing a category or tags.
 - **AC3.6** Tags link to their tag pages.
 
-### R4 — Categories index
+### R4 — Topics index
 
-- **AC4.1** `/categories` lists every category with its post count.
-- **AC4.2** Each entry links to `/categories/:slug`.
+- **AC4.1** `/topics` lists every topic with its post count.
+- **AC4.2** Each entry links to `/topics/:slug`.
 
-### R5 — Category detail page
+### R5 — Topic detail page
 
-- **AC5.1** `/categories/:slug` shows the category name and the number of posts in it.
-- **AC5.2** Only posts in that category are listed.
-- **AC5.3** An unknown category slug shows the 404 page.
+- **AC5.1** `/topics/:slug` shows the topic name and the number of posts in it.
+- **AC5.2** Only posts in that topic are listed.
+- **AC5.3** An unknown topic slug shows the 404 page.
 
 ### R6 — Tag detail page
 
@@ -131,7 +132,7 @@ A post is readable, navigable, and connected to related content.
 ### R7 — About page
 
 - **AC7.1** `/about` explains what the site covers and who writes it, using semantic headings.
-- **AC7.2** The page links to `/blog` and `/categories`.
+- **AC7.2** The page links to `/blog` and `/topics`.
 
 ### R8 — 404 page
 
@@ -176,14 +177,37 @@ A post is readable, navigable, and connected to related content.
 - **AC14.2** Production build CSS is under 25 kB gzipped.
 - **AC14.3** The home page renders its main content without console errors.
 
-### R15 — Site header
+### R15 — Site header *(SUPERSEDED by R18)*
 
-A persistent header provides brand identity and primary navigation on every page.
+> **Superseded on 2026-10-21.** The project owner replaced the flat header with a
+> glassmorphism design and a new brand. The original acceptance criteria are kept
+> below for the historical record; **R18 is the active requirement.**
+> Evidence entries referencing R15 remain valid as history and are not edited.
+
+The original header provided brand identity and primary navigation on every page.
 
 - **AC15.1** The header displays the site brand, linking to `/`.
 - **AC15.2** The header navigation links to Home (`/`), AI Updates (`/blog`), Categories (`/categories`), and About (`/about`).
 - **AC15.3** The nav link for the current route is visually marked as active.
 - **AC15.4** The header is present on every page as a `<header>` landmark.
+
+### R18 — Glassmorphism header
+
+A translucent, glass-like header carries the new **AI Pulse** brand, the primary
+navigation, and the account/search controls. It works in both themes and keeps
+text readable over any content behind it.
+
+- **AC18.1** The header uses a glassmorphism treatment: a translucent background with a backdrop blur and a subtle border, in both light and dark themes.
+- **AC18.2** Left side: a glowing AI-themed logo plus the brand name **AI Pulse**, together linking to `/`.
+- **AC18.3** Center: navigation links **Home** (`/`), **Topics** (`/topics`), **Blogs** (`/blog`), and **About** (`/about`), each with a smooth gradient effect on mouse hover.
+- **AC18.4** Right side: a search icon linking to `/blog`, a dark/light mode toggle, and **Sign In** / **Sign Up** buttons linking to `/signin` and `/signup`.
+- **AC18.5** The theme toggle switches between light and dark and persists the choice across reloads *(delivers R9)*.
+- **AC18.6** On a first visit with no stored preference, the system `prefers-color-scheme` setting is respected.
+- **AC18.7** Header text meets WCAG 2.1 AA contrast (4.5:1) in both themes.
+- **AC18.8** `/signin`, `/signup`, `/topics`, `/blog`, and `/about` all render a real page — no link in the header leads to a blank screen.
+- **AC18.9** The nav link for the current route is visually marked as active.
+- **AC18.10** Build and lint pass, and the existing home page test still passes.
+- **AC18.11** The logo glow animation is disabled when the user prefers reduced motion.
 
 ### R16 — Firebase integration
 

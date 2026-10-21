@@ -274,3 +274,52 @@ change is recorded in the decision log — the budget itself was **not** raised.
 All tests green before commit and push, per the new AGENTS.md rule.
 **Commit:** see git log (message references R14.1/R16)
 
+### 2026-10-21 — Glassmorphism header (R18, supersedes R15)
+
+**Scope:** New AI Pulse glassmorphism header with glowing logo, gradient-hover
+navigation, search icon, theme toggle (delivering R9), and Sign In / Sign Up
+controls. R15 marked superseded; Categories renamed Topics, AI Updates
+relabelled Blogs; placeholder routes added so no header link dead-ends.
+**Test cases:** TC-1801–TC-1812, TC-101 (regression)
+**Commands run:**
+
+    npm run build
+    npm run lint
+    npx playwright test
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-1801 | R18.1 | pass | `backdrop-filter` contains blur; background alpha 0.65 (light) / 0.6 (dark); border present |
+| TC-1802 | R18.2 | pass | Logo + "AI Pulse" brand visible, links to `/`; glow animation running |
+| TC-1803 | R18.3 | pass | Home→`/`, Topics→`/topics`, Blogs→`/blog`, About→`/about`; gradient `:hover` rule verified in the stylesheet |
+| TC-1804 | R18.4 | pass | Search icon → `/blog` |
+| TC-1805 | R18.5 | pass | Toggle flips `data-theme` and body background; persists after reload |
+| TC-1806 | R18.6 | pass | With `colorScheme: dark` and no stored theme, the page renders dark |
+| TC-1807 | R18.4 | pass | Sign In → `/signin`, Sign Up → `/signup` |
+| TC-1808 | R18.8 | pass | `/`, `/topics`, `/blog`, `/about`, `/signin`, `/signup`, and an unknown route all render a real heading |
+| TC-1809 | R18.7 | pass | Nav contrast ≥ 4.5:1 in both themes (light ≈ 7.6:1, dark ≈ 7.3:1) |
+| TC-1810 | R18.9 | pass | Exactly one active nav link, matching the route |
+| TC-1811 | R18.11 | pass | Under `prefers-reduced-motion: reduce`, the logo animation is `none` |
+| TC-101 | R18.10 | pass | Home hero regression — eyebrow, h1, lead, CTA all correct under the new brand |
+| TC-1606/1607 | — | pass | Firebase regression — still lazy, still initializes on demand |
+
+**Two failures were found and fixed during evaluation (not hidden):**
+1. **Contrast measured mid-transition (2.48:1)** — the nav link's 200ms colour
+   transition meant the text colour was still the old theme's when measured.
+   Fixed by adding a global `prefers-reduced-motion` block that neutralises
+   transitions/animations (an accessibility improvement in its own right) and
+   polling until the colour settles.
+2. **TC-1806 asserted the wrong thing** — the app legitimately persists the
+   system-derived theme on first visit, so "localStorage is empty" was never
+   true. The assertion was corrected to check the applied theme.
+
+**Artifacts:** `evidence/screenshots/r18-header-light.png`,
+`evidence/screenshots/r18-header-dark.png`
+**Evaluation:** 14 passed, 1 skipped (template spec). Build and lint clean.
+Bundle: 84.38 kB JS / 2.08 kB CSS gzipped — still inside the R14.1/R14.2
+budgets. R18 is complete pending the owner's visual review; R9 (theme toggle)
+is delivered by this work.
+**Commit:** local only — **awaiting owner approval before push/deploy**
+

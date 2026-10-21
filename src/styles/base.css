@@ -44,6 +44,21 @@ h1 {
   border-radius: var(--radius-sm);
 }
 
+/* Accessibility: honour prefers-reduced-motion globally (R11) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Utilities -------------------------------------------------------------- */
 
 .container {
@@ -88,4 +103,20 @@ h1 {
   background-color: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
   color: var(--color-accent-contrast);
+}
+
+.btn--sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.btn--outline {
+  background-color: transparent;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn--outline:hover {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
 }
