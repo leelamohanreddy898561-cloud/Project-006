@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-21T13:59:47.525Z",
+  "generatedAt": "2026-10-21T14:15:48.147Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 22,
+    "commits": 24,
     "fileChanges": {
-      "M": 91,
+      "M": 100,
       "A": 70,
       "D": 1
     },
@@ -948,6 +948,64 @@
         {
           "status": "A",
           "path": "tests/r19-home-layout.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "cc67920a63d29f4d33c58a9507ec2f61be1442fb",
+      "short": "cc67920",
+      "date": "2026-10-21T19:43:09+05:30",
+      "subject": "chore: regenerate changeLog.json (R19 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "946d7f39060208f9a6646a1c4751afc3a0e91c95",
+      "short": "946d7f3",
+      "date": "2026-10-21T19:45:09+05:30",
+      "subject": "docs: evidence for R19 publish; sync status in AGENTS.md/checklist (R19)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": ".firebase/hosting.ZGlzdA.cache"
+        },
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
         }
       ]
     }
