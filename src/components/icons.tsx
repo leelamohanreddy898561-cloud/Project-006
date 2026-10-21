@@ -36,6 +36,14 @@ export function MoonIcon({ size = 16 }: IconProps) {
   );
 }
 
+export function ArrowRightIcon({ size = 16 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
 export function SearchIcon({ size = 16 }: IconProps) {
   return (
     <svg {...iconProps(size)}>

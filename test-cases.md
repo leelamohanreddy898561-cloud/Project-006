@@ -18,14 +18,24 @@ Results for each run are recorded in `evidence.md`.
 | TC-004 | auto | Run `npx playwright test` | Tests run, HTML report produced |
 | TC-005 | manual | Run `git log --oneline` | Initial commit contains the workflow docs |
 
-## R1 — Home page
+## R1 — Home page (hero)
 
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
-| TC-101 | auto | Open `/` | Hero shows site name, description, and a CTA linking to `/blog` |
-| TC-102 | auto | Open `/` | "Featured reading" section exists and shows featured posts |
-| TC-103 | auto | Open `/` | "Latest updates" shows posts in newest-first order |
-| TC-104 | auto | Open `/` | "Browse by category" lists all categories with counts; each links to its category page |
+| TC-101 | auto | Open `/` | Headline "Explore the Future of AI", a description, and a "Start Reading" button linking to `/blog` |
+| TC-102 | auto | Open `/`, sample the network canvas twice, 400ms apart | Canvas exists with non-zero size and its pixels change between samples (it is animating) |
+| TC-103 | auto | Open `/`, inspect `.topic-card` | Card is visible, has a float animation (`animation-name` ≠ `none`), and its topic text changes after the rotation interval |
+| TC-104 | auto | Open `/` with `prefers-reduced-motion: reduce` | Canvas pixels do not change between samples; card float animation is `none` |
+| TC-105 | auto | Set viewport to 360×800, open `/` | Card renders below the text; no horizontal overflow |
+| TC-106 | auto | Open `/` in both themes | Headline and description contrast ≥ 4.5:1 against the page background |
+
+## R1 — Home page (below the hero — later increments)
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-107 | auto | Open `/` | "Featured reading" section shows posts marked `featured: true` |
+| TC-108 | auto | Open `/` | "Latest updates" shows posts in newest-first order |
+| TC-109 | auto | Open `/` | "Browse by topic" lists all topics with counts, each links to its topic page |
 
 ## R2 — AI Updates list with search and filters
 

@@ -1,34 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { contrastRatio, parseRgb } from "./helpers/contrast";
 
 /**
  * R18 — Glassmorphism header (supersedes R15).
  * Maps to TC-1801 … TC-1812 in test-cases.md.
  */
-
-/* ---------- contrast helpers (TC-1809) ---------- */
-
-function parseRgb(value: string): { rgb: number[]; alpha: number } {
-  const numbers = (value.match(/[\d.]+/g) ?? []).map(Number);
-  return {
-    rgb: numbers.slice(0, 3),
-    alpha: numbers.length > 3 ? numbers[3] : 1,
-  };
-}
-
-function luminance([r, g, b]: number[]): number {
-  const channel = (c: number) => {
-    const s = c / 255;
-    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
-}
-
-function contrastRatio(a: number[], b: number[]): number {
-  const la = luminance(a);
-  const lb = luminance(b);
-  const [hi, lo] = la > lb ? [la, lb] : [lb, la];
-  return (hi + 0.05) / (lo + 0.05);
-}
 
 /* ---------- tests ---------- */
 
@@ -179,7 +155,7 @@ test.describe("R18 — Glassmorphism header", () => {
     page,
   }) => {
     const routes: Array<[string, string]> = [
-      ["/", "Making sense of AI"],
+      ["/", "Explore the Future of AI"],
       ["/topics", "Topics"],
       ["/blog", "Blogs"],
       ["/about", "About"],
@@ -220,7 +196,7 @@ test.describe("R18 — Glassmorphism header", () => {
                 bg: getComputedStyle(document.body).backgroundColor,
               };
             });
-            return contrastRatio(parseRgb(fg).rgb, parseRgb(bg).rgb);
+            return contrastRatio(fg, bg);
           },
           { message: `${theme} theme nav contrast`, timeout: 3000 },
         )

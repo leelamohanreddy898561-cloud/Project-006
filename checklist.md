@@ -93,6 +93,16 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] (R3) `TableOfContents` (R3.3)
 - [ ] (R8) `NotFound` page component
 
+## Phase 3b — Hero section (R1.1–R1.6)
+
+- [x] (R1.1) Hero copy: "Explore the Future of AI", description, "Start Reading" → `/blog`
+- [x] (R1.2) `NetworkBackground`: canvas particle network, slow ambient drift
+- [x] (R1.3) `TopicCard`: floating popular-topic card with float animation + rotation
+- [x] (R1.4) All hero animation disabled under `prefers-reduced-motion`
+- [x] (R1.5) Mobile stacking at 360px with no overflow
+- [x] (R1.6) Hero text contrast ≥ 4.5:1 in both themes
+- [x] Execute TC-101–TC-106; evidence entry; local commit; **awaiting owner approval before push/deploy**
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

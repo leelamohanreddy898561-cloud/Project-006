@@ -351,3 +351,44 @@ file contains the literal text `git grep "AIza"` from documenting earlier
 scans, not the key itself. Verified before and after the push.
 **Commit:** `7aac76f` (change log regeneration; this entry follows it)
 
+### 2026-10-21 — Hero section: network effect and floating topic card (R1.1–R1.6)
+
+**Scope:** New home page hero — "Explore the Future of AI" headline with a
+"Start Reading" button, an animated AI network canvas behind the content, and a
+floating popular-topic card on the right.
+**Test cases:** TC-101–TC-106, plus TC-1808 regression
+**Commands run:**
+
+    npm run build
+    npm run lint
+    npx playwright test
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-101 | R1.1 | pass | Headline, description, and "Start Reading" → `/blog` |
+| TC-102 | R1.2 | pass | Canvas has non-zero size and its pixel fingerprint changes across 400ms (verified animating, not just present) |
+| TC-103 | R1.3 | pass | Card visible with a float animation; topic text rotates after the interval |
+| TC-104 | R1.4 | pass | Under `prefers-reduced-motion`: canvas fingerprint unchanged; card animation duration ≈ 0 |
+| TC-105 | R1.5 | pass | At 360×800 the card renders below the text; zero horizontal overflow |
+| TC-106 | R1.6 | pass | Hero description contrast ≥ 4.5:1 in both themes |
+| TC-1808 | — | pass | Header route test updated for the new hero headline and re-run green |
+
+**What was built:** `NetworkBackground` (canvas particle network, ~60 nodes,
+slow drift, accent colour read from CSS so it follows the theme, static frame
+under reduced motion), `TopicCard` (glass card, float animation, rotates
+through four topics every 4.5s, rotation stops under reduced motion), and a
+two-column hero that stacks on mobile with a radial scrim protecting text
+contrast over the network.
+
+**One test fixed during evaluation:** TC-1808 asserted the old hero headline
+("Making sense of AI"); updated to the new copy and re-run — legitimate, since
+the requirement changed.
+
+**Artifacts:** `evidence/screenshots/r1-hero.png`
+**Evaluation:** 19 passed, 1 skipped. Build and lint clean. Bundle 85.5 kB JS /
+2.6 kB CSS gzipped — inside the R14.1/R14.2 budgets. Note: the topic card's
+post counts are placeholders until the content model (R13) lands.
+**Commit:** local only — **awaiting owner approval before push/deploy**
+

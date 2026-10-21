@@ -85,10 +85,20 @@ The project builds, lints, tests, and serves locally with the agreed stack.
 
 Visitors immediately understand what the site is and can reach the latest content.
 
-- **AC1.1** The page shows a hero with the site name, a one-sentence description, and a primary call-to-action linking to `/blog`.
-- **AC1.2** A "Featured reading" section shows posts marked `featured: true`.
-- **AC1.3** A "Latest updates" section shows the most recent posts, newest first.
-- **AC1.4** A "Browse by category" section lists every category with its post count, each linking to its category page.
+**Hero section (R1.1–R1.6):**
+
+- **AC1.1** The hero shows the headline **"Explore the Future of AI"**, a short description, and a primary **"Start Reading"** button linking to `/blog`.
+- **AC1.2** An AI network effect renders behind the hero content — drifting nodes connected by lines, moving slowly.
+- **AC1.3** A floating **popular AI topic** card sits on the right side with a gentle float animation, cycling through topics.
+- **AC1.4** All hero animation is disabled when the user prefers reduced motion.
+- **AC1.5** On mobile (360px) the hero stacks — text first, card below — with no horizontal overflow.
+- **AC1.6** Hero text keeps WCAG AA contrast (4.5:1) over the network background in both themes.
+
+**Below the hero (later increments):**
+
+- **AC1.7** A "Featured reading" section shows posts marked `featured: true`.
+- **AC1.8** A "Latest updates" section shows the most recent posts, newest first.
+- **AC1.9** A "Browse by topic" section lists every topic with its post count, each linking to its topic page.
 
 ### R2 — Blogs list with search and filters
 
