@@ -33,9 +33,26 @@ Results for each run are recorded in `evidence.md`.
 
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
-| TC-107 | auto | Open `/` | "Featured reading" section shows posts marked `featured: true` |
-| TC-108 | auto | Open `/` | "Latest updates" shows posts in newest-first order |
-| TC-109 | auto | Open `/` | "Browse by topic" lists all topics with counts, each links to its topic page |
+| TC-107 | auto | Open `/` | *(superseded by R19)* |
+| TC-108 | auto | Open `/` | *(superseded by R19)* |
+| TC-109 | auto | Open `/` | *(superseded by R19)* |
+
+## R19 — Home main content layout
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-1901 | auto | Open `/` at 1440px | Two columns exist; article column width is ≈70% of the pair (between 60% and 80%) |
+| TC-1902 | auto | Open `/` at 1440px | Article grid renders cards in 2 columns and shows posts newest-first |
+| TC-1903 | auto | Inspect the first card | Contains a cover image, category badge, title, "N min read", author avatar + name, and a bookmark button |
+| TC-1904 | auto | Hover a card | Card `transform` becomes a translateY lift and the image `scale` > 1 |
+| TC-1905 | auto | Hover a card with `prefers-reduced-motion: reduce` | No transform lift is applied |
+| TC-1906 | auto | Open `/` | Sidebar contains a Trending Topics section, a search input, and quick-filter controls |
+| TC-1907 | auto | Type "prompt" in the sidebar search | Grid narrows to matching posts; count updates |
+| TC-1908 | auto | Click the "Featured" quick filter | Grid shows only featured posts; filter is marked active |
+| TC-1909 | auto | Click a card's bookmark button | `aria-pressed` flips from false to true |
+| TC-1910 | auto | Search for a nonsense term | Empty state message is shown instead of a blank column |
+| TC-1911 | auto | Set viewport to 360×800 | Layout is a single column, articles above sidebar, no horizontal overflow |
+| TC-1912 | auto | Open `/` in both themes | Card title and excerpt contrast ≥ 4.5:1 |
 
 ## R2 — AI Updates list with search and filters
 

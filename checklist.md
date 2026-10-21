@@ -101,7 +101,21 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R1.4) All hero animation disabled under `prefers-reduced-motion`
 - [x] (R1.5) Mobile stacking at 360px with no overflow
 - [x] (R1.6) Hero text contrast ≥ 4.5:1 in both themes
-- [x] Execute TC-101–TC-106; evidence entry; local commit; **awaiting owner approval before push/deploy**
+- [x] Execute TC-101–TC-106; evidence entry; local commit; published after owner approval
+
+## Phase 3c — Home main content layout (R19)
+
+- [x] (R19.1) 70/30 two-column layout below the hero
+- [x] (R19.2) Article grid: 2 columns desktop, 1 mobile, newest first
+- [x] (R19.4) `BlogCard`: cover image, category badge, title, read time, author, bookmark
+- [x] (R19.5, R19.6) Hover lift + image zoom, disabled under reduced motion
+- [x] (R19.7) Bookmark toggle with `aria-pressed`
+- [x] (R19.9) Sidebar: Trending Topics, search bar, Quick Filters
+- [x] (R19.10, R19.11) Sidebar search and quick filters drive the grid
+- [x] (R19.12) Empty state when nothing matches
+- [x] (R19.3, R19.8) Single column on mobile; AA contrast in both themes
+- [x] Seed post data + local AI-themed cover art (placeholder until R13)
+- [x] Execute TC-1901–TC-1912; evidence entry; local commit; **awaiting owner approval**
 
 ## Phase 5 — Routing & pages
 

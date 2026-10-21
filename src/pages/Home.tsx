@@ -1,32 +1,88 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { NetworkBackground } from "../components/hero/NetworkBackground";
 import { TopicCard } from "../components/hero/TopicCard";
+import { BlogCard } from "../components/BlogCard";
+import { Sidebar } from "../components/Sidebar";
+import {
+  getLatestPosts,
+  getTrendingTopics,
+  selectPosts,
+  type QuickFilter,
+} from "../data/posts";
 import "./Home.css";
 
-/** R1 — home page hero (R1.1–R1.6). */
+/** R1 (hero) + R19 (main content layout). */
 export function Home() {
-  return (
-    <section className="hero container">
-      <NetworkBackground />
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<QuickFilter>("all");
 
-      <div className="hero__content">
-        <div className="hero__text">
-          <p className="hero__eyebrow">AI Pulse — an AI blog</p>
-          <h1 className="hero__title">
-            Explore the <span>Future of AI</span>
-          </h1>
-          <p className="hero__lead">
-            Clear, practical coverage of the models, research, and tools shaping
-            artificial intelligence — what changed, why it matters, and what to
-            do about it.
-          </p>
-          <Link to="/blog" className="btn btn--primary hero__cta">
-            Start Reading
-          </Link>
+  const latest = useMemo(() => getLatestPosts(), []);
+  const topics = useMemo(() => getTrendingTopics(5), []);
+  const visible = useMemo(
+    () => selectPosts(latest, query, filter),
+    [latest, query, filter],
+  );
+
+  return (
+    <>
+      <section className="hero container">
+        <NetworkBackground />
+
+        <div className="hero__content">
+          <div className="hero__text">
+            <p className="hero__eyebrow">AI Pulse — an AI blog</p>
+            <h1 className="hero__title">
+              Explore the <span>Future of AI</span>
+            </h1>
+            <p className="hero__lead">
+              Clear, practical coverage of the models, research, and tools
+              shaping artificial intelligence — what changed, why it matters,
+              and what to do about it.
+            </p>
+            <Link to="/blog" className="btn btn--primary hero__cta">
+              Start Reading
+            </Link>
+          </div>
+
+          <TopicCard />
+        </div>
+      </section>
+
+      <section className="home-main container" aria-labelledby="latest-heading">
+        <div className="home-main__articles">
+          <div className="home-main__header">
+            <h2 className="home-main__title" id="latest-heading">
+              Latest articles
+            </h2>
+            <Link to="/blog" className="home-main__link">
+              View all
+            </Link>
+          </div>
+
+          {visible.length > 0 ? (
+            <div className="post-grid">
+              {visible.map((post) => (
+                <BlogCard key={post.slug} post={post} />
+              ))}
+            </div>
+          ) : (
+            <p className="post-grid__empty">
+              No articles match your search. Try a different keyword or clear
+              the filters.
+            </p>
+          )}
         </div>
 
-        <TopicCard />
-      </div>
-    </section>
+        <Sidebar
+          topics={topics}
+          query={query}
+          onQueryChange={setQuery}
+          filter={filter}
+          onFilterChange={setFilter}
+          resultCount={visible.length}
+        />
+      </section>
+    </>
   );
 }

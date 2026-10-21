@@ -96,9 +96,39 @@ Visitors immediately understand what the site is and can reach the latest conten
 
 **Below the hero (later increments):**
 
-- **AC1.7** A "Featured reading" section shows posts marked `featured: true`.
-- **AC1.8** A "Latest updates" section shows the most recent posts, newest first.
-- **AC1.9** A "Browse by topic" section lists every topic with its post count, each linking to its topic page.
+- **AC1.7** ~~A "Featured reading" section shows posts marked `featured: true`.~~ *(superseded by R19)*
+- **AC1.8** ~~A "Latest updates" section shows the most recent posts, newest first.~~ *(superseded by R19)*
+- **AC1.9** ~~A "Browse by topic" section lists every topic with its post count.~~ *(superseded by R19)*
+
+### R19 — Home main content layout
+
+Below the hero, the home page presents the latest articles alongside a sidebar of
+discovery tools.
+
+**Layout**
+
+- **AC19.1** A two-column main content area sits below the hero: the article column takes roughly 70% of the width and the sidebar roughly 30%.
+- **AC19.2** The article column shows the latest posts in a grid — two columns on desktop, one on mobile.
+- **AC19.3** Below 1000px the whole area stacks to a single column (articles first, sidebar second) with no horizontal overflow.
+
+**Blog card**
+
+- **AC19.4** Each card shows, in order: a cover image at the top, a category badge, the title, the read time (e.g. "8 min read"), the author (avatar + name), and a bookmark button.
+- **AC19.5** Hovering a card lifts it slightly and zooms its cover image.
+- **AC19.6** Both hover effects are disabled when the user prefers reduced motion.
+- **AC19.7** The bookmark button toggles its state and reflects it accessibly via `aria-pressed`.
+- **AC19.8** Card text meets WCAG AA contrast (4.5:1) in both themes.
+
+**Sidebar**
+
+- **AC19.9** The sidebar contains three sections: **Trending Topics**, a **search bar**, and **Quick Filters**.
+- **AC19.10** Typing in the sidebar search filters the article grid by title, excerpt, topic, or tag.
+- **AC19.11** The Quick Filters (All / Latest / Quick reads / Featured) change which articles are shown.
+- **AC19.12** An empty result shows a friendly empty state rather than a blank column.
+
+**Quality**
+
+- **AC19.13** Build and lint pass, and all previously passing tests stay green.
 
 ### R2 — Blogs list with search and filters
 

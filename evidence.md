@@ -441,3 +441,51 @@ instead of failing misleadingly.
 placeholders until R13 (content model).
 **Commit:** see git log (message references R1)
 
+### 2026-10-21 — Home main content layout: article grid + sidebar (R19)
+
+**Scope:** Two-column main content area below the hero — article grid (≈70%)
+with rich blog cards, and a discovery sidebar (≈30%) with trending topics,
+search, and quick filters. Supersedes R1.7–R1.9.
+**Test cases:** TC-1901–TC-1912, plus the full regression suite
+**Commands run:**
+
+    npm run build
+    npm run lint
+    npx playwright test
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-1901 | R19.1 | pass | Sidebar sits right of the article column; measured ratio ≈0.70 |
+| TC-1902 | R19.2 | pass | 6 cards, two columns at 1440px, newest-first ordering confirmed |
+| TC-1903 | R19.4 | pass | Image (verified actually loaded via `naturalWidth`), badge, title, "N min read", author avatar + name, bookmark button |
+| TC-1904 | R19.5 | pass | Hover changes the card `transform` and scales the image |
+| TC-1905 | R19.6 | pass | Under reduced motion the card transform stays `none`/identity |
+| TC-1906 | R19.9 | pass | Sidebar has trending topics (5), a searchbox, and a quick-filter group |
+| TC-1907 | R19.10 | pass | Search "prompt" narrows the grid to 1 article; count updates to "1 article" |
+| TC-1908 | R19.11 | pass | "Featured" filter shows exactly 2 posts and is marked active |
+| TC-1909 | R19.7 | pass | Bookmark `aria-pressed` false → true, gains `is-active` |
+| TC-1910 | R19.12 | pass | Nonsense search shows the empty state, not a blank column |
+| TC-1911 | R19.3 | pass | At 360px the sidebar renders below the articles; zero overflow |
+| TC-1912 | R19.8 | pass | Title and excerpt contrast ≥ 4.5:1 in both themes |
+| — | R19.13 | pass | 31 passed, 1 skipped; build and lint clean; 87.9 kB JS gzipped |
+
+**Deliberate placeholder decisions (flagged for the owner):**
+1. **Seed data.** Posts live in `src/data/posts.ts` mirroring the final `Post`
+   shape. The content model (R13) will load the same fields from markdown
+   frontmatter — only that one file changes, not the components.
+2. **Cover art.** Locally authored abstract SVGs in `public/covers/` rather than
+   external photo URLs: they always load, carry no licensing questions, cost a
+   few kB each, and need no network. Real artwork or Firebase Storage can
+   replace them later.
+3. **Bookmark** is a local UI toggle — persisting it needs an account (Firebase
+   Auth), which is not built yet.
+4. **Card links** point to `/blog/:slug` and `/topics/:slug`, which are still
+   placeholder pages until R3 and R4 land.
+
+**Artifacts:** none new (no screenshots captured this run)
+**Evaluation:** R19 complete and green. Search and quick filters operate on the
+home grid; R2 will add the dedicated `/blog` list page with URL-driven filters.
+**Commit:** local only — **awaiting owner approval before push/deploy**
+

@@ -52,3 +52,39 @@ export function SearchIcon({ size = 16 }: IconProps) {
     </svg>
   );
 }
+
+export function ClockIcon({ size = 14 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+export function BookmarkIcon({
+  size = 16,
+  filled = false,
+}: IconProps & { filled?: boolean }) {
+  return (
+    <svg {...iconProps(size)} fill={filled ? "currentColor" : "none"}>
+      <path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4-7 4V5a1 1 0 0 1 1-1z" />
+    </svg>
+  );
+}
+
+export function FlameIcon({ size = 14 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <path d="M12 3c3 3.5 5 6 5 9a5 5 0 0 1-10 0c0-1.5.6-2.8 1.5-4 .3 1.2 1 2 2 2.3C10 8.5 11 5.5 12 3z" />
+    </svg>
+  );
+}
+
+export function CloseIcon({ size = 14 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
