@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-22T05:03:45.371Z",
+  "generatedAt": "2026-10-22T05:39:14.889Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 28,
+    "commits": 31,
     "fileChanges": {
-      "M": 118,
-      "A": 76,
-      "D": 1
+      "M": 136,
+      "D": 3,
+      "A": 77
     },
     "latestVerification": null,
     "requirementsImplemented": [
@@ -1131,6 +1131,123 @@
           "status": "M",
           "path": ".firebase/hosting.ZGlzdA.cache"
         },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
+        }
+      ]
+    },
+    {
+      "commit": "193a69633b3319e80f8c40c8882f1bb032040c0b",
+      "short": "193a696",
+      "date": "2026-10-22T10:35:58+05:30",
+      "subject": "chore: regenerate changeLog.json after R20 publish",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "32501d671617952f911bda45f9f903e4a62a518a",
+      "short": "32501d6",
+      "date": "2026-10-22T11:01:56+05:30",
+      "subject": "chore: repository and workflow hygiene (R21)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "D",
+          "path": ".firebase/hosting.ZGlzdA.cache"
+        },
+        {
+          "status": "M",
+          "path": ".gitignore"
+        },
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
+        },
+        {
+          "status": "M",
+          "path": "package-lock.json"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Footer.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "D",
+          "path": "tests/example.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r20-footer.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r21-hygiene.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "fa1de2a5b4429fedc2416f6c1641809020987d20",
+      "short": "fa1de2a",
+      "date": "2026-10-22T11:08:59+05:30",
+      "subject": "docs: evidence for R21 publish (R21)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
         {
           "status": "M",
           "path": "evidence.md"
