@@ -249,10 +249,9 @@ deliberately, so a growing repository is expected rather than a leak.
   R21 (repository and workflow hygiene), R22 (deploy tooling footprint),
   R23 (blog detail page), R24 (sign in and sign up pages), R25 (test runs never
   mutate committed evidence), R26 (this section kept accurate by a guard test),
-  R27 (production verification runs a smoke subset).
-  **R27 is the most recent requirement published to production.**
-- **Implemented and verified, awaiting owner approval:** R28 (one branch per
+  R27 (production verification runs a smoke subset), R28 (one branch per
   requirement; `main` only receives approved work, fast-forwarded).
+  **R28 is the most recent requirement published to production.**
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).

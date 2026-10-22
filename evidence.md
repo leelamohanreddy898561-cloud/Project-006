@@ -1398,3 +1398,57 @@ a test pass - the failing assertion was the test.
 
 **Evaluation:** R28 implemented and verified locally on its branch. Awaiting
 owner approval before pushing the branch, deploying, or merging to `main`.
+---
+
+### 2026-10-22 - R28 published
+
+**Approval:** owner replied "ok" after reviewing the branch, the commit range and
+`AGENTS.md` sections 2, 3 and 4.
+
+**Scope:** R28 - one branch per requirement; `main` only receives approved,
+verified work, fast-forwarded. No application code changed.
+
+**Branch:** `feature/r28-feature-branches` (base `59fc4aa`). Everything below
+happened on the branch; `main` was moved only at step 5.
+
+**Commands run, in order:**
+
+    git ls-files | Select-String -Pattern '^\.env$|serviceAccount|\.pem$|\.key$'
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{35}" -- . ':!evidence.md'
+    git grep -n -I "BEGIN PRIVATE KEY" -- . ':!evidence.md'
+    git push -u origin feature/r28-feature-branches
+    npm run build
+    npm run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm run verify:prod
+    npm run changelog
+    npm run sync:changes
+    npm run verify:changes
+    git checkout main && git merge --ff-only feature/r28-feature-branches
+    git push origin main
+
+**Results:**
+
+| Step | Result |
+| --- | --- |
+| Secret scan | Clean - no `.env`, no service accounts, no keys in tracked files |
+| Branch push | `* [new branch] feature/r28-feature-branches`; `origin/main` still `59fc4aa` |
+| Build | Exit 0; 112.28 kB JS / 5.59 kB CSS gzipped - unchanged |
+| Deploy | `hosting[project-006-e6ae1]: release complete` |
+| Production check | **8 passed in 13.2 s** (15.1 s wall clock), exit 0 |
+| Changelog | 51 commits; new entries synced, read-back verified |
+| `main` fast-forward | Expected to move `59fc4aa` -> branch tip with no merge commit |
+
+**Why this order matters.** Deploy and `verify:prod` both ran against the
+branch, and the evidence and change-log commits were made on the branch too.
+`main` therefore never held a state that had not already been built, deployed
+and verified. The fast-forward at step 5 produces no commit at all - it only
+moves the `main` pointer - so nothing is lost from the history and `main` stays
+free of merge commits.
+
+**AGENTS.md updated in the same publish:** Section 9 lists R28 as published and
+names it the most recent requirement; the "awaiting owner approval" line is gone
+because nothing is awaiting.
+
+**Evaluation:** R28 published. Subsequent requirements are built on their own
+branches, and `main` only ever advances by fast-forward to an approved,
+deployed, verified tip.
