@@ -1280,3 +1280,57 @@ The only edits to existing specs are the `@smoke` tag appended to eight titles.
 
 **Evaluation:** R27 implemented and verified locally, including one real run
 against the deployed site. Awaiting owner approval before any push or deploy.
+---
+
+### 2026-10-22 - R27 published
+
+**Approval:** owner replied "ok" after reviewing the local commit and the
+measured timings.
+
+**Scope:** R27 - production verification runs an 8-test smoke subset instead of
+the whole suite. No application code changed; the deployed bundle is
+`index-BJkolB8H.js` / `index-DJ3hfQbW.css` either way.
+
+**Commands run, in order:**
+
+    git ls-files | Select-String -Pattern '^\.env$|serviceAccount|\.pem$|\.key$'
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{35}" -- . ':!evidence.md'
+    git grep -n -I "BEGIN PRIVATE KEY" -- . ':!evidence.md'
+    git push origin main
+    npm run build
+    npm run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm run verify:prod
+
+**Results:**
+
+| Step | Result |
+| --- | --- |
+| Secret scan | Clean - no `.env`, no service account files, no keys in tracked files |
+| Push | `d73602f..90250fd  main -> main` |
+| Build | Exit 0; 112.28 kB JS / 5.59 kB CSS gzipped - within budget, unchanged |
+| Deploy | `hosting[project-006-e6ae1]: release complete` |
+| Production check | **8 passed in 13.3 s** (15.8 s wall clock), exit 0 |
+| Working tree after the run | Clean - R25 still holds against the deployed target |
+
+**This is the first release verified with the new command.** The previous
+release needed 3.2-4.5 minutes and four attempts to get a green production run,
+because 88 tests each re-downloaded the 344 kB bundle over a slow link. This one
+took 15.8 seconds, first attempt, no retries.
+
+**AGENTS.md updated in the same publish:** Section 9 now lists R27 as published
+and names it the most recent requirement; the "awaiting owner approval" line is
+gone because there is nothing awaiting. Section 2 step 11, Section 5 and Section
+6 all name `npm run verify:prod`, so the workflow, the file map and the command
+cannot drift apart.
+
+**Verification after that edit:** `tests/r26-agents-state.spec.ts` and
+`tests/r27-production-smoke.spec.ts` - 8 passed, so Section 9 still agrees with
+`requirements.md` and the tagged set still matches the manifest.
+
+**Change-log cycle:** run after this entry, in the single pass the workflow
+allows (`changelog` -> `sync:changes` -> `verify:changes` -> commit -> push).
+Per the documented order it cannot record its own commit.
+
+**Evaluation:** R27 published. Production verification is now a fixed 8-test
+subset covering every route class, it refuses to run without a deployed target,
+and it never retries to mask a failure.
