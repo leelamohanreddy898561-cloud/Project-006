@@ -21,11 +21,27 @@ function section9(): string {
 }
 
 test.describe("R26 — AGENTS.md current state", () => {
-  test("TC-2601: Section 9 names R24 as the latest published requirement", () => {
+  test("TC-2601: Section 9 names the most recent published requirement", () => {
     const section = section9();
 
-    expect(section).toContain("R24");
-    expect(section).toMatch(/R24 is the most recent requirement published/i);
+    // Everything the section claims is published, excluding anything still
+    // marked as awaiting approval.
+    const publishedPart = section.split(/awaiting owner approval/i)[0];
+    const numbers = [...publishedPart.matchAll(/\bR(\d+)\b/g)].map((match) =>
+      Number(match[1]),
+    );
+    expect(numbers.length).toBeGreaterThan(0);
+
+    const highest = Math.max(...numbers);
+    const claim = section.match(
+      /\bR(\d+)\b is the most recent requirement published/i,
+    );
+
+    expect(claim, "Section 9 must say which requirement is the latest").not.toBeNull();
+    expect(
+      Number(claim?.[1]),
+      `Section 9 claims R${claim?.[1]} is latest, but R${highest} is listed as published`,
+    ).toBe(highest);
   });
 
   test("TC-2602: superseded requirements are kept and labelled", () => {

@@ -1148,3 +1148,67 @@ commit, which lands before the change-log cycle.
 **Artifacts:** none new. `evidence/screenshots/*.png` unchanged by this work.
 **Evaluation:** R25 and R26 complete and green. 88 passed, no skips added.
 **Commit:** local only — **awaiting owner approval before push/deploy**
+---
+
+### 2026-10-22 — R25 and R26 published
+
+**Approval:** owner replied "ok" after reviewing the local build.
+**Scope:** R25 (test runs no longer mutate committed evidence), R26 (AGENTS.md
+Section 9 kept accurate).
+**Commands run, in order:**
+
+    git status --short
+    git ls-files | Select-String -Pattern "^\.env$|serviceAccount|\.pem$|\.key$"
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{35}" -- . ':!evidence.md'
+    git grep -n -I "BEGIN PRIVATE KEY" -- . ':!evidence.md'
+    git push origin main
+    npm run build
+    npm run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npx playwright test
+    npx playwright test --workers=2 --timeout=180000 --retries=1
+
+**Results:**
+
+| Step | Result |
+| --- | --- |
+| Secret scan | Clean — no `.env`, no service account files, no keys in tracked files |
+| Push | `1ad7b52..a96c101  main -> main` |
+| Build | Clean; 112.28 kB JS / 5.59 kB CSS gzipped — **byte-identical to R24** (`index-BJkolB8H.js`, `index-DJ3hfQbW.css`), because this release changed only tests, scripts and docs |
+| Deploy | `hosting[project-006-e6ae1]: release complete` |
+| Production suite | **87 passed, 1 skipped**, exit 0 |
+| Working tree after production run | Clean — `evidence/` untouched, so R25 holds against the deployed target too |
+
+**Network incident during verification (worth recording):** the first three
+production runs came back red with *different* tests failing each time. The
+cause was not the application. Measured against the same URL:
+
+| Asset | Time |
+| --- | --- |
+| `index.html` (1.5 kB) | 48–1753 ms |
+| `index-BJkolB8H.js` (344 kB) | 16.7 s, 19.1 s, 30.4 s, 39.8 s, 57.1 s, 17.3 s, 23.9 s |
+
+Every 344 kB bundle download was consuming most or all of the 30 s per-test
+budget, so navigations died with `page.goto: net::ERR_TIMED_OUT`. Evidence that
+this was environmental rather than a defect:
+
+1. The identical suite passed 88/88 twice locally, immediately before.
+2. `tests/r1-home.spec.ts` passed 6/6 against production with one worker and a
+   180 s timeout, minutes after failing under parallel load.
+3. The recorded error for TC-103 was `net::ERR_TIMED_OUT` on `page.goto`, not an
+   assertion failure.
+4. Lowering parallelism improved but did not fix it, until retries were allowed
+   for a transient timeout.
+
+Final verification therefore used `--workers=2 --timeout=180000 --retries=1`.
+That accommodates slow I/O; it does not weaken any assertion. It is a
+workaround, not a fix, and is recorded as such.
+
+**AGENTS.md updated in the same publish:** Section 9 now lists R25 and R26 as
+published and names **R26** as the most recent requirement, replacing the
+"awaiting owner approval" line. `TC-2601` was rewritten to stay true without
+needing an edit every release: it now reads the highest requirement number in
+the published list and fails if the "most recent" sentence disagrees with it.
+Re-run after the change: 4/4 green.
+
+**Evaluation:** R25 and R26 published. The live site serves the same bundle as
+R24, and future test runs no longer dirty the repository.

@@ -216,10 +216,9 @@ deliberately, so a growing repository is expected rather than a leak.
   R17 (change log export), R18 (glassmorphism header), R19 (home main content
   layout — article grid + discovery sidebar), R20 (footer and newsletter),
   R21 (repository and workflow hygiene), R22 (deploy tooling footprint),
-  R23 (blog detail page), R24 (sign in and sign up pages).
-  **R24 is the most recent requirement published to production.**
-- **Implemented and verified, awaiting owner approval:** R25 (test runs no
-  longer touch committed evidence), R26 (this section kept accurate).
+  R23 (blog detail page), R24 (sign in and sign up pages), R25 (test runs never
+  mutate committed evidence), R26 (this section kept accurate by a guard test).
+  **R26 is the most recent requirement published to production.**
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).
