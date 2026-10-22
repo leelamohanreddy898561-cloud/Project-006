@@ -159,6 +159,15 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] Article body content for the six seed posts (markdown)
 - [x] Execute TC-2301–TC-2320; evidence entry; local commit; **awaiting owner approval**
 
+## Phase 3h — Sign in and sign up pages (R24)
+
+- [x] (R24.1–R24.6) Real `/signin` and `/signup` routes, glass card, gradient glows
+- [x] (R24.7–R24.10) Field validation, error association, error clearing, autocomplete
+- [x] (R24.11–R24.14) Live-region outcomes, Google button, password reveal, cross links
+- [x] (R24.15) Single auth seam in `src/lib/auth.ts`
+- [x] (R24.16–R24.18) Mobile overflow, AA contrast, build/lint/tests/budget
+- [x] Execute TC-2401–TC-2418; evidence entry; local commit; **awaiting owner approval**
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

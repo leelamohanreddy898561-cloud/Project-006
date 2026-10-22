@@ -159,8 +159,8 @@ test.describe("R18 — Glassmorphism header", () => {
       ["/topics", "Topics"],
       ["/blog", "Blogs"],
       ["/about", "About"],
-      ["/signin", "Sign In"],
-      ["/signup", "Sign Up"],
+      ["/signin", "Welcome back"],
+      ["/signup", "Create your account"],
       ["/this-route-does-not-exist", "Page not found"],
     ];
 

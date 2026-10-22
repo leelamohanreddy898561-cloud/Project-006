@@ -23,3 +23,19 @@ export function contrastRatio(a: string, b: string): number {
   const [hi, lo] = la > lb ? [la, lb] : [lb, la];
   return (hi + 0.05) / (lo + 0.05);
 }
+
+/**
+ * Flatten a translucent colour over an opaque backdrop (R24).
+ *
+ * Glassmorphic surfaces are semi-transparent, so their real colour depends on
+ * what sits behind them. Contrast checks on a glass card have to composite
+ * first or they measure a colour the user never sees.
+ */
+export function composite(over: string, under: string): string {
+  const top = parseRgb(over);
+  const bottom = parseRgb(under);
+  const blended = top.rgb.map((channel, index) =>
+    Math.round(channel * top.alpha + bottom.rgb[index] * (1 - top.alpha)),
+  );
+  return `rgb(${blended.join(", ")})`;
+}

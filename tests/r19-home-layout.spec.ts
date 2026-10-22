@@ -65,10 +65,15 @@ test.describe("R19 — Home main content layout", () => {
     ).toBeVisible();
 
     // The cover image actually loads (not a broken image).
-    const loaded = await card
-      .locator(".blog-card__media img")
-      .evaluate((el) => (el as HTMLImageElement).naturalWidth > 0);
-    expect(loaded).toBe(true);
+    // Polled: `naturalWidth` is 0 until the decode finishes, and that is not
+    // guaranteed to have happened by the time the visibility checks above pass.
+    await expect
+      .poll(async () =>
+        card
+          .locator(".blog-card__media img")
+          .evaluate((el) => (el as HTMLImageElement).naturalWidth > 0),
+      )
+      .toBe(true);
   });
 
   test("TC-1904: hover lifts the card and zooms the image", async ({ page }) => {

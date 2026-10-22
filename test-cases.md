@@ -296,3 +296,26 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2318 | auto | Click a related card | Navigates to that article |
 | TC-2319 | auto | Open an article in both themes | Prose body and comment text contrast ≥ 4.5:1 |
 | TC-2320 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green; bundle within budget |
+
+## R24 — Sign in and sign up pages
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2401 | auto | Open `/signin` and `/signup` | Both render an auth card with a heading; no "Coming soon" placeholder |
+| TC-2402 | auto | Inspect each card | Email input, password input, "Sign in with Google" button, submit button all present |
+| TC-2403 | auto | Read `document.title` on each page | Title matches the page; navigating away restores the previous title |
+| TC-2404 | auto | Read computed style of the card | Background is semi-transparent (alpha < 1), `backdrop-filter` contains `blur`, border and shadow present |
+| TC-2405 | auto | Count glow layers behind the card | Glow elements exist, are `aria-hidden`, and are `pointer-events: none` |
+| TC-2406 | auto | Submit with every field empty | Two inline errors, nothing submitted, live region stays empty |
+| TC-2407 | auto | Enter `not-an-email` + short password, submit | Email error mentions a valid address; password error mentions the 8-character minimum |
+| TC-2408 | auto | Inspect an invalid field | `aria-invalid="true"` and `aria-describedby` pointing at the error, which has `role="alert"` |
+| TC-2409 | auto | Fix the email after an error | Email error disappears while the password error remains |
+| TC-2410 | auto | Inspect the two password fields | `autocomplete` is `current-password` on `/signin`, `new-password` on `/signup` |
+| TC-2411 | auto | Submit valid credentials | Live region reports the not-connected outcome; no success wording |
+| TC-2412 | auto | Click "Sign in with Google" | The same live region reports the not-connected outcome |
+| TC-2413 | auto | Click the password toggle twice | `type` switches password→text→password and `aria-pressed` follows |
+| TC-2414 | auto | Click the switch link on each page | `/signin` → `/signup` and `/signup` → `/signin` |
+| TC-2415 | auto | Import scan of `src/pages/AuthPage.tsx` | Auth calls come only from `src/lib/auth.ts` |
+| TC-2416 | auto | Set viewport to 360×800 on both pages | No horizontal overflow; card fits within the viewport |
+| TC-2417 | auto | Open both pages in both themes | Title, label, helper and link text ≥ 4.5:1 against the composited card colour |
+| TC-2418 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green; bundle within budget |

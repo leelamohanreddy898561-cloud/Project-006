@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
+import { AuthPage } from "./pages/AuthPage";
 import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 
@@ -40,24 +41,8 @@ export default function App() {
               />
             }
           />
-          <Route
-            path="/signin"
-            element={
-              <Placeholder
-                title="Sign In"
-                description="Email and Google sign-in, powered by the Firebase Auth integration that is already wired up."
-              />
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <Placeholder
-                title="Sign Up"
-                description="Account creation with Firebase Auth — arriving in a later increment."
-              />
-            }
-          />
+          <Route path="/signin" element={<AuthPage mode="signin" />} />
+          <Route path="/signup" element={<AuthPage mode="signup" />} />
           <Route
             path="/privacy"
             element={

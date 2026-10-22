@@ -955,3 +955,88 @@ route, sticky rail, comments, related articles, contrast, and mobile layout are
 confirmed in production rather than only locally.
 
 **Evaluation:** R23 published. The live site now serves the blog detail page.
+---
+
+### 2026-10-22 — Sign in and sign up pages (R24)
+
+**Scope:** `/signin` and `/signup` as real glassmorphic pages with email +
+password, a "Sign in with Google" button, soft AI gradient glows, and a single
+Firebase seam. UI only — nothing is authenticated.
+**Test cases:** TC-2401–TC-2418, plus the full regression suite
+**Commands run:**
+
+    npm run build
+    npm run lint
+    npx playwright test
+    npx playwright test        # second run, to prove the fixes removed flake
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-2401 | R24.1 | pass | Both routes render an auth card; no `Coming soon` / `.placeholder` remains |
+| TC-2402 | R24.2 | pass | Email, password, Google and submit all present on both pages |
+| TC-2403 | R24.3 | pass | `Sign in — AI Pulse` / `Create your account — AI Pulse`; restored on leaving |
+| TC-2404 | R24.4 | pass | Card background alpha 0–1, `backdrop-filter` contains `blur`, border alpha > 0, shadow set |
+| TC-2405 | R24.5–24.6 | pass | Three glow layers, each with a gradient, `aria-hidden="true"`, `pointer-events: none` |
+| TC-2406 | R24.7 | pass | Empty submit ? two errors, live region still empty |
+| TC-2407 | R24.7 | pass | `not-an-email` ? email error; `short` ? 8-character error |
+| TC-2408 | R24.8 | pass | `aria-invalid="true"`, `aria-describedby` resolves to a `role="alert"` node |
+| TC-2409 | R24.9 | pass | Editing email removes its error, leaves the password error, clears `aria-invalid` |
+| TC-2410 | R24.10 | pass | `current-password` on sign-in, `new-password` on sign-up; email has `autocomplete=email`, `inputmode=email` |
+| TC-2411 | R24.11 | pass | Valid submit reports "not connected"; never claims success |
+| TC-2412 | R24.12 | pass | Google button reports the same outcome in the same live region |
+| TC-2413 | R24.13 | pass | `type` password?text?password, `aria-pressed` follows, accessible name flips |
+| TC-2414 | R24.14 | pass | Switch link navigates `/signin` ? `/signup` |
+| TC-2415 | R24.15 | pass | `AuthPage.tsx` imports auth from `../lib/auth` only, and contains no `firebase` reference |
+| TC-2416 | R24.16 | pass | 360 px: zero horizontal overflow on both pages, card inside the viewport |
+| TC-2417 | R24.17 | pass | Six text/background pairs = 4.5:1 in both themes against the composited glass |
+| TC-2418 | R24.18 | pass | 80 passed / 0 skipped (twice); build and lint clean; 112.3 kB JS / 5.6 kB CSS gzipped |
+
+**Glass colour is composited before measuring.** The card is translucent, so
+`tests/helpers/contrast.ts` gained `composite(over, under)`: the card's real
+colour is its rgba flattened over the page background, and the field's colour is
+its rgba flattened over the card. Measuring the raw rgba would have graded a
+colour that never appears on screen.
+
+**Three defects found during the run:**
+1. **TC-2417 (my own test):** first failure reported `NaN`, because
+   `getPropertyValue("backgroundColor")` needs the kebab-case `background-color`
+   and silently returned `""`. Switched to direct `getComputedStyle` properties.
+2. **TC-2417 (my own test, second failure):** then it failed *only inside the
+   full suite*, reporting 2.90:1 for the switch link in dark mode. That is the
+   light-theme accent measured against the dark card — the sample landed
+   mid-transition, because `base.css` animates `a { transition: color }`. The
+   resting colour is 6.3:1. Fixed by injecting a `transition: none` style before
+   switching theme, so the test measures the settled state. Confirmed stable
+   over two consecutive full runs.
+3. **TC-1903 (pre-existing R19 flake, not caused by R24):** it read
+   `naturalWidth` immediately after a visibility check, so it could sample
+   before the cover decoded. Exposed once the suite grew to 80 parallel tests.
+   Converted to `expect.poll`.
+4. **TC-1808 (R18) updated, not weakened:** it expected the placeholder headings
+   "Sign In" / "Sign Up". R24 replaces those pages, so the expectation moved to
+   the real headings ("Welcome back" / "Create your account"). The test still
+   asserts that every header destination renders a visible `h1` — its meaning is
+   unchanged.
+
+**Deliberate placeholder decisions (flagged for the owner):**
+1. **Nothing is authenticated.** `src/lib/auth.ts` returns a "not connected"
+   outcome for all three calls and the UI says exactly that — it never fakes a
+   session or an account.
+2. **No Firebase Auth provider is enabled**, so enabling it is a separate step
+   (console access) plus a one-file change in `src/lib/auth.ts`. The page code
+   does not need to change.
+3. **Email format checking is client-side and permissive** — it exists to give
+   fast feedback, not to decide what a valid account is. The provider decides.
+4. **No "forgot password", "remember me" or terms checkbox** — none were asked
+   for, and each implies behaviour that does not exist yet.
+5. **Dark-mode `--color-text-subtle` (#64748b) measures ˜3.98:1 on the dark
+   background**, below AA for normal text. R24 avoids it entirely (the auth
+   pages use `--color-text-muted`), but other pages still use it. This needs a
+   token fix in the accessibility pass (R11) and is recorded here rather than
+   silently changed.
+
+**Artifacts:** none new.
+**Evaluation:** R24 complete and green.
+**Commit:** local only — **awaiting owner approval before push/deploy**

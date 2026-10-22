@@ -375,6 +375,49 @@ comments and related articles.
 - **AC23.20** Article and comment text meets WCAG AA contrast (4.5:1) in both themes.
 - **AC23.21** Build and lint pass, all tests stay green, and the bundle stays within budget.
 
+### R24 — Sign in and sign up pages
+
+Real `/signin` and `/signup` pages: a transparent glassmorphic card floating on
+a soft AI gradient, with email/password inputs and a "Sign in with Google"
+button. **UI only** — the pages are structured so wiring Firebase Auth touches
+exactly one file.
+
+**Pages**
+
+- **AC24.1** `/signin` and `/signup` render purpose-built pages; the placeholders are gone.
+- **AC24.2** Both show an email field, a password field, a "Sign in with Google" button, and a submit button.
+- **AC24.3** Each page sets its own document title and restores the previous one on unmount.
+
+**Visual**
+
+- **AC24.4** The form sits in a glassmorphic card: a semi-transparent fill with a backdrop blur, a hairline border, and a soft shadow.
+- **AC24.5** Behind the card, soft indigo/cyan/violet gradient glows give the panel an AI feel without a bitmap asset.
+- **AC24.6** The glows are decorative only — hidden from assistive technology and non-interactive.
+
+**Validation**
+
+- **AC24.7** Email and password are required. An empty email, a malformed email, an empty password, or a password shorter than 8 characters shows an inline error and blocks submission.
+- **AC24.8** Each error is associated with its field (`aria-invalid` + `aria-describedby`) and announced (`role="alert"`).
+- **AC24.9** Editing a field clears that field's error.
+- **AC24.10** Sign up asks for a new password and sign in for a current one (`autocomplete` differs), and both declare `inputmode`/`autocomplete` correctly for the field type.
+
+**Actions**
+
+- **AC24.11** Submitting valid credentials reports the outcome in a `role="status"` live region. Today that outcome is "not connected yet" — the page never claims a sign-in succeeded.
+- **AC24.12** The Google button reports its outcome in the same live region.
+- **AC24.13** The password can be revealed and hidden; the toggle exposes `aria-pressed`, an accessible name that reflects the state, and switches the input `type`.
+- **AC24.14** Each page links to the other and the link navigates correctly.
+
+**Integration seam**
+
+- **AC24.15** All authentication calls go through `src/lib/auth.ts`; the pages import nothing else auth-related, so enabling Firebase Auth is a one-file change.
+
+**Quality**
+
+- **AC24.16** At 360 px there is no horizontal overflow and the card remains readable.
+- **AC24.17** All text meets WCAG AA contrast (4.5:1) in both themes, counting the real composited glass colour.
+- **AC24.18** Build and lint pass, all tests stay green, and the bundle stays within budget.
+
 ---
 
 ## 8. Open Questions
