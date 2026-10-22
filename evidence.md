@@ -641,3 +641,73 @@ therefore holds no project data and no sync step applies. Setting up a bucket
 **Evaluation:** R20 published. Approval gate observed — deploy and pushes
 happened only after the owner's "ok".
 
+---
+
+### 2026-10-22 — Repository and workflow hygiene (R21)
+
+**Scope:** The six cleanup items from the repository audit: untrack the Firebase
+CLI cache, drop the placeholder spec, collapse publishing to one change-log
+cycle, pin `firebase-tools`, distinguish the two brand links, and document the
+files that are kept on purpose.
+**Test cases:** TC-2101–TC-2107, plus the full regression suite
+**Commands run:**
+
+    git rm -r --cached .firebase
+    git rm tests/example.spec.ts
+    npm install --save-dev firebase-tools
+    npm run build
+    npm run lint
+    npx playwright test
+    git ls-files
+    npm ls firebase-tools --depth=0
+    npx --no-install firebase --version
+
+**Results:**
+
+| Test case | AC | Result | Evidence |
+| --- | --- | --- | --- |
+| TC-2101 | R21.1 | pass | `git ls-files` has no `.firebase/` entries; `.gitignore` contains `.firebase/`; the file stays on disk (`git status` reports it as ignored `!!`) |
+| TC-2102 | R21.2 | pass | `tests/example.spec.ts` deleted; the "Writing a spec" convention now lives in `test-cases.md` |
+| TC-2103 | R21.3 | pass | **44 passed, 0 skipped** locally (was 43 passed / 1 skipped) |
+| TC-2104 | R21.4 | pass (manual) | `AGENTS.md` step 11 now specifies one cycle: push → deploy → verify → evidence → **one** changelog → sync → verify → commit → push, with the self-reference reason written down |
+| TC-2105 | R21.5 | pass | `firebase-tools@15.34.1` in devDependencies (exact, no caret); `npx --no-install firebase --version` → `15.34.1` |
+| TC-2106 | R21.6 | pass | Header link name "AI Pulse — home"; footer link name "AI Pulse". The old name now matches exactly once instead of twice |
+| TC-2107 | R21.8 | pass | Build and lint clean; 44 passed / 0 skipped; 90.2 kB JS / 4.0 kB CSS gzipped (budgets 150 / 25 kB) |
+
+**Changes in detail:**
+
+1. **`.firebase/` untracked + ignored.** It was the CLI's local deploy cache
+   (978 B of local paths, timestamps, and hashes). Removing it from the index
+   keeps it on disk for the CLI while stopping machine-specific churn from
+   reaching the repository.
+2. **`tests/example.spec.ts` deleted.** It was a permanently `test.skip()`d
+   template — the sole source of the "1 skipped" in every run. Its guidance
+   moved into `test-cases.md` under "Writing a spec".
+3. **Publishing now uses one change-log cycle.** Previously each release ran
+   regenerate → sync → commit → push twice (four commits per release). Because
+   the final changelog commit can never contain itself, the second cycle bought
+   nothing: the repository still ends one commit ahead of Firestore. The order
+   is now push → deploy → verify → evidence → **one** changelog cycle.
+4. **`firebase-tools` pinned** at `15.34.1` as an exact devDependency, with a
+   new `npm run deploy` script. Deploys no longer depend on `npx -y` resolving
+   whatever version is current that day.
+5. **Brand links distinguished.** The footer link no longer overrides its
+   accessible name; it now reads "AI Pulse" from its own text, while the header
+   keeps "AI Pulse — home". Two same-named links became two properly distinct
+   ones.
+6. **Kept on purpose, now documented.** `evidence/screenshots/*.png` and
+   `changeLog.json` stay committed; `AGENTS.md` records why, and lists what is
+   never committed.
+
+**Trade-off recorded honestly:** pinning `firebase-tools` takes `node_modules`
+to about **456 MB** (git-ignored, so the repository is unaffected, but a fresh
+`npm install` is heavier and slower). The alternative — `npx --yes
+firebase-tools@15.34.1` in the deploy script — gives the same version pinning
+without the disk cost, at the price of a cache lookup per deploy. Swapping is a
+one-line change if the owner prefers the lighter option.
+
+**Artifacts:** tracked file count 75 → 73 before adding the new spec (net 74).
+**Evaluation:** R21 complete and green. `npm run deploy` is wired but **not
+executed** — deploying is a publish action and awaits approval.
+**Commit:** local only — **awaiting owner approval before push/deploy**
+

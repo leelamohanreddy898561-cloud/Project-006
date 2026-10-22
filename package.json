@@ -13,7 +13,8 @@
     "report": "playwright show-report",
     "changelog": "node scripts/generate-changelog.mjs",
     "sync:changes": "node --env-file=.env scripts/sync-changes.mjs",
-    "verify:changes": "node --env-file=.env scripts/verify-changelog.mjs"
+    "verify:changes": "node --env-file=.env scripts/verify-changelog.mjs",
+    "deploy": "firebase deploy --only hosting --project project-006-e6ae1 --non-interactive"
   },
   "dependencies": {
     "firebase": "^13.0.0",
@@ -27,6 +28,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.0",
+    "firebase-tools": "15.34.1",
     "oxlint": "^1.39.0",
     "typescript": "~5.9.0",
     "vite": "^7.2.0"

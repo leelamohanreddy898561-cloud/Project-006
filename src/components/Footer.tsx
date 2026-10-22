@@ -30,7 +30,6 @@ export function Footer() {
             <Link
               to="/"
               className="site-footer__brand-link"
-              aria-label="AI Pulse — home"
             >
               <Logo />
               <span className="site-footer__brand-name">{SITE.name}</span>

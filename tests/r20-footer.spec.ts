@@ -100,7 +100,7 @@ test.describe("R20 — Footer and newsletter", () => {
 
     const footer = page.locator(".site-footer");
     await expect(
-      footer.getByRole("link", { name: "AI Pulse — home" }),
+      footer.getByRole("link", { name: "AI Pulse", exact: true }),
     ).toBeVisible();
     await expect(
       footer.getByRole("heading", { name: "Quick links" }),

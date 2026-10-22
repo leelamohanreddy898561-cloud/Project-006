@@ -305,6 +305,20 @@ closing every page with navigation, topics, social links, and legal links.
 - **AC20.12** Footer text meets WCAG AA contrast (4.5:1) in both themes.
 - **AC20.13** Build and lint pass, and all previously passing tests stay green.
 
+### R21 — Repository and workflow hygiene
+
+Cleanup found by the repository audit: remove local-only state and placeholder
+specs from version control, and stop doing the same publish work twice.
+
+- **AC21.1** `.firebase/` (CLI deploy cache) is untracked and listed in `.gitignore`, so local machine state never reaches the repository.
+- **AC21.2** The permanently-skipped template spec (`tests/example.spec.ts`) is removed; its convention is documented in `test-cases.md` instead.
+- **AC21.3** A local test run reports **zero skipped** tests. Cases that are dev-only skip solely against a remote base URL, by design.
+- **AC21.4** Publishing performs a **single** change-log cycle per release: one regenerate → sync → verify → commit → push. The workflow in `AGENTS.md` reflects that order.
+- **AC21.5** `firebase-tools` is pinned as a devDependency, so a deploy uses one fixed version instead of `npx -y` resolving a new one each time.
+- **AC21.6** The header and footer home links have **distinct** accessible names.
+- **AC21.7** Evidence screenshots and `changeLog.json` are intentionally retained and documented as files that grow with each release.
+- **AC21.8** Build, lint, and all tests pass, and the bundle stays within budget.
+
 ---
 
 ## 8. Open Questions

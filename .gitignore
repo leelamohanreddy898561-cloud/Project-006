@@ -9,6 +9,9 @@ playwright-report/
 test-results/
 blob-report/
 
+# Firebase CLI local state (deploy cache; machine-specific, regenerated locally)
+.firebase/
+
 # Local environment / secrets
 .env
 .env.*.local

@@ -67,8 +67,19 @@ because it looks done — only because it was run and recorded.
 9. **Present for visual review** — start the dev server, give you the URL, and
    list exactly what to look for, mapped to the acceptance criteria.
 10. **Wait for approval** — stop here until you reply OK.
-11. **Publish** (only after your OK) — push to GitHub, sync the change log to
-    Firestore, rebuild and deploy to Firebase Hosting, verify the live site.
+11. **Publish** (only after your OK), in this exact order — **one change-log
+    cycle, never two**:
+    1. Secret-scan, then `git push` the code commit.
+    2. `npm run build`, then `npm run deploy`, then verify the live site
+       (`PLAYWRIGHT_BASE_URL=... npx playwright test`).
+    3. Write the publish entry in `evidence.md`, commit and push it.
+    4. **One** change-log cycle: `npm run changelog` → `npm run sync:changes` →
+       `npm run verify:changes` → commit `changeLog.json` → `git push`.
+
+    Do not run a second regenerate/sync pass. The final changelog commit can
+    never contain itself, so repeating the cycle adds commits and pushes without
+    adding coverage — it only widens the gap between the repository and
+    Firestore.
 12. **Report** — what changed, the proof, and what is next.
 
 ---
@@ -133,11 +144,20 @@ necessary but never sufficient** — your visual approval is the gate.
 | `changeLog.json` | Generated record of all commits (synced to Firestore) |
 | `tests/*.spec.ts` | Playwright specs, one file per requirement area |
 | `playwright.config.ts` | Playwright configuration |
+| `tests/helpers/contrast.ts` | Shared WCAG contrast helper |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
 | `scripts/sync-changes.mjs` | Writes `changeLog.json` to Firestore |
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
 | `.env` / `.env.example` | Firebase credentials (local only) / documented template |
+
+**Committed on purpose, and they grow with each release:** `evidence/screenshots/*.png`
+(proof artifacts referenced by `evidence.md`) and `changeLog.json` (reviewable
+without Firebase access, per R17). Neither is build output; both are kept
+deliberately, so a growing repository is expected rather than a leak.
+
+**Never committed:** `.env` (secrets), `node_modules/`, `dist/`, `playwright-report/`,
+`test-results/`, and `.firebase/` (machine-specific CLI deploy cache).
 
 ---
 

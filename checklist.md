@@ -129,6 +129,17 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R20.11, R20.12) Single column below 900px; AA contrast both themes
 - [x] Execute TC-2001–TC-2012; evidence entry; local commit; **awaiting owner approval**
 
+## Phase 3e — Repository and workflow hygiene (R21)
+
+- [x] (R21.1) Untrack `.firebase/` and add it to `.gitignore`
+- [x] (R21.2) Delete `tests/example.spec.ts`; document the convention in `test-cases.md`
+- [x] (R21.3) Local suite reports 0 skipped
+- [x] (R21.4) Publish = one change-log cycle; update `AGENTS.md` step 11
+- [x] (R21.5) Pin `firebase-tools` as a devDependency + `npm run deploy`
+- [x] (R21.6) Distinct accessible names for the header and footer home links
+- [x] (R21.7) Document that screenshots and `changeLog.json` are retained on purpose
+- [x] Execute TC-2101–TC-2107; evidence entry; local commit; **awaiting owner approval**
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

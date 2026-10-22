@@ -6,6 +6,21 @@ Results for each run are recorded in `evidence.md`.
 
 **Status legend:** `pending` · `pass` · `fail`
 
+## Writing a spec
+
+When a requirement area is implemented, add a spec named after it —
+`tests/r<number>-<area>.spec.ts` (for example `tests/r2-search.spec.ts`).
+
+- Map **every** test back to its `TC-` id, and use the id in the test title so a
+  failing run names the case directly.
+- Assert observable behaviour, not implementation details: measured geometry,
+  computed styles, navigation results, accessibility state.
+- Add a new row here first, then write the test. If a case cannot be automated,
+  label it `manual` rather than skipping it silently.
+- Do not leave permanently-skipped specs in the suite; a skip must be a
+  deliberate, documented condition (for example, a dev-only hook that cannot run
+  against a remote URL).
+
 ---
 
 ## R0 — Project scaffold and tooling
@@ -234,3 +249,15 @@ Results for each run are recorded in `evidence.md`.
 | TC-2010 | auto | Click the Privacy Policy link | Resolves to a real route (`/privacy`) that renders content, not a dead `#` |
 | TC-2011 | auto | Set viewport to 360×800 | Footer columns stack to one column; no horizontal overflow |
 | TC-2012 | auto | Open `/` in both themes | Footer body text contrast ≥ 4.5:1 |
+
+## R21 — Repository and workflow hygiene
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2101 | auto | Run `git ls-files` and read `.gitignore` | No `.firebase/` entry is tracked; `.gitignore` contains `.firebase/` |
+| TC-2102 | auto | Check for `tests/example.spec.ts`; read `test-cases.md` | The file is gone and the spec-writing convention is documented in `test-cases.md` |
+| TC-2103 | auto | Run `npx playwright test` | Report shows 0 skipped tests |
+| TC-2104 | manual | Read `AGENTS.md` step 11 | Describes one change-log cycle per release (no second regenerate/sync/commit) |
+| TC-2105 | auto | Run `npm ls firebase-tools` and `npx --no-install firebase --version` | Pinned in devDependencies; the pinned binary runs without network resolution |
+| TC-2106 | auto | Open `/`, list all links named like the brand | The header and footer home links expose different accessible names |
+| TC-2107 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green; JS and CSS stay under 150 kB / 25 kB gzipped |
