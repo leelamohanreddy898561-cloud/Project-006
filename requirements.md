@@ -454,6 +454,19 @@ client-side flows, and nothing more.
 - **AC27.6** `npm run verify:prod` exits non-zero when any smoke test fails and never retries to mask a failure.
 - **AC27.7** `AGENTS.md` names `npm run verify:prod` as the production check, so the workflow and the command cannot drift apart.
 
+### R28 — One branch per requirement; `main` only holds published states
+
+Every requirement is built on its own branch and merged into `main` only after
+the owner approves it. `main` therefore never contains half-finished work: it is
+a straight line of states that were each verified and published.
+
+- **AC28.1** Every requirement is implemented on its own branch, created from an up-to-date `main`, named `<type>/r<N>-<slug>` where `<type>` is `feature`, `fix`, `chore` or `docs`.
+- **AC28.2** No work is committed directly to `main`. At publish time the branch is fast-forwarded into `main` (`git merge --ff-only`), so `main` stays linear and every commit on it is a state that was approved and published.
+- **AC28.3** If `main` has moved and the merge cannot fast-forward, the branch is rebased onto `main` and fully re-verified before publishing. Never force-push, and never add a merge commit.
+- **AC28.4** Pushing the work branch before approval is allowed and is not publishing, because it cannot affect `main` or production. Merging into `main`, deploying, and the Firestore sync remain gated on approval.
+- **AC28.5** A guard test fails if `AGENTS.md` stops stating the branch rule, the branch naming pattern, the fast-forward publish, or the rebase rule.
+- **AC28.6** Nothing else in the workflow changes: the full local suite still passes, production verification is still `npm run verify:prod`, and there is still exactly one change-log cycle per publish.
+
 ---
 
 ## 8. Open Questions

@@ -47,6 +47,11 @@ because it looks done — only because it was run and recorded.
 
 ## 2. The workflow — every request, every time
 
+0. **Branch** — before touching a file, branch off an up-to-date `main`:
+   `<type>/r<N>-<slug>`, where `<type>` is `feature`, `fix`, `chore` or `docs`
+   (for example `feature/r2-blog-list`). **One requirement per branch.** `main`
+   is never edited directly; it only ever receives work that has been approved
+   and published.
 1. **Specify** — add or update a requirement (`R#`) in `requirements.md` with
    testable acceptance criteria. Even the smallest change gets an ID.
 2. **Plan tests** — add test cases (`TC#`) to `test-cases.md`, each mapped to
@@ -62,42 +67,57 @@ because it looks done — only because it was run and recorded.
    If it cannot be made green, **stop and ask**.
 7. **Evidence** — append a dated entry to `evidence.md`: exact commands,
    results table, artifacts, and an evaluation summary.
-8. **Commit locally** — commit with the requirement ID in the message.
-   **Do not push.**
+8. **Commit locally** — commit on the branch with the requirement ID in the
+   message. **Do not merge to `main` and do not deploy.**
 9. **Present for visual review** — start the dev server, give you the URL, and
    list exactly what to look for, mapped to the acceptance criteria.
 10. **Wait for approval** — stop here until you reply OK.
 11. **Publish** (only after your OK), in this exact order — **one change-log
-    cycle, never two**:
-    1. Secret-scan, then `git push` the code commit.
+    cycle, never two**. Everything below happens on the branch; `main` is only
+    moved at the very end:
+    1. Secret-scan, then `git push` the branch.
     2. `npm run build`, then `npm run deploy`, then `npm run verify:prod`
        (smoke subset against the live site; it refuses to run without
        `PLAYWRIGHT_BASE_URL`).
-    3. Write the publish entry in `evidence.md`, commit and push it.
+    3. Write the publish entry in `evidence.md`, move the requirement into the
+       published list in `AGENTS.md` Section 9, then commit and push both.
     4. **One** change-log cycle: `npm run changelog` → `npm run sync:changes` →
        `npm run verify:changes` → commit `changeLog.json` → `git push`.
+    5. `git checkout main` → `git merge --ff-only <branch>` → `git push origin
+       main`. The merged branch is kept as history; the next requirement starts
+       from the updated `main` on a fresh branch.
 
     Do not run a second regenerate/sync pass. The final changelog commit can
     never contain itself, so repeating the cycle adds commits and pushes without
     adding coverage — it only widens the gap between the repository and
     Firestore.
+
+    **If the merge is not a fast-forward** (someone else moved `main`), rebase
+    the branch onto `main` and re-run steps 2–4 before merging. Never
+    force-push, and never add a merge commit: `main` stays linear, so every
+    commit on it is a published checkpoint.
 12. **Report** — what changed, the proof, and what is next.
 
 ---
 
 ## 3. The approval gate (STRICT)
 
-> **After writing the code and passing the automated tests, do not push
-> directly to GitHub. Wait for the project owner's visual confirmation
-> (manual check / approval). Only push to GitHub and deploy to Firebase after
-> the owner visually reviews it locally and gives the OK.**
+> **After writing the code and passing the automated tests, do not merge to
+> `main` and do not deploy. Wait for the project owner's visual confirmation
+> (manual check / approval). Only merge to `main`, deploy to Firebase and sync
+> the change log after the owner visually reviews it locally and gives the OK.**
 
-**"Publish" means all three of:** `git push`, Firestore `changeLog` sync, and
-Firebase Hosting deploy. None of them happen before approval.
+**"Publish" means all three of:** merging the branch into `main` (and pushing
+it), Firebase Hosting deploy, and the Firestore `changeLog` sync. None of them
+happen before approval.
+
+**Pushing the work branch is not publishing.** It cannot touch `main` or
+production, so it is allowed before approval as off-machine backup. Merging,
+deploying and syncing stay gated.
 
 ### How a review works
 
-1. I finish steps 1–8 and confirm all automated tests are green.
+1. I finish steps 0–8 and confirm all automated tests are green.
 2. I start the dev server and give you **http://127.0.0.1:5173/** (restart with
    `npm run dev` if it is not running).
 3. I give you a short review list: the requirement, what to click, and what
@@ -117,6 +137,9 @@ necessary but never sufficient** — your visual approval is the gate.
 
 - **Never commit or push with a failing acceptance criterion.** If something
   cannot be made green, stop and ask — do not push "flagged but broken" code.
+- **`main` only ever receives approved work.** Implement on a branch, merge with
+  `--ff-only`, and never force-push or rewrite `main`. A linear `main` means
+  every one of its commits is a state that was verified and published.
 - **Never publish without the owner's approval** (Section 3).
 - No requirement is "done" without a matching entry in `evidence.md`.
 - Never edit or delete a past evidence entry — append a new dated one.
@@ -148,6 +171,7 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/helpers/contrast.ts` | Shared WCAG contrast helper |
 | `tests/helpers/screenshots.ts` | Single source of truth for where captures are written (R25) |
 | `tests/helpers/smoke.ts` | The production smoke subset and its coverage map (R27) |
+| `tests/r28-branch-workflow.spec.ts` | Guards the branch rule in `AGENTS.md` (R28) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
 | `scripts/capture-evidence.mjs` | Runs the suite with `EVIDENCE_SCREENSHOTS=1` to refresh `evidence/screenshots/` (R25) |
 | `scripts/verify-prod.mjs` | Runs the `@smoke` subset against the deployed site — the production check (R27) |
@@ -227,6 +251,8 @@ deliberately, so a growing repository is expected rather than a leak.
   mutate committed evidence), R26 (this section kept accurate by a guard test),
   R27 (production verification runs a smoke subset).
   **R27 is the most recent requirement published to production.**
+- **Implemented and verified, awaiting owner approval:** R28 (one branch per
+  requirement; `main` only receives approved work, fast-forwarded).
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).

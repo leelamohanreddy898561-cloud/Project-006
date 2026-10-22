@@ -181,6 +181,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R27.5) Guard test keeps the tagged set and the manifest identical, and route coverage complete
 - [x] (R27.6) Launcher exits non-zero on failure and forces zero retries
 - [x] (R27.7) `AGENTS.md` publish steps name `npm run verify:prod`
+
+## Phase 3k - One branch per requirement (R28)
+
+- [x] (R28.1-R28.2) Branch created from `main`; workflow documents one branch per requirement and a fast-forward publish
+- [x] (R28.3) Rebase-and-re-verify rule recorded; force-push and merge commits forbidden
+- [x] (R28.4) Approval gate corrected: pushing a work branch is not publishing
+- [x] (R28.5) Guard test asserts every documented branch rule
+- [x] (R28.6) Full suite green; `verify:prod` unchanged
 - [ ] Execute TC-2501–TC-2604; evidence entry; local commit; await owner approval
 
 ## Phase 5 — Routing & pages

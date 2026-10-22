@@ -354,3 +354,15 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2706 | cli | Set `PLAYWRIGHT_BASE_URL` to the live site and run `npm run verify:prod` | Only the tagged tests run, all pass, and the elapsed time is well under a full run |
 | TC-2707 | cli | Run `npx playwright test --list`, then `npx playwright test --grep @smoke --list` | The full suite declares every test (88 before R27, plus the R27 guards); the smoke selection is exactly 8 |
 | TC-2708 | cli | Run the full suite locally, then `git status --short` | All tests green; tree clean (R25 still holds) |
+
+## R28 — One branch per requirement
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2801 | auto | Read Section 2 step 0 and Section 4 of `AGENTS.md` | They require one branch per requirement, name the `<type>/r<N>-<slug>` pattern with all four types, and forbid editing `main` directly |
+| TC-2802 | auto | Read the Section 2 publish steps | The branch is pushed and deployed first; `main` is moved last with `git merge --ff-only` |
+| TC-2803 | auto | Read the non-fast-forward note in Section 2 | It requires rebasing and re-verifying, and forbids force-push and merge commits |
+| TC-2804 | auto | Read Section 3 | Pushing a work branch is explicitly not publishing; merge, deploy and sync stay gated on approval |
+| TC-2805 | cli | Run `git branch --show-current` during development | Matches `^(feature\|fix\|chore\|docs)/r[0-9]+-[a-z0-9-]+$` |
+| TC-2806 | cli | Run `git rev-list --count HEAD..main` while working | 0 — the branch is ahead of `main`, never behind it |
+| TC-2807 | cli | After publishing: compare `git rev-parse main` with `git rev-parse HEAD`, then `git log --merges --oneline main` | Same commit; no merge commits on `main` |
