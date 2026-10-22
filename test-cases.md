@@ -271,3 +271,28 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2203 | auto | Read the `deploy` script in `package.json` | Uses `npx --yes firebase-tools@15.34.1`, keeps `--only hosting`, `--non-interactive`, and the project id |
 | TC-2204 | auto | Measure `node_modules` before and after | Size drops materially |
 | TC-2205 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green |
+
+## R23 — Blog detail page
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2301 | auto | Click the first card on `/` | URL becomes `/blog/<slug>` and the article heading matches the card title |
+| TC-2302 | auto | Open `/blog/does-not-exist` | Not-found state with a link back home; no article body |
+| TC-2303 | auto | Open an article | `document.title` contains the article title |
+| TC-2304 | auto | Open an article | A header image is visible and sits above the prose body |
+| TC-2305 | auto | Open an article | Prose contains real `h2`, `p`, `ul li`, and `blockquote` elements |
+| TC-2306 | auto | Measure the prose column at 1440px | Width is a readable measure and `line-height` ≥ 1.6, `font-size` ≥ 16px |
+| TC-2307 | auto | Set viewport to 360×800, open an article | Rail becomes a horizontal bar; no horizontal overflow |
+| TC-2308 | auto | Open an article | A rail labelled "Article actions" contains Like, Share and Bookmark buttons |
+| TC-2309 | auto | Scroll the article body 900px | Rail is `position: sticky` and still within the viewport |
+| TC-2310 | auto | Click Like twice | `aria-pressed` flips false→true→false and the count changes with it |
+| TC-2311 | auto | Click Share | A live region reports the outcome (copied, or the URL to copy) |
+| TC-2312 | auto | Click Bookmark | `aria-pressed` flips from false to true |
+| TC-2313 | auto | Inspect the three rail buttons | Each has a non-empty accessible name |
+| TC-2314 | auto | Submit a comment with a name | Comment appears at the top of the list and the live region announces it |
+| TC-2315 | auto | Submit with an empty name or empty comment | Inline error shown; comment count unchanged |
+| TC-2316 | auto | Open an article | A visible notice says comments are not persisted |
+| TC-2317 | auto | Inspect related articles | 1–3 cards shown, none matching the current article's title, each linking to `/blog/<slug>` |
+| TC-2318 | auto | Click a related card | Navigates to that article |
+| TC-2319 | auto | Open an article in both themes | Prose body and comment text contrast ≥ 4.5:1 |
+| TC-2320 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green; bundle within budget |

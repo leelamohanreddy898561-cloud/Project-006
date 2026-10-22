@@ -850,3 +850,73 @@ still stands.
 **Evaluation:** R22 published. `node_modules` is 196 MB lighter, the CLI stays
 pinned, and the lighter deploy path is confirmed in production.
 
+---
+
+### 2026-10-22 — Blog detail page (R23)
+
+**Scope:** `/blog/<slug>` with a header image, Markdown prose at a comfortable
+measure, a sticky action rail (Like / Share / Bookmark), a comment section, and
+related articles.
+**Test cases:** TC-2301–TC-2320, plus the full regression suite
+**Commands run:**
+
+    npm install marked
+    npm run build
+    npm run lint
+    npx playwright test
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-2301 | R23.1 | pass | Card click → `/blog/mixture-of-experts`; heading matches the card title |
+| TC-2302 | R23.2 | pass | Unknown slug → "Article not found" with links home and to the list; no article title rendered |
+| TC-2303 | R23.3 | pass | `document.title` contains the article title, and navigating away restores the previous title |
+| TC-2304 | R23.4 | pass | Cover image visible, `naturalWidth > 0`, bounding box above the prose |
+| TC-2305 | R23.5 | pass | Prose contains real `h2`, multiple `p`, `ul li`, and `blockquote` |
+| TC-2306 | R23.6 | pass | Column 480–880 px; font-size 17 px; line-height ratio 1.75 |
+| TC-2307 | R23.7 | pass | At 360 px the rail's `flex-direction` is `row`; zero horizontal overflow |
+| TC-2308 | R23.8 | pass | `<aside aria-label="Article actions">` with Like, Share, Bookmark |
+| TC-2309 | R23.9 | pass | `position: sticky`; after `scrollTo(0, 900)` the rail stays under the header (y < 220) |
+| TC-2310 | R23.10 | pass | `aria-pressed` false→true→false, count 128→129→128, accessible name changes with state |
+| TC-2311 | R23.11 | pass | Share sets the `role="status"` region to a copied / URL message containing the slug |
+| TC-2312 | R23.12 | pass | Bookmark `aria-pressed` false→true |
+| TC-2313 | R23.13 | pass | All three rail buttons have non-empty accessible names |
+| TC-2314 | R23.15 | pass | Comment prepended, count +1, announced as "Comment posted by Ada Lovelace." |
+| TC-2315 | R23.16 | pass | Empty submit → inline error, list count unchanged |
+| TC-2316 | R23.17 | pass | "browser session only" notice visible |
+| TC-2317 | R23.18 | pass | 1–3 related cards, current title excluded, all hrefs `/blog/<slug>` |
+| TC-2318 | R23.19 | pass | Related card opens its own article |
+| TC-2319 | R23.20 | pass | Prose paragraph and comment text ≥ 4.5:1 in both themes |
+| TC-2320 | R23.21 | pass | 63 passed / 0 skipped; build and lint clean; 110.7 kB JS / 4.9 kB CSS gzipped |
+
+**Latent bug found and fixed along the way:** `BlogCard.css` used
+`var(--shadow-lg)` since R19, but no `--shadow-*` token was ever defined — the
+hover shadow silently resolved to nothing. Added `--shadow-sm/md/lg` for both
+themes in `tokens.css`; the R19 hover lift now actually casts a shadow.
+
+**Two test defects found and fixed during the run (implementation untouched):**
+1. TC-2310 located the Like button by its accessible name, but that name changes
+   with state ("Like this article" → "Remove your like"), so the locator stopped
+   resolving after the click. Switched to a stable class-based locator and
+   asserted the name change separately.
+2. TC-2314 used `getByLabel("Comment")`, which matched both the textarea and the
+   `aria-labelledby` comment section. Scoped to `getByRole("textbox", …)`.
+
+**Deliberate placeholder decisions (flagged for the owner):**
+1. **Article bodies are seed content** in `src/data/postBodies.ts` — real prose,
+   but authored as placeholders until R13 loads Markdown files.
+2. **`marked` HTML is not sanitised.** Content is repository-authored and
+   therefore trusted; `src/lib/markdown.ts` documents that this must change
+   before any user-supplied Markdown is rendered.
+3. **Like and Bookmark are local state only**, with an illustrative starting
+   count of 128 and no server.
+4. **Comments are session-only** and the UI says so; persistence needs accounts
+   and locked-down Firestore rules.
+5. **Share falls back to showing the URL** when the Clipboard API is blocked, so
+   the action still works without permissions.
+
+**Artifacts:** none new.
+**Evaluation:** R23 complete and green.
+**Commit:** local only — **awaiting owner approval before push/deploy**
+

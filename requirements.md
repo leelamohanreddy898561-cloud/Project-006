@@ -330,6 +330,51 @@ grew `node_modules` to ~456 MB. Keep the pin, drop the install cost.
 - **AC22.4** The deploy target and non-interactive flag are unchanged (`project-006-e6ae1`, `--only hosting`, `--non-interactive`).
 - **AC22.5** The project's `node_modules` is materially smaller, and build, lint, and tests still pass.
 
+### R23 — Blog detail page
+
+Clicking an article opens a comfortable reading page: a header image, a
+constrained prose column, a left rail of actions that follows the reader, then
+comments and related articles.
+
+**Routing**
+
+- **AC23.1** Clicking an article card (home grid or related list) opens `/blog/<slug>`.
+- **AC23.2** An unknown slug renders a not-found state with a way back home, not a blank page.
+- **AC23.3** The document title is set to the article title, and restored on navigation away.
+
+**Reading layout**
+
+- **AC23.4** A header image appears at the top of the article, above the body.
+- **AC23.5** Markdown in the article body renders as real HTML: headings, paragraphs, lists, blockquotes.
+- **AC23.6** The prose column is constrained to a comfortable measure (roughly 60–75 characters) with line-height ≥ 1.6 and font-size ≥ 16px.
+- **AC23.7** Below 1000px the action rail becomes a horizontal sticky bar; there is no horizontal overflow.
+
+**Floating action rail**
+
+- **AC23.8** A left-side rail offers **Like**, **Share**, and **Bookmark**.
+- **AC23.9** The rail is sticky and remains in view while the body scrolls.
+- **AC23.10** Like toggles, exposes `aria-pressed`, and its visible count changes.
+- **AC23.11** Share copies the article URL and reports the outcome in a live region; when the Clipboard API is unavailable it shows the URL to copy instead.
+- **AC23.12** Bookmark toggles and exposes `aria-pressed`.
+- **AC23.13** Each action has an accessible name.
+
+**Comments**
+
+- **AC23.14** A comment section follows the article, with a labelled name field and comment field.
+- **AC23.15** Submitting a valid name and comment prepends it to the list and announces it in a live region.
+- **AC23.16** Submitting with an empty name or comment shows an inline error and adds nothing.
+- **AC23.17** A visible notice states that comments are not persisted yet.
+
+**Related articles**
+
+- **AC23.18** Up to three related articles are shown, excluding the current one, preferring the same category then shared tags.
+- **AC23.19** Each related card opens its own `/blog/<slug>`.
+
+**Quality**
+
+- **AC23.20** Article and comment text meets WCAG AA contrast (4.5:1) in both themes.
+- **AC23.21** Build and lint pass, all tests stay green, and the bundle stays within budget.
+
 ---
 
 ## 8. Open Questions

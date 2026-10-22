@@ -148,6 +148,17 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R22.4) Deploy target and flags unchanged
 - [x] (R22.5) Measure `node_modules`, re-run build/lint/tests; evidence entry; local commit
 
+## Phase 3g — Blog detail page (R23)
+
+- [x] (R23.1–R23.3) `/blog/:slug` route, not-found state, document title
+- [x] (R23.4–R23.7) Header image, markdown body, readable measure, mobile bar
+- [x] (R23.8–R23.13) Sticky left rail: Like, Share, Bookmark with a11y state
+- [x] (R23.14–R23.17) Comment section with validation + non-persistence notice
+- [x] (R23.18–R23.19) Related articles
+- [x] (R23.20–R23.21) AA contrast; build, lint, tests, budget
+- [x] Article body content for the six seed posts (markdown)
+- [x] Execute TC-2301–TC-2320; evidence entry; local commit; **awaiting owner approval**
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

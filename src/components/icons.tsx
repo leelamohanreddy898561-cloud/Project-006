@@ -98,6 +98,27 @@ export function MailIcon({ size = 16 }: IconProps) {
   );
 }
 
+export function HeartIcon({
+  size = 16,
+  filled = false,
+}: IconProps & { filled?: boolean }) {
+  return (
+    <svg {...iconProps(size)} fill={filled ? "currentColor" : "none"}>
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z" />
+    </svg>
+  );
+}
+
+export function ShareIcon({ size = 16 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <path d="M12 3v12" />
+      <path d="m8 7 4-4 4 4" />
+      <path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" />
+    </svg>
+  );
+}
+
 /* Brand marks are solid glyphs, so they fill rather than stroke. */
 
 function brandIconProps(size: number) {

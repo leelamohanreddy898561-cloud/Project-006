@@ -68,6 +68,11 @@
   --glow-color: rgb(99 102 241 / 0.45);
   --glow-soft: rgb(6 182 212 / 0.28);
   --gradient-brand: linear-gradient(90deg, #4f46e5, #06b6d4);
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
+  --shadow-md: 0 6px 16px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 16px 40px rgb(15 23 42 / 0.14);
 }
 
 /* Dark theme (consumed by the theme toggle, R9) */
@@ -91,4 +96,8 @@
   --glass-border: rgb(255 255 255 / 0.1);
   --glow-color: rgb(129 140 248 / 0.55);
   --glow-soft: rgb(34 211 238 / 0.32);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.45);
+  --shadow-md: 0 6px 16px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 16px 40px rgb(0 0 0 / 0.6);
 }

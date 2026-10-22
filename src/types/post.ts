@@ -19,4 +19,6 @@ export interface Post {
   /** Cover image path, e.g. /covers/cover-1.svg */
   coverImage: string;
   featured: boolean;
+  /** Article body in Markdown, rendered by the detail page (R23). */
+  body: string;
 }

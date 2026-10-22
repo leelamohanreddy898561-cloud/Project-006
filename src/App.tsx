@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
+import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
       <main id="main">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/blog/:slug" element={<PostDetail />} />
           <Route
             path="/blog"
             element={

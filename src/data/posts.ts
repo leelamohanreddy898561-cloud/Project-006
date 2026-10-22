@@ -1,4 +1,5 @@
 import type { Post } from "../types/post";
+import { postBodies } from "./postBodies";
 
 /**
  * Seed article data.
@@ -19,7 +20,7 @@ const AUTHORS = {
   ana: { name: "Ana Costa", initials: "AC", role: "Applied AI lead" },
 } as const;
 
-export const posts: Post[] = [
+const basePosts: Omit<Post, "body">[] = [
   {
     slug: "mixture-of-experts",
     title:
@@ -101,9 +102,43 @@ export const posts: Post[] = [
   },
 ];
 
+/** Seed articles, each joined to its Markdown body (R23). */
+export const posts: Post[] = basePosts.map((post) => ({
+  ...post,
+  body: postBodies[post.slug] ?? "",
+}));
+
 /** Newest first. */
 export function getLatestPosts(): Post[] {
   return [...posts].sort((a, b) => b.date.localeCompare(a.date));
+}
+
+/** Single article by slug, or undefined when the slug is unknown. */
+export function getPostBySlug(slug: string): Post | undefined {
+  return posts.find((post) => post.slug === slug);
+}
+
+/**
+ * Up to `limit` other articles: same category first, then shared tags, then
+ * newest. Never includes the current article (R23.18).
+ */
+export function getRelatedPosts(slug: string, limit = 3): Post[] {
+  const current = getPostBySlug(slug);
+  if (!current) return [];
+
+  return posts
+    .filter((post) => post.slug !== slug)
+    .map((post) => ({
+      post,
+      score:
+        (post.category === current.category ? 2 : 0) +
+        post.tags.filter((tag) => current.tags.includes(tag)).length,
+    }))
+    .sort(
+      (a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date),
+    )
+    .slice(0, limit)
+    .map((entry) => entry.post);
 }
 
 export interface TrendingTopic {
