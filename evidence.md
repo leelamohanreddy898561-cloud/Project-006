@@ -1075,3 +1075,76 @@ production rather than only locally.
 
 **Evaluation:** R24 published. The live site serves the auth pages; no account
 function exists behind them yet.
+---
+
+### 2026-10-22 — Test runs no longer mutate evidence; AGENTS.md current state (R25, R26)
+
+**Scope:** two fixes only, no new features.
+1. R25 — a test run must never change a committed file.
+2. R26 — `AGENTS.md` Section 9 must describe what is actually published.
+
+**Test cases:** TC-2501–TC-2508, TC-2601–TC-2604, plus the full regression suite
+**Commands run:**
+
+    npm run build
+    npm run lint
+    npx playwright test                      # tree compared before/after
+    git commit                               # then two further runs on a clean tree
+    npx playwright test                      # run 1
+    npx playwright test                      # run 2
+    npm run evidence:screenshots -- tests/r1-home.spec.ts   # deliberate refresh
+    git checkout -- evidence/screenshots     # reverted again
+
+**R25 results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-2501 | R25.1 | pass | `git status --porcelain` byte-identical before and after a full run; repeated on the committed tree, empty after both runs |
+| TC-2502 | R25.2 | pass | Helper resolves to `test-results/screenshots/`; the three captures (r1-hero, r18-header-light, r18-header-dark, 140–145 kB each) exist there after the run |
+| TC-2503 | R25.3 | pass | Every `page.screenshot` in every spec goes through `screenshotPath(...)` |
+| TC-2504 | R25.4 | pass | No spec contains the tracked evidence path, quoted or bare |
+| TC-2505 | R25.5 | pass | No `.gitignore` rule matches `evidence/`; `test-results/` is ignored |
+| TC-2506 | R25.5 | pass | `git ls-files evidence/screenshots` still lists the proof images |
+| TC-2507 | R25.3 | pass | `npm run evidence:screenshots` did change `r1-hero.png` (hash differed), proving refresh is possible on demand; reverted immediately |
+| TC-2508 | R25.1 | pass | Two consecutive full runs on the committed tree: 88 passed each, tree clean each |
+
+**The fix, in one line:** captures no longer have a hard-coded destination.
+`tests/helpers/screenshots.ts` resolves `test-results/screenshots/` by default
+and `evidence/screenshots/` only when `EVIDENCE_SCREENSHOTS=1`, which only
+`npm run evidence:screenshots` sets. The three specs that wrote literal
+`evidence/…` paths now call `screenshotPath(name)`.
+
+**R26 results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-2601 | R26.1 | pass | Section 9 contains "R24 is the most recent requirement published to production" |
+| TC-2602 | R26.2 | pass | R15 still present and labelled "superseded by R18" |
+| TC-2603 | R26.3 | pass | Every `### R#` in `requirements.md` is either named in Section 9 or inside the declared R2–R13 range |
+| TC-2604 | R26.4 | pass | `AGENTS.md` 112.3 / 5.6 vs evidence 112.28 / 5.59 — within 1 kB |
+
+**Guard test added so this cannot drift again:** `tests/r26-agents-state.spec.ts`
+parses `requirements.md` for every requirement ID and fails if Section 9 stops
+mentioning one; it also fails if the bundle figure in `AGENTS.md` disagrees with
+the most recent figure recorded here.
+
+**One defect found during the run (my own guard, implementation untouched):**
+TC-2504 failed on its *own* source file. Its assertion message read
+`"evidence/ must stay committed…"`, and the guard's `["']evidence\/` pattern
+matched the quote in front of that word. Re-worded the message ("The evidence
+folder must stay committed…"); the guard then reported zero offenders.
+
+**Outside the two requested items, one factual correction (flagged):** the
+bundle figure in `AGENTS.md` Section 8 said `83.3 kB / 1.4 kB`. That has been
+wrong since R19 — the real figure is 112.3 kB JS / 5.6 kB CSS. Corrected in the
+same commit because Section 9's accuracy was the point of R26. Revert on
+request; it changes no behaviour.
+
+**Section 9 status wording:** R25 and R26 are recorded as "implemented and
+verified, awaiting owner approval" rather than published, because they are not
+in production yet. They move into the published list in the publish-evidence
+commit, which lands before the change-log cycle.
+
+**Artifacts:** none new. `evidence/screenshots/*.png` unchanged by this work.
+**Evaluation:** R25 and R26 complete and green. 88 passed, no skips added.
+**Commit:** local only — **awaiting owner approval before push/deploy**
