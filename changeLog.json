@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-22T09:11:04.645Z",
+  "generatedAt": "2026-10-22T11:20:49.533Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 45,
+    "commits": 48,
     "fileChanges": {
-      "M": 183,
-      "A": 94,
+      "M": 196,
+      "A": 97,
       "D": 3
     },
     "latestVerification": null,
@@ -1673,6 +1673,103 @@
         {
           "status": "M",
           "path": "tests/r26-agents-state.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "d73602f5b479986b325b7f2fc742629af08ffd61",
+      "short": "d73602f",
+      "date": "2026-10-22T14:43:14+05:30",
+      "subject": "chore: regenerate changeLog.json (R25, R26 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "90250fdc349e7941a806434b6dfc8fe5688cca80",
+      "short": "90250fd",
+      "date": "2026-10-22T16:46:25+05:30",
+      "subject": "test: verify the deployed site with a small smoke subset (R27)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "scripts/verify-prod.mjs"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/helpers/smoke.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r18-header.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r20-footer.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r23-post-detail.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r24-auth.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r27-production-smoke.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "d48703e1c4af5479c058885e48bbdfec38159be7",
+      "short": "d48703e",
+      "date": "2026-10-22T16:50:16+05:30",
+      "subject": "docs: record R27 publish; mark R27 latest (R27)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
         }
       ]
     }
