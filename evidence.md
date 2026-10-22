@@ -592,5 +592,52 @@ not the UI.
 **Artifacts:** `test-results/` (git-ignored) holds the transient failure
 screenshot from the first TC-2005 run; the re-run is green.
 **Evaluation:** R20 complete and green.
-**Commit:** local only — **awaiting owner approval before push/deploy**
+
+**Commit:** `ab0f67e` (local at the time of that entry)
+
+---
+
+### 2026-10-21 — R20 published to GitHub, Firestore, and Firebase Hosting
+
+**Gate:** owner replied **"ok push to github and sync firestore"**
+**Commands run:**
+
+    git push origin main
+    npm run changelog
+    npm run sync:changes
+    npm run verify:changes
+    npm run build
+    npx firebase-tools deploy --only hosting --project project-006-e6ae1 --non-interactive
+    set PLAYWRIGHT_BASE_URL=https://project-006-e6ae1.web.app && npx playwright test
+    git push origin main
+
+**Results:**
+
+| Step | Result | Notes |
+| --- | --- | --- |
+| Secret scan | clean | Firebase key only in git-ignored `.env` |
+| Push to GitHub | pass | `c4ebdb5..ab0f67e` (R20 code) |
+| Change log regeneration | pass | 26 commits, 112 modified / 76 added / 1 deleted |
+| Firestore sync | pass | 2 new, 24 already present — no duplicates |
+| Firestore read-back | pass | Every `changeLog.json` entry present |
+| Build | pass | 90.2 kB JS / 4.0 kB CSS gzipped (budgets 150 / 25 kB) |
+| Hosting deploy | pass | 10 files, release complete |
+| **Production suite** | **42 passed, 2 skipped** | All R20 cases green against the live URL |
+| Changelog commit + push | pass | `ab0f67e..8e1e7a0` |
+
+**Firebase Storage — explicitly checked, nothing to sync.** `firebase.json`
+declares only a `hosting` block, there is no `storage` configuration, and no
+`storage.rules` file exists in the repository. The cover images are static SVG
+files in `public/covers/` that Vite copies into `dist/` and Firebase Hosting
+serves directly — they are build output, not uploaded objects. Firebase Storage
+therefore holds no project data and no sync step applies. Setting up a bucket
+(and writing rules) would be a new requirement, not part of this publish.
+
+**Artifacts:**
+- GitHub: commit `8e1e7a0`
+- Live: https://project-006-e6ae1.web.app
+- Firestore `changeLog`: 26 documents verified
+
+**Evaluation:** R20 published. Approval gate observed — deploy and pushes
+happened only after the owner's "ok".
 
