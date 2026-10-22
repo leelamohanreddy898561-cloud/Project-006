@@ -539,3 +539,58 @@ deploy and both pushes happened only after the owner's "ok".
 
 **Commit:** pending this evidence entry (next commit, pushed immediately after)
 
+---
+
+### 2026-10-21 — Footer + newsletter subscription (R20)
+
+**Scope:** A newsletter subscription box above a four-column footer (brand,
+Quick Links, AI Categories, Social) with a copyright/legal bottom bar. Rendered
+site-wide below `<main>`.
+**Test cases:** TC-2001–TC-2012, plus the full regression suite
+**Commands run:**
+
+    npm run build
+    npm run lint
+    npx playwright test
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-2001 | R20.1 | pass | Newsletter box sits entirely above the `<footer>`; email field + Subscribe present |
+| TC-2002 | R20.2 | pass | `not-an-email` → `is-error`, `aria-invalid="true"`, no success |
+| TC-2003 | R20.3 | pass | Valid email → `is-success`, `role="status"`, `aria-live="polite"`, field cleared |
+| TC-2004 | R20.4 | pass | `<label for>` association resolves by role+name; `aria-describedby` points at the message |
+| TC-2005 | R20.5 | pass | Exactly 4 `.site-footer__col` columns; brand + 3 headings present |
+| TC-2006 | R20.6 | pass | Home/Blogs/Topics/About navigate via the router — SPA marker survived every click |
+| TC-2007 | R20.7 | pass | Every AI category links to `/topics/<slug>` |
+| TC-2008 | R20.8 | pass | X, GitHub, LinkedIn each `target="_blank"` with `rel` containing `noopener` |
+| TC-2009 | R20.9 | pass | Bottom bar shows the current year and "All rights reserved" |
+| TC-2010 | R20.10 | pass | Privacy Policy → `/privacy` renders a heading (not a dead `#`) |
+| TC-2011 | R20.11 | pass | At 360px columns stack (same x, second below first), zero overflow |
+| TC-2012 | R20.12 | pass | Intro and copyright text contrast ≥ 4.5:1 in both themes |
+| — | R20.13 | pass | 43 passed, 1 skipped; build and lint clean; 90.2 kB JS / 4.0 kB CSS gzipped |
+
+**One failure found and fixed during the run:** TC-2005 initially failed because
+the header and footer both expose a link named "AI Pulse — home", so the
+un-scoped query matched twice. The assertion was scoped to the footer — the two
+links are intentional (same destination, two placements), so the test changed,
+not the UI.
+
+**Deliberate placeholder decisions (flagged for the owner):**
+1. **No data is stored.** A valid email only produces a client-side confirmation.
+   There is no mailing list, and subscriber emails must not go into the current
+   wide-open Firestore rules.
+2. **X and LinkedIn URLs are placeholders** (`x.com/aipulse`,
+   `linkedin.com/company/aipulse`). GitHub points at the real repository. All
+   three live in `src/data/site.ts` for a one-line change.
+3. **AI Categories are derived from the post data** (`getCategories()`), so the
+   footer never links to a topic with no posts.
+4. **`/privacy` and `/terms` are placeholder pages** using the existing
+   `Placeholder` component — real legal copy is the owner's call.
+
+**Artifacts:** `test-results/` (git-ignored) holds the transient failure
+screenshot from the first TC-2005 run; the re-run is green.
+**Evaluation:** R20 complete and green.
+**Commit:** local only — **awaiting owner approval before push/deploy**
+

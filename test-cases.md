@@ -217,3 +217,20 @@ Results for each run are recorded in `evidence.md`.
 | TC-1702 | auto | Run the sync script with no credentials | Exits non-zero with a clear "missing credentials" message |
 | TC-1703 | manual | Fill `.env`, run `npm run sync:changes` | Documents appear in the Firestore `changeLog` collection |
 | TC-1704 | auto | Run `npm run sync:changes` twice | Second run adds 0 new documents (no duplicates) |
+
+## R20 — Footer and newsletter subscription
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2001 | auto | Open `/` | A newsletter box renders directly above the footer, containing an email input and a Subscribe button |
+| TC-2002 | auto | Submit the newsletter form with an invalid email (e.g. `not-an-email`) | Inline error is shown, `aria-invalid="true"` on the field, no success message |
+| TC-2003 | auto | Submit the newsletter form with `reader@example.com` | Success message appears, announced in a live region, and the field is cleared |
+| TC-2004 | auto | Inspect the email field and its messages | Field has an accessible label; error/success text is referenced by `aria-describedby` |
+| TC-2005 | auto | Inspect the footer | Exactly four columns exist: brand, Quick Links, AI Categories, Social Links |
+| TC-2006 | auto | Click each Quick Link | Navigates client-side to Home, Blogs, Topics, About without a full reload |
+| TC-2007 | auto | Inspect the AI Categories column | Lists AI categories, each linking to a `/topics/:slug` route |
+| TC-2008 | auto | Inspect the Social Links column | X, GitHub and LinkedIn links exist, each has an accessible name, `target="_blank"` and `rel` containing `noopener` |
+| TC-2009 | auto | Inspect the bottom bar | Shows the current year in the copyright notice and a Privacy Policy link |
+| TC-2010 | auto | Click the Privacy Policy link | Resolves to a real route (`/privacy`) that renders content, not a dead `#` |
+| TC-2011 | auto | Set viewport to 360×800 | Footer columns stack to one column; no horizontal overflow |
+| TC-2012 | auto | Open `/` in both themes | Footer body text contrast ≥ 4.5:1 |

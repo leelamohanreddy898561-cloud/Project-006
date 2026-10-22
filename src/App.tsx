@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
 import { Placeholder } from "./pages/Placeholder";
 
@@ -56,6 +57,24 @@ export default function App() {
             }
           />
           <Route
+            path="/privacy"
+            element={
+              <Placeholder
+                title="Privacy Policy"
+                description="The full privacy policy is being prepared. Until it is published, this site stores no personal data beyond what your browser keeps locally."
+              />
+            }
+          />
+          <Route
+            path="/terms"
+            element={
+              <Placeholder
+                title="Terms of Use"
+                description="The full terms of use are being prepared and will be published before any account feature goes live."
+              />
+            }
+          />
+          <Route
             path="*"
             element={
               <Placeholder
@@ -66,6 +85,7 @@ export default function App() {
           />
         </Routes>
       </main>
+      <Footer />
     </>
   );
 }

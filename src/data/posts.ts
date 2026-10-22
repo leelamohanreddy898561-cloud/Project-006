@@ -128,6 +128,22 @@ export function getTrendingTopics(limit = 5): TrendingTopic[] {
 
 export type QuickFilter = "all" | "latest" | "quick" | "featured";
 
+export interface Category {
+  name: string;
+  slug: string;
+  count: number;
+}
+
+/** Post categories, most-used first — the single source for topic links. */
+export function getCategories(): Category[] {
+  const counts = new Map<string, number>();
+  for (const post of posts) {
+    counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, slug: slugify(name), count }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+}
 export const QUICK_FILTERS: Array<{ id: QuickFilter; label: string }> = [
   { id: "all", label: "All" },
   { id: "latest", label: "Latest" },

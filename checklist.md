@@ -117,6 +117,18 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] Seed post data + local AI-themed cover art (placeholder until R13)
 - [x] Execute TC-1901–TC-1912; evidence entry; local commit; published after owner approval (2026-10-21)
 
+## Phase 3d — Footer + newsletter (R20)
+
+- [x] (R20.1) Newsletter box above the footer: email field + Subscribe + value statement
+- [x] (R20.2–R20.4) Validation, success state, live region, label + `aria-describedby`
+- [x] (R20.5) Four footer columns: brand, Quick Links, AI Categories, Social Links
+- [x] (R20.6) Quick Links use the router (no full reloads)
+- [x] (R20.7) AI Categories from the shared site config
+- [x] (R20.8) X, GitHub, LinkedIn links with accessible names + `rel="noopener noreferrer"`
+- [x] (R20.9, R20.10) Bottom bar: copyright with current year + Privacy Policy route
+- [x] (R20.11, R20.12) Single column below 900px; AA contrast both themes
+- [x] Execute TC-2001–TC-2012; evidence entry; local commit; **awaiting owner approval**
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

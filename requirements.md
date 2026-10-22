@@ -275,6 +275,36 @@ reviewable without Firebase, and syncced to Firestore once credentials exist.
 - **AC17.3** A sync script writes the change log to the Firestore `changeLog` collection, using credentials from `.env`.
 - **AC17.4** The sync script fails with a clear, actionable message when credentials are missing.
 
+### R20 — Footer and newsletter subscription
+
+The bottom of the page carries a newsletter sign-up and a four-column footer,
+closing every page with navigation, topics, social links, and legal links.
+
+**Newsletter (above the footer)**
+
+- **AC20.1** A newsletter subscription box sits directly above the footer, with an email field, a Subscribe button, and a short value statement.
+- **AC20.2** Submitting an empty or malformed email shows an inline error and does **not** show a success state.
+- **AC20.3** Submitting a valid email shows an inline success confirmation, clears the field, and is announced via a live region.
+- **AC20.4** The email field is labelled, and the error/success text is tied to it programmatically (`aria-describedby`, `aria-invalid`).
+
+**Footer columns**
+
+- **AC20.5** The footer has exactly four columns: (1) brand logo and intro, (2) Quick Links, (3) AI Categories, (4) Social Links.
+- **AC20.6** Quick Links are real in-app routes (Home, Blogs, Topics, About) using the router, not full page reloads.
+- **AC20.7** AI Categories link to their topic routes and are derived from a single source of truth shared with the rest of the site.
+- **AC20.8** Social Links include **X**, **GitHub**, and **LinkedIn**, each with an accessible name, opening in a new tab with `rel="noopener noreferrer"`.
+
+**Bottom bar**
+
+- **AC20.9** A bottom bar shows the copyright notice with the current year and links to the Privacy Policy (and Terms).
+- **AC20.10** The Privacy Policy link resolves to a real route, not a dead `#`.
+
+**Quality**
+
+- **AC20.11** Below 900px the footer stacks to a single column with no horizontal overflow.
+- **AC20.12** Footer text meets WCAG AA contrast (4.5:1) in both themes.
+- **AC20.13** Build and lint pass, and all previously passing tests stay green.
+
 ---
 
 ## 8. Open Questions
