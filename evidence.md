@@ -709,5 +709,49 @@ one-line change if the owner prefers the lighter option.
 **Artifacts:** tracked file count 75 → 73 before adding the new spec (net 74).
 **Evaluation:** R21 complete and green. `npm run deploy` is wired but **not
 executed** — deploying is a publish action and awaits approval.
-**Commit:** local only — **awaiting owner approval before push/deploy**
+**Commit:** `32501d6` (local at the time of that entry)
+
+---
+
+### 2026-10-22 — R21 published; first run of the single-cycle sequence
+
+**Gate:** owner replied **"ok"**
+**Commands run** — the new `AGENTS.md` step 11 order, executed top to bottom:
+
+    git push origin main
+    npm run build
+    npm run deploy
+    set PLAYWRIGHT_BASE_URL=https://project-006-e6ae1.web.app && npx playwright test
+    git push origin main          # evidence commit
+    npm run changelog
+    npm run sync:changes
+    npm run verify:changes
+
+**Results:**
+
+| Step | Result | Notes |
+| --- | --- | --- |
+| Secret scan | clean | Firebase key only in git-ignored `.env` |
+| Push code commit | pass | `193a696..32501d6` |
+| Build | pass | 90.2 kB JS / 4.0 kB CSS gzipped (budgets 150 / 25 kB) |
+| Deploy via `npm run deploy` | pass | Pinned `firebase-tools@15.34.1`, 10 files, release complete — **no `npx -y` resolution** |
+| Production suite | **43 passed, 1 skipped** | The one skip is the dev-only r16 hook, excluded against remote URLs by design |
+| Evidence commit + push | pass | step 3 of the new sequence |
+| Single change-log cycle | pass | one regenerate → sync → verify → commit → push |
+
+**Process change verified in practice.** This release used **one** change-log
+cycle instead of two. Previously each publish produced four commits (feat →
+chore → docs → chore); this one produces three (feat → docs → chore), with one
+sync instead of two. The end state is unchanged and expected: the final
+changelog commit cannot contain itself, so the repository remains exactly one
+commit ahead of Firestore — which was equally true under the old double cycle,
+where the extra commit bought no coverage.
+
+**Artifacts:**
+- GitHub: `32501d6` (R21 code) → evidence commit → changelog commit
+- Live: https://project-006-e6ae1.web.app
+- Firestore `changeLog`: synced and read-back verified
+
+**Evaluation:** R21 published. Approval gate observed; the six cleanup items are
+live, and the single-cycle publish path is proven rather than merely documented.
 
