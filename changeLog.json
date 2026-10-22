@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-22T07:13:42.413Z",
+  "generatedAt": "2026-10-22T07:49:23.220Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 37,
+    "commits": 40,
     "fileChanges": {
-      "M": 158,
-      "A": 86,
+      "M": 170,
+      "A": 90,
       "D": 3
     },
     "latestVerification": null,
@@ -1446,6 +1446,103 @@
       "short": "04096f8",
       "date": "2026-10-22T12:43:17+05:30",
       "subject": "docs: record R23 publish in evidence (R23)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "eb2947c114f361c2db90e9b1d9b2eeb02c8d5144",
+      "short": "eb2947c",
+      "date": "2026-10-22T12:45:58+05:30",
+      "subject": "chore: regenerate changeLog.json (R23 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "2648d85d1e5e7fbf258369fca7833530cb1c604a",
+      "short": "2648d85",
+      "date": "2026-10-22T13:12:02+05:30",
+      "subject": "feat: glassmorphic sign in and sign up pages (R24)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/icons.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/auth.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/AuthPage.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/AuthPage.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/styles/tokens.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/helpers/contrast.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r18-header.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r19-home-layout.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r24-auth.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "c8e6b441ec720b08740bf6c69735c547f16bd5e8",
+      "short": "c8e6b44",
+      "date": "2026-10-22T13:18:50+05:30",
+      "subject": "docs: record R24 publish in evidence (R24)",
       "requirements": [],
       "verification": null,
       "notes": "",
