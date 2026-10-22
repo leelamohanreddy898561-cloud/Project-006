@@ -319,6 +319,17 @@ specs from version control, and stop doing the same publish work twice.
 - **AC21.7** Evidence screenshots and `changeLog.json` are intentionally retained and documented as files that grow with each release.
 - **AC21.8** Build, lint, and all tests pass, and the bundle stays within budget.
 
+### R22 — Deploy tooling footprint
+
+Pinning the Firebase CLI as a project dependency made deploys reproducible but
+grew `node_modules` to ~456 MB. Keep the pin, drop the install cost.
+
+- **AC22.1** `npm run deploy` runs a **pinned** `firebase-tools@15.34.1` through `npx --yes`, not through a project dependency.
+- **AC22.2** `firebase-tools` is removed from `devDependencies`, so a fresh `npm install` does not fetch it or its dependency tree.
+- **AC22.3** The pinned command resolves and reports version `15.34.1`.
+- **AC22.4** The deploy target and non-interactive flag are unchanged (`project-006-e6ae1`, `--only hosting`, `--non-interactive`).
+- **AC22.5** The project's `node_modules` is materially smaller, and build, lint, and tests still pass.
+
 ---
 
 ## 8. Open Questions

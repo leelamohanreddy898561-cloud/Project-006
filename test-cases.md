@@ -261,3 +261,13 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2105 | auto | Run `npm ls firebase-tools` and `npx --no-install firebase --version` | Pinned in devDependencies; the pinned binary runs without network resolution |
 | TC-2106 | auto | Open `/`, list all links named like the brand | The header and footer home links expose different accessible names |
 | TC-2107 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green; JS and CSS stay under 150 kB / 25 kB gzipped |
+
+## R22 — Deploy tooling footprint
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2201 | auto | Run `npm ls firebase-tools --depth=0` | Not present as a project dependency |
+| TC-2202 | auto | Run `npx --yes firebase-tools@15.34.1 --version` | Prints `15.34.1` |
+| TC-2203 | auto | Read the `deploy` script in `package.json` | Uses `npx --yes firebase-tools@15.34.1`, keeps `--only hosting`, `--non-interactive`, and the project id |
+| TC-2204 | auto | Measure `node_modules` before and after | Size drops materially |
+| TC-2205 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green |

@@ -755,3 +755,50 @@ where the extra commit bought no coverage.
 **Evaluation:** R21 published. Approval gate observed; the six cleanup items are
 live, and the single-cycle publish path is proven rather than merely documented.
 
+---
+
+### 2026-10-22 — Deploy tooling footprint (R22)
+
+**Scope:** Keep the Firebase CLI version pin while removing it from project
+dependencies, so `npm install` no longer fetches it or its dependency tree.
+**Test cases:** TC-2201–TC-2205, plus the full regression suite
+**Commands run:**
+
+    npm uninstall firebase-tools
+    npx --yes firebase-tools@15.34.1 --version        (cold, then warm)
+    npm run build
+    npm run lint
+    npx playwright test
+    npm ls firebase-tools --depth=0
+
+**Results:**
+
+| Test case | AC | Result | Evidence |
+| --- | --- | --- | --- |
+| TC-2201 | R22.2 | pass | `npm ls firebase-tools --depth=0` reports it absent; also gone from `package-lock.json` |
+| TC-2202 | R22.3 | pass | `npx --yes firebase-tools@15.34.1 --version` → `15.34.1` (cold 161.5 s to download, warm 6.7 s) |
+| TC-2203 | R22.1, R22.4 | pass | Script reads `npx --yes firebase-tools@15.34.1 deploy --only hosting --project project-006-e6ae1 --non-interactive` — pin, target, and flag all preserved |
+| TC-2204 | R22.5 | pass | `node_modules` **456 MB → 260 MB** (−196 MB, −43%) |
+| TC-2205 | R22.5 | pass | Build and lint clean; **44 passed, 0 skipped**; 90.2 kB JS / 3.95 kB CSS gzipped |
+
+**Where the size actually went — stated honestly.** The 196 MB did not vanish; it
+moved off the project and into the machine-level npx cache
+(`%LOCALAPPDATA%\npm-cache\_npx`, now 201 MB, shared by every project on this
+machine). The real gains are per project: a fresh clone plus `npm install` no
+longer pulls ~190 MB, `node_modules` is 43% smaller, and the version stays
+exactly pinned. The costs are that the **first** deploy on a cold machine takes
+about 2.5 extra minutes, and a warm resolution costs ~6.7 s instead of nothing.
+
+**Side finding, not fixed (outside this task's scope):** `tests/r1-home.spec.ts`
+and `tests/r18-header.spec.ts` write screenshots into the tracked
+`evidence/screenshots/` directory, so every test run leaves three modified
+binaries in the working tree. They were regenerated during this run and
+**reverted** so this commit contains only R22 changes. Worth deciding later:
+either treat those as build artifacts and redirect them to `test-results/`, or
+refresh them deliberately in a dedicated evidence commit.
+
+**Artifacts:** none new.
+**Evaluation:** R22 complete and green. No deploy was run — `npm run deploy` is
+wired and verified to resolve, but deploying is a publish action.
+**Commit:** local only — **awaiting owner approval before push**
+

@@ -140,6 +140,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R21.7) Document that screenshots and `changeLog.json` are retained on purpose
 - [x] Execute TC-2101–TC-2107; evidence entry; local commit; **awaiting owner approval**
 
+## Phase 3f — Deploy tooling footprint (R22)
+
+- [x] (R22.1) `deploy` script uses `npx --yes firebase-tools@15.34.1`
+- [x] (R22.2) Remove `firebase-tools` from devDependencies
+- [x] (R22.3) Verify the pinned command resolves to `15.34.1`
+- [x] (R22.4) Deploy target and flags unchanged
+- [x] (R22.5) Measure `node_modules`, re-run build/lint/tests; evidence entry; local commit
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table
