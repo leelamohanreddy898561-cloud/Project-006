@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-22T04:54:29.270Z",
+  "generatedAt": "2026-10-22T05:03:45.371Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 26,
+    "commits": 28,
     "fileChanges": {
-      "M": 112,
+      "M": 118,
       "A": 76,
       "D": 1
     },
@@ -1100,6 +1100,52 @@
         {
           "status": "A",
           "path": "tests/r20-footer.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "8e1e7a0db7e4f7f3e2029a93d30b784d4bf05647",
+      "short": "8e1e7a0",
+      "date": "2026-10-22T10:27:06+05:30",
+      "subject": "chore: regenerate changeLog.json (R20 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "838aca7ecd5b3c388b73d6eb9ed0dad92ae02563",
+      "short": "838aca7",
+      "date": "2026-10-22T10:33:22+05:30",
+      "subject": "docs: evidence for R20 publish (R20)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": ".firebase/hosting.ZGlzdA.cache"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
         }
       ]
     }
