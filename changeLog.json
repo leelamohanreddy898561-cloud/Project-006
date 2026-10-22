@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-22T05:39:14.889Z",
+  "generatedAt": "2026-10-22T06:15:47.373Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 31,
+    "commits": 34,
     "fileChanges": {
-      "M": 136,
+      "M": 144,
       "D": 3,
       "A": 77
     },
@@ -1263,6 +1263,71 @@
         {
           "status": "M",
           "path": "evidence/screenshots/r18-header-light.png"
+        }
+      ]
+    },
+    {
+      "commit": "039d0af4ce2846c28105f62cb6643f1832f323d7",
+      "short": "039d0af",
+      "date": "2026-10-22T11:11:25+05:30",
+      "subject": "chore: regenerate changeLog.json (R21 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "4ad3631cafff5bd7c57784719c0a6d69d44b5d5e",
+      "short": "4ad3631",
+      "date": "2026-10-22T11:42:37+05:30",
+      "subject": "chore: pin firebase-tools via npx, drop the dependency (R22)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "package-lock.json"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        }
+      ]
+    },
+    {
+      "commit": "7e6dee809995979bf1b8d3cbe39049c2554c0c79",
+      "short": "7e6dee8",
+      "date": "2026-10-22T11:45:32+05:30",
+      "subject": "docs: evidence for R22 publish (R22)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
         }
       ]
     }
