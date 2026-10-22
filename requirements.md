@@ -418,6 +418,25 @@ exactly one file.
 - **AC24.17** All text meets WCAG AA contrast (4.5:1) in both themes, counting the real composited glass colour.
 - **AC24.18** Build and lint pass, all tests stay green, and the bundle stays within budget.
 
+### R25 — Test runs must not mutate committed evidence
+
+Running the suite must never change a committed file. The proof screenshots in
+`evidence/screenshots/` stay committed and referenced by `evidence.md`, but
+they are refreshed **only** when explicitly asked.
+
+- **AC25.1** A normal test run (`npm test`, `npx playwright test`, including against `PLAYWRIGHT_BASE_URL`) leaves the working tree clean — `git status --short` is empty afterwards.
+- **AC25.2** Screenshots captured during a normal run are written under the git-ignored `test-results/` directory, not into `evidence/`.
+- **AC25.3** Refreshing `evidence/screenshots/` requires the explicit `npm run evidence:screenshots` command; no test run does it as a side effect.
+- **AC25.4** A guard test fails if any spec writes a screenshot to a literal path or to anything under `evidence/`; captures must go through the shared helper.
+- **AC25.5** `evidence/screenshots/*.png` stays tracked and un-ignored, and the images referenced by `evidence.md` keep resolving.
+
+### R26 — `AGENTS.md` current state reflects what is actually published
+
+- **AC26.1** Section 9 lists every requirement that is implemented, verified and published, up to and including the most recent one.
+- **AC26.2** Superseded requirements are still named as superseded rather than removed.
+- **AC26.3** Section 9's "not yet built" list contains only requirements that genuinely remain unbuilt.
+- **AC26.4** No figure in Section 9 contradicts the latest evidence entry.
+
 ---
 
 ## 8. Open Questions

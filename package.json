@@ -10,6 +10,7 @@
     "lint": "oxlint",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "evidence:screenshots": "node scripts/capture-evidence.mjs",
     "report": "playwright show-report",
     "changelog": "node scripts/generate-changelog.mjs",
     "sync:changes": "node --env-file=.env scripts/sync-changes.mjs",

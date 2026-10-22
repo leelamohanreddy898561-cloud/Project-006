@@ -168,6 +168,13 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R24.16–R24.18) Mobile overflow, AA contrast, build/lint/tests/budget
 - [x] Execute TC-2401–TC-2418; evidence entry; local commit; **awaiting owner approval**
 
+## Phase 3i — Test hygiene and documentation truth (R25, R26)
+
+- [~] (R25.1–R25.3) Capture helper, redirect to `test-results/`, explicit `evidence:screenshots` command
+- [~] (R25.4–R25.5) Guard test against literal/`evidence/` paths; keep the proof images tracked
+- [~] (R26.1–R26.4) `AGENTS.md` Section 9 lists R0–R24 with R15 still marked superseded
+- [ ] Execute TC-2501–TC-2604; evidence entry; local commit; await owner approval
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

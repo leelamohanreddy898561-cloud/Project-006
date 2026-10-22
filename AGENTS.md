@@ -145,7 +145,9 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/*.spec.ts` | Playwright specs, one file per requirement area |
 | `playwright.config.ts` | Playwright configuration |
 | `tests/helpers/contrast.ts` | Shared WCAG contrast helper |
+| `tests/helpers/screenshots.ts` | Single source of truth for where captures are written (R25) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
+| `scripts/capture-evidence.mjs` | Runs the suite with `EVIDENCE_SCREENSHOTS=1` to refresh `evidence/screenshots/` (R25) |
 | `scripts/sync-changes.mjs` | Writes `changeLog.json` to Firestore |
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
@@ -167,6 +169,11 @@ deliberately, so a growing repository is expected rather than a leak.
 - `npm test` — run everything; `npm run test:headed` — watch it run;
   `npm run report` — open the HTML report.
 - Reports go to `playwright-report/` and `test-results/` (git-ignored).
+- **A test run never writes to a tracked file (R25).** Captures go to
+  `test-results/screenshots/` by default. To refresh the committed proof images
+  in `evidence/screenshots/`, say so and run `npm run evidence:screenshots` —
+  it is the only command that touches them, and the result is committed
+  separately as evidence, not as build output.
 - Non-browser checks (build, lint, bundle size, Firestore read-back, git state)
   are executed as CLI commands and recorded in `evidence.md` the same way.
 - The browser tools may be used for quick visual spot checks; record them in
@@ -198,19 +205,34 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 83.3 kB / 1.4 kB |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 112.3 kB JS / 5.6 kB CSS gzipped |
 
 ---
 
 ## 9. Current state (updated as work lands)
 
-- **Implemented and verified and published:** R0 (scaffold), R1 (home hero),
-  R14 (performance budget), R15 (header — superseded by R18), R16 (Firebase),
+- **Implemented, verified and published:** R0 (scaffold), R1 (home hero),
+  R14 (performance budget), R15 (header — **superseded by R18**), R16 (Firebase),
   R17 (change log export), R18 (glassmorphism header), R19 (home main content
-  layout — article grid + discovery sidebar)
-- **Not yet built:** R2–R13 (post list, post detail, topic pages, about, 404,
-  theme toggle wiring, responsive pass, accessibility pass, SEO, content model)
+  layout — article grid + discovery sidebar), R20 (footer and newsletter),
+  R21 (repository and workflow hygiene), R22 (deploy tooling footprint),
+  R23 (blog detail page), R24 (sign in and sign up pages).
+  **R24 is the most recent requirement published to production.**
+- **Implemented and verified, awaiting owner approval:** R25 (test runs no
+  longer touch committed evidence), R26 (this section kept accurate).
+- **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
+  topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
+  accessibility pass, SEO, content model).
+  *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
+  table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Known open item:** Firestore/Storage security rules must be tightened
-  before either is used with real data.
+- **Current bundle:** 112.3 kB JS / 5.6 kB CSS gzipped (budgets 150 / 25).
+- **Known open items:**
+  - Firestore/Storage security rules must be tightened before either is used
+    with real data.
+  - Dark-mode `--color-text-subtle` (#64748b) measures ≈3.98:1, below AA for
+    normal text. R24 avoids it; the rest of the site does not. Fix during R11.
+  - No Firebase Auth provider is enabled, so `src/lib/auth.ts` returns a
+    "not connected" outcome. Enabling it needs console access plus a one-file
+    change.

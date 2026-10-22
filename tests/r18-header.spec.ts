@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { contrastRatio, parseRgb } from "./helpers/contrast";
+import { screenshotPath } from "./helpers/screenshots";
 
 /**
  * R18 — Glassmorphism header (supersedes R15).
@@ -46,7 +47,7 @@ test.describe("R18 — Glassmorphism header", () => {
     expect(animation.name).not.toBe("none");
     expect(animation.duration).not.toBe("0s");
 
-    await page.screenshot({ path: "evidence/screenshots/r18-header-light.png" });
+    await page.screenshot({ path: screenshotPath("r18-header-light.png") });
   });
 
   test("TC-1803: navigation links use a gradient hover effect", async ({
@@ -137,7 +138,7 @@ test.describe("R18 — Glassmorphism header", () => {
     expect(persisted).toBe(themeAfter);
 
     await page.screenshot({
-      path: "evidence/screenshots/r18-header-dark.png",
+      path: screenshotPath("r18-header-dark.png"),
     });
   });
 

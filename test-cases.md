@@ -319,3 +319,25 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2416 | auto | Set viewport to 360×800 on both pages | No horizontal overflow; card fits within the viewport |
 | TC-2417 | auto | Open both pages in both themes | Title, label, helper and link text ≥ 4.5:1 against the composited card colour |
 | TC-2418 | auto | Run `npm run build`, `npm run lint`, `npx playwright test` | All green; bundle within budget |
+
+## R25 — Test runs must not mutate committed evidence
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2501 | cli | Run `npx playwright test`, then `git status --short` | No output — the tree is unchanged |
+| TC-2502 | auto | Assert the capture target with no env var set, then list `test-results/screenshots/` after a run | Helper resolves to `test-results/screenshots/`; the three captures exist there |
+| TC-2503 | auto | Grep every spec for screenshot writes | Each capture goes through `screenshotPath(...)`; none names an `evidence/` path |
+| TC-2504 | auto | Grep every spec for the literal tracked evidence path | No spec contains it |
+| TC-2505 | auto | Read `.gitignore` | No rule ignores `evidence/`; `test-results/` is ignored |
+| TC-2506 | cli | Check `git ls-files evidence/screenshots` | The proof images are tracked |
+| TC-2507 | manual | Run `npm run evidence:screenshots` deliberately, then `git status --short` | The three images are modified, proving refresh is possible on demand; revert afterwards |
+| TC-2508 | cli | Run the full suite twice | Green both times; tree clean after each |
+
+## R26 — `AGENTS.md` current state
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2601 | auto | Read Section 9 of `AGENTS.md` | It names R24 as published |
+| TC-2602 | auto | Read Section 9 | R15 is still described as superseded by R18, not deleted |
+| TC-2603 | auto | Cross-read every `### R#` heading in `requirements.md` against Section 9 | Each requirement is either listed as published or still in the not-yet-built set |
+| TC-2604 | auto | Compare the bundle figure in `AGENTS.md` with the latest evidence entry | Within 1 kB on both JS and CSS |

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { contrastRatio } from "./helpers/contrast";
+import { screenshotPath } from "./helpers/screenshots";
 
 /**
  * R1 — Home hero. Maps to TC-101 … TC-106 in test-cases.md.
@@ -37,7 +38,7 @@ test.describe("R1 — Home hero", () => {
     const cta = page.getByRole("link", { name: /start reading/i });
     await expect(cta).toHaveAttribute("href", "/blog");
 
-    await page.screenshot({ path: "evidence/screenshots/r1-hero.png" });
+    await page.screenshot({ path: screenshotPath("r1-hero.png") });
   });
 
   test("TC-102: the AI network canvas animates", async ({ page }) => {
