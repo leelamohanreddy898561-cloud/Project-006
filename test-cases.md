@@ -337,7 +337,20 @@ When a requirement area is implemented, add a spec named after it —
 
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
-| TC-2601 | auto | Read Section 9 of `AGENTS.md` | It names R24 as published |
+| TC-2601 | auto | Read Section 9 of `AGENTS.md` | It names the most recent published requirement, and that ID is the highest one listed as published |
 | TC-2602 | auto | Read Section 9 | R15 is still described as superseded by R18, not deleted |
 | TC-2603 | auto | Cross-read every `### R#` heading in `requirements.md` against Section 9 | Each requirement is either listed as published or still in the not-yet-built set |
 | TC-2604 | auto | Compare the bundle figure in `AGENTS.md` with the latest evidence entry | Within 1 kB on both JS and CSS |
+
+## R27 — Published-site smoke subset
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2701 | auto | Read every spec title carrying `@smoke` and compare with `SMOKE_SUITE` in `tests/helpers/smoke.ts` | The two sets are identical — no tagged test is undeclared and no declared test is untagged |
+| TC-2702 | auto | Collect the `covers` field of every manifest entry | Each required route class (home, blog list, topics, about, article, unknown slug, auth, 404) appears at least once |
+| TC-2703 | auto | Count the tagged tests and all declared tests | Smoke count is between 6 and 12, and strictly smaller than the full suite |
+| TC-2704 | auto | Read `package.json` and `scripts/verify-prod.mjs` | `verify:prod` exists, passes `--grep` with `@smoke`, forces `--retries=0`, and demands `PLAYWRIGHT_BASE_URL` |
+| TC-2705 | cli | Run `npm run verify:prod` with `PLAYWRIGHT_BASE_URL` unset | Exits non-zero and prints the variable that is required; no browser is launched |
+| TC-2706 | cli | Set `PLAYWRIGHT_BASE_URL` to the live site and run `npm run verify:prod` | Only the tagged tests run, all pass, and the elapsed time is well under a full run |
+| TC-2707 | cli | Run `npx playwright test --list`, then `npx playwright test --grep @smoke --list` | The full suite declares every test (88 before R27, plus the R27 guards); the smoke selection is exactly 8 |
+| TC-2708 | cli | Run the full suite locally, then `git status --short` | All tests green; tree clean (R25 still holds) |

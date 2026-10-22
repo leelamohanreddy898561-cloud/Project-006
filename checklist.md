@@ -172,7 +172,15 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 - [x] (R25.1–R25.3) Capture helper, redirect to `test-results/`, explicit `evidence:screenshots` command
 - [x] (R25.4–R25.5) Guard test against literal/`evidence/` paths; keep the proof images tracked
-- [x] (R26.1–R26.4) `AGENTS.md` Section 9 lists R0–R24 with R15 still marked superseded
+- [x] (R26.1-R26.4) `AGENTS.md` Section 9 lists R0-R24 with R15 still marked superseded
+
+## Phase 3j - Production smoke subset (R27)
+
+- [x] (R27.1) `npm run verify:prod` refuses to run without `PLAYWRIGHT_BASE_URL`
+- [x] (R27.2-R27.4) `@smoke` tags on existing tests; 8 tests covering every route class plus interactive flows
+- [x] (R27.5) Guard test keeps the tagged set and the manifest identical, and route coverage complete
+- [x] (R27.6) Launcher exits non-zero on failure and forces zero retries
+- [x] (R27.7) `AGENTS.md` publish steps name `npm run verify:prod`
 - [ ] Execute TC-2501–TC-2604; evidence entry; local commit; await owner approval
 
 ## Phase 5 — Routing & pages

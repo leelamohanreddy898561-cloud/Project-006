@@ -1212,3 +1212,71 @@ Re-run after the change: 4/4 green.
 
 **Evaluation:** R25 and R26 published. The live site serves the same bundle as
 R24, and future test runs no longer dirty the repository.
+---
+
+### 2026-10-22 - R27 production smoke subset
+
+**Scope:** R27 - production verification runs a small fixed subset instead of all
+92 tests. Requested after measuring that the 344 kB bundle was arriving from
+Firebase Hosting in 16-57 s, which turned each full production run into 3-4.5
+minutes and produced false reds.
+
+**Design.** No test body was duplicated. Eight existing tests carry an `@smoke`
+tag in their title, and `tests/helpers/smoke.ts` declares the same eight with the
+route class each one proves. A guard test fails if the two drift apart, or if a
+required route class loses coverage.
+
+**Commands run, in order:**
+
+    npx playwright test --list
+    npx playwright test --grep "@smoke" --list
+    npx playwright test tests/r27-production-smoke.spec.ts
+    npx playwright test --grep "@smoke"
+    npm run lint
+    npm run build
+    npx playwright test
+    npm run verify:prod                      (PLAYWRIGHT_BASE_URL unset)
+    npm run verify:prod                      (PLAYWRIGHT_BASE_URL set to the live site)
+
+**Results:**
+
+| Check | Result |
+| --- | --- |
+| Smoke selection | Exactly 8 tests: TC-1805, TC-1808, TC-2003, TC-2301, TC-2302, TC-2305, TC-2406, TC-2411 |
+| R27 guards (TC-2701..TC-2704) | 4 passed |
+| Smoke subset, local | 8 passed (25.9 s) |
+| `verify:prod` with no `PLAYWRIGHT_BASE_URL` | Exit 1, names the variable, launches no browser |
+| Lint | Exit 0 |
+| Build | Exit 0; 112.28 kB JS / 5.59 kB CSS gzipped - unchanged, no app code touched |
+| Full suite, local | **92 passed** (88 before R27 + 4 guards) |
+| Traceability | 92 declared = 92 executed, so no test case was dropped by the tag |
+| `verify:prod` against the live site | **8 passed in 13.4 s** (16.6 s wall clock), exit 0 |
+| Tree after every run | Only the files being edited; `test-results/` still ignored (R25 holds) |
+
+**Coverage of the subset (AC27.4).** TC-1808 walks every header destination and
+the 404 route (home, blog list, topics, about, sign in, sign up, unknown path);
+TC-2301 and TC-2305 prove article detail and markdown; TC-2302 proves the
+unknown-slug state; TC-2406 and TC-2411 prove auth validation and the auth seam;
+TC-2003 proves the newsletter form; TC-1805 proves the theme toggle. Every
+required route class is represented, and the guard asserts that.
+
+**Time saved, measured on the same live target:**
+
+| Verification | Elapsed |
+| --- | --- |
+| Full 88-test suite against production (this session) | 3.2 min, 3.8 min, 3.2 min, 4.5 min |
+| Smoke subset via `npm run verify:prod` | **16.6 s** |
+
+That is roughly 12-16x faster, and it removes the false-red loop: the smoke run
+downloads the bundle eight times instead of eighty-eight.
+
+**Deliberate non-choice (AC27.6).** The launcher forces `--retries=0` and does not
+retry. The earlier workaround used `--retries=1`, which would let a genuinely
+broken deploy pass on a second attempt. With eight tests a rerun is cheap, so a
+retry buys nothing worth the risk of masking a failure.
+
+**Not changed:** no application source, no bundle content, no existing test body.
+The only edits to existing specs are the `@smoke` tag appended to eight titles.
+
+**Evaluation:** R27 implemented and verified locally, including one real run
+against the deployed site. Awaiting owner approval before any push or deploy.

@@ -54,7 +54,7 @@ test.describe("R20 — Footer and newsletter", () => {
     );
   });
 
-  test("TC-2003: valid email shows success in a live region and clears the field", async ({
+  test("TC-2003: valid email shows success in a live region and clears the field @smoke", async ({
     page,
   }) => {
     await page.goto("/");

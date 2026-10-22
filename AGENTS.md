@@ -70,8 +70,9 @@ because it looks done — only because it was run and recorded.
 11. **Publish** (only after your OK), in this exact order — **one change-log
     cycle, never two**:
     1. Secret-scan, then `git push` the code commit.
-    2. `npm run build`, then `npm run deploy`, then verify the live site
-       (`PLAYWRIGHT_BASE_URL=... npx playwright test`).
+    2. `npm run build`, then `npm run deploy`, then `npm run verify:prod`
+       (smoke subset against the live site; it refuses to run without
+       `PLAYWRIGHT_BASE_URL`).
     3. Write the publish entry in `evidence.md`, commit and push it.
     4. **One** change-log cycle: `npm run changelog` → `npm run sync:changes` →
        `npm run verify:changes` → commit `changeLog.json` → `git push`.
@@ -146,8 +147,10 @@ necessary but never sufficient** — your visual approval is the gate.
 | `playwright.config.ts` | Playwright configuration |
 | `tests/helpers/contrast.ts` | Shared WCAG contrast helper |
 | `tests/helpers/screenshots.ts` | Single source of truth for where captures are written (R25) |
+| `tests/helpers/smoke.ts` | The production smoke subset and its coverage map (R27) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
 | `scripts/capture-evidence.mjs` | Runs the suite with `EVIDENCE_SCREENSHOTS=1` to refresh `evidence/screenshots/` (R25) |
+| `scripts/verify-prod.mjs` | Runs the `@smoke` subset against the deployed site — the production check (R27) |
 | `scripts/sync-changes.mjs` | Writes `changeLog.json` to Firestore |
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
@@ -168,6 +171,10 @@ deliberately, so a growing repository is expected rather than a leak.
 - Runner: **Playwright** (`@playwright/test`).
 - `npm test` — run everything; `npm run test:headed` — watch it run;
   `npm run report` — open the HTML report.
+- `npm run verify:prod` — the production check: the 8-test `@smoke` subset
+  against the deployed site (R27). The full suite stays local; re-running all of
+  it over the network proves little and costs minutes. It refuses to run without
+  `PLAYWRIGHT_BASE_URL`, so it can never "pass" against localhost.
 - Reports go to `playwright-report/` and `test-results/` (git-ignored).
 - **A test run never writes to a tracked file (R25).** Captures go to
   `test-results/screenshots/` by default. To refresh the committed proof images
@@ -219,6 +226,8 @@ deliberately, so a growing repository is expected rather than a leak.
   R23 (blog detail page), R24 (sign in and sign up pages), R25 (test runs never
   mutate committed evidence), R26 (this section kept accurate by a guard test).
   **R26 is the most recent requirement published to production.**
+- **Implemented and verified, awaiting owner approval:** R27 (production
+  verification runs a smoke subset via `npm run verify:prod`).
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).

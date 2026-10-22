@@ -116,7 +116,7 @@ test.describe("R24 — Sign in and sign up pages", () => {
     }
   });
 
-  test("TC-2406: an empty form shows both errors and submits nothing", async ({
+  test("TC-2406: an empty form shows both errors and submits nothing @smoke", async ({
     page,
   }) => {
     await page.goto("/signin");
@@ -191,7 +191,7 @@ test.describe("R24 — Sign in and sign up pages", () => {
     }
   });
 
-  test("TC-2411: a valid submission reports the not-connected outcome", async ({
+  test("TC-2411: a valid submission reports the not-connected outcome @smoke", async ({
     page,
   }) => {
     await page.goto("/signin");

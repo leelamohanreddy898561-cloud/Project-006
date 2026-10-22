@@ -105,7 +105,7 @@ test.describe("R18 — Glassmorphism header", () => {
     ).toHaveAttribute("href", "/blog");
   });
 
-  test("TC-1805: theme toggle flips the theme and persists it", async ({
+  test("TC-1805: theme toggle flips the theme and persists it @smoke", async ({
     page,
   }) => {
     await page.goto("/");
@@ -152,7 +152,7 @@ test.describe("R18 — Glassmorphism header", () => {
     ).toHaveAttribute("href", "/signup");
   });
 
-  test("TC-1808: every header destination renders a real page", async ({
+  test("TC-1808: every header destination renders a real page @smoke", async ({
     page,
   }) => {
     const routes: Array<[string, string]> = [

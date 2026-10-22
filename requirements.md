@@ -437,6 +437,23 @@ they are refreshed **only** when explicitly asked.
 - **AC26.3** Section 9's "not yet built" list contains only requirements that genuinely remain unbuilt.
 - **AC26.4** No figure in Section 9 contradicts the latest evidence entry.
 
+### R27 — Published-site verification runs a smoke subset
+
+Verifying production currently re-runs all 88 tests against the live host. On a
+slow connection a single 344 kB bundle download can consume most of a test's
+budget, so one release can spend several minutes re-proving what the local run
+already proved. Production verification runs a small, fixed subset instead —
+enough to prove the deployed artifact serves every kind of route and its main
+client-side flows, and nothing more.
+
+- **AC27.1** `npm run verify:prod` runs only the smoke subset against the deployed site, and fails immediately with a clear message when `PLAYWRIGHT_BASE_URL` is not set (it must never fall back to localhost).
+- **AC27.2** The subset is carried by an `@smoke` tag on existing tests; no test body is duplicated or forked for production.
+- **AC27.3** `npm test` still runs the whole suite unchanged — the tag selects a subset for production, it never removes a test from the local run.
+- **AC27.4** The subset holds between 6 and 12 tests and covers every route class: home, blog list, topic index, about, article detail, unknown slug, sign in, sign up and the 404 route, plus at least one interactive flow.
+- **AC27.5** A guard test fails when a tagged test disappears, when an untagged test is added to the declared manifest, or when a required route class loses coverage — so the subset cannot silently shrink.
+- **AC27.6** `npm run verify:prod` exits non-zero when any smoke test fails and never retries to mask a failure.
+- **AC27.7** `AGENTS.md` names `npm run verify:prod` as the production check, so the workflow and the command cannot drift apart.
+
 ---
 
 ## 8. Open Questions

@@ -10,7 +10,7 @@ const SLUG = "mixture-of-experts";
 const ARTICLE = `/blog/${SLUG}`;
 
 test.describe("R23 — Blog detail page", () => {
-  test("TC-2301: clicking a card opens its article", async ({ page }) => {
+  test("TC-2301: clicking a card opens its article @smoke", async ({ page }) => {
     await page.goto("/");
 
     const card = page.locator(".blog-card").first();
@@ -22,7 +22,7 @@ test.describe("R23 — Blog detail page", () => {
     await expect(page.locator(".post-page__title")).toHaveText(title);
   });
 
-  test("TC-2302: an unknown slug shows a not-found state", async ({ page }) => {
+  test("TC-2302: an unknown slug shows a not-found state @smoke", async ({ page }) => {
     await page.goto("/blog/does-not-exist");
 
     await expect(
@@ -65,7 +65,7 @@ test.describe("R23 — Blog detail page", () => {
     expect(loaded).toBe(true);
   });
 
-  test("TC-2305: markdown renders as real HTML elements", async ({ page }) => {
+  test("TC-2305: markdown renders as real HTML elements @smoke", async ({ page }) => {
     await page.goto(ARTICLE);
     const prose = page.locator(".prose");
 
