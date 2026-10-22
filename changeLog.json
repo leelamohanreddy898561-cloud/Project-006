@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-22T07:49:23.220Z",
+  "generatedAt": "2026-10-22T09:11:04.645Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 40,
+    "commits": 45,
     "fileChanges": {
-      "M": 170,
-      "A": 90,
+      "M": 183,
+      "A": 94,
       "D": 3
     },
     "latestVerification": null,
@@ -1550,6 +1550,129 @@
         {
           "status": "M",
           "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "1ad7b5261e7b7dbefb334cbfb89f2bb90b236593",
+      "short": "1ad7b52",
+      "date": "2026-10-22T13:22:00+05:30",
+      "subject": "chore: regenerate changeLog.json (R24 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "8ab6bc0f48ed4ee512fcacae9df6ccaa2f8eee93",
+      "short": "8ab6bc0",
+      "date": "2026-10-22T14:03:51+05:30",
+      "subject": "test: stop test runs mutating committed evidence (R25, R26)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "scripts/capture-evidence.mjs"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/helpers/screenshots.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r1-home.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r18-header.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r25-evidence-artifacts.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r26-agents-state.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "93f33930cf1368fbc9db6b952269b418e8fbabac",
+      "short": "93f3393",
+      "date": "2026-10-22T14:06:50+05:30",
+      "subject": "docs: evidence for R25 and R26 (R25, R26)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "a96c1015bd1689596218a219764dbe870b355a27",
+      "short": "a96c101",
+      "date": "2026-10-22T14:07:40+05:30",
+      "subject": "docs: check off R25 and R26 items (R25, R26)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        }
+      ]
+    },
+    {
+      "commit": "61dcfb64482e7d31fca2f6a4aa66dba13699370e",
+      "short": "61dcfb6",
+      "date": "2026-10-22T14:40:20+05:30",
+      "subject": "docs: record R25 and R26 publish; mark R26 latest (R25, R26)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r26-agents-state.spec.ts"
         }
       ]
     }
