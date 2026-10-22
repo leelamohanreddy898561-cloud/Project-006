@@ -800,5 +800,53 @@ refresh them deliberately in a dedicated evidence commit.
 **Artifacts:** none new.
 **Evaluation:** R22 complete and green. No deploy was run — `npm run deploy` is
 wired and verified to resolve, but deploying is a publish action.
-**Commit:** local only — **awaiting owner approval before push**
+**Commit:** `4ad3631` (local at the time of that entry)
+
+---
+
+### 2026-10-22 — R22 published; npx-pinned deploy proven end to end
+
+**Gate:** owner replied **"ok"**
+**Commands run** — one change-log cycle, per `AGENTS.md` step 11:
+
+    git push origin main
+    npm run build
+    npm run deploy
+    set PLAYWRIGHT_BASE_URL=https://project-006-e6ae1.web.app && npx playwright test
+    git push origin main          # evidence commit
+    npm run changelog
+    npm run sync:changes
+    npm run verify:changes
+
+**Results:**
+
+| Step | Result | Notes |
+| --- | --- | --- |
+| Secret scan | clean | Key only in git-ignored `.env` |
+| Push code commit | pass | `039d0af..4ad3631` |
+| Build | pass | 90.2 kB JS / 3.95 kB CSS gzipped |
+| **Deploy via `npm run deploy`** | **pass** | Ran `npx --yes firebase-tools@15.34.1` with **no project dependency installed** — 10 files, release complete, **29.5 s total** |
+| Production suite | **43 passed, 1 skipped** | Skip is the dev-only r16 hook |
+| Evidence commit + push | pass | |
+| Single change-log cycle | pass | one regenerate → sync → verify → commit → push |
+
+**What this proves:** AC22.1 and AC22.4 are verified by a real deploy, not by
+reading the script. The deploy ran with `firebase-tools` absent from
+`node_modules`, resolved the pinned `15.34.1` from the shared npx cache, and
+released the same 10 files to the same project. Total overhead against the old
+local-binary path: about 7 s of resolution inside a 29.5 s deploy.
+
+**Screenshots reverted again:** the production run rewrote the three tracked
+evidence PNGs (`r1-hero`, `r18-header-light`, `r18-header-dark`) because those
+specs save directly into `evidence/screenshots/`. They were reverted so this
+commit contains only R22 publish records. The open decision from the R22 entry
+still stands.
+
+**Artifacts:**
+- GitHub: `4ad3631` → evidence commit → changelog commit
+- Live: https://project-006-e6ae1.web.app
+- Firestore `changeLog`: synced and read-back verified
+
+**Evaluation:** R22 published. `node_modules` is 196 MB lighter, the CLI stays
+pinned, and the lighter deploy path is confirmed in production.
 
