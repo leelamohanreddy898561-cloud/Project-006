@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-21T14:15:48.147Z",
+  "generatedAt": "2026-10-22T04:54:29.270Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 24,
+    "commits": 26,
     "fileChanges": {
-      "M": 100,
-      "A": 70,
+      "M": 112,
+      "A": 76,
       "D": 1
     },
     "latestVerification": null,
@@ -1006,6 +1006,100 @@
         {
           "status": "M",
           "path": "requirements.md"
+        }
+      ]
+    },
+    {
+      "commit": "c4ebdb5bcc86dfd436cdf4af558562451d924ff2",
+      "short": "c4ebdb5",
+      "date": "2026-10-21T19:47:59+05:30",
+      "subject": "chore: regenerate changeLog.json after R19 publish",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "ab0f67e4a3279e2ef6084f15254d511427bf28b8",
+      "short": "ab0f67e",
+      "date": "2026-10-22T10:18:19+05:30",
+      "subject": "feat: footer with newsletter subscription (R20)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r1-hero.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-dark.png"
+        },
+        {
+          "status": "M",
+          "path": "evidence/screenshots/r18-header-light.png"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Footer.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Footer.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Newsletter.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/Newsletter.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/icons.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/data/posts.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/data/site.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/styles/tokens.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r20-footer.spec.ts"
         }
       ]
     }
