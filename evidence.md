@@ -1040,3 +1040,38 @@ colour that never appears on screen.
 **Artifacts:** none new.
 **Evaluation:** R24 complete and green.
 **Commit:** local only — **awaiting owner approval before push/deploy**
+---
+
+### 2026-10-22 — R24 published
+
+**Approval:** owner replied "ok" after reviewing the local build.
+**Scope:** R24 — sign in and sign up pages.
+**Commands run, in order:**
+
+    git status --short
+    git ls-files | Select-String -Pattern "^\.env$|serviceAccount|\.pem$|\.key$|credentials"
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{35}" -- . ':!evidence.md'
+    git grep -n -I "BEGIN PRIVATE KEY" -- .
+    git push origin main
+    npm run build
+    npm run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npx playwright test
+
+**Results:**
+
+| Step | Result |
+| --- | --- |
+| Secret scan | No `.env`, no service account files, no `AIza…` keys. The single `BEGIN PRIVATE KEY` hit is this file's own recorded command text, not a key |
+| Push | `eb2947c..2648d85  main -> main`; 0 commits ahead afterwards |
+| Build | Clean; 112.28 kB JS / 5.59 kB CSS gzipped (budgets 150 / 25) |
+| Deploy | `hosting[project-006-e6ae1]: release complete` ? https://project-006-e6ae1.web.app |
+| Production suite | **79 passed, 1 skipped** (skipped = the dev-only R16 Firebase hook), exit 0 |
+
+**Live verification:** `/signin` and `/signup` render on the deployed site. The
+R24 suite ran against `PLAYWRIGHT_BASE_URL` and passed in full, so the glass
+card, gradient glows, validation wiring, password reveal, live-region outcomes,
+cross-navigation, 360 px layout and composited contrast are confirmed in
+production rather than only locally.
+
+**Evaluation:** R24 published. The live site serves the auth pages; no account
+function exists behind them yet.
