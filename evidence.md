@@ -920,3 +920,38 @@ themes in `tokens.css`; the R19 hover lift now actually casts a shadow.
 **Evaluation:** R23 complete and green.
 **Commit:** local only â€” **awaiting owner approval before push/deploy**
 
+
+---
+
+### 2026-10-22 — R23 published
+
+**Approval:** owner replied "push to github and deploy it in my firebase" after
+reviewing the local build.
+**Scope:** R23 — blog detail page.
+**Commands run, in order:**
+
+    git status --short          # clean
+    git ls-files | Select-String -Pattern "^\.env$|serviceAccount|\.pem$|\.key$"
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{35}" -- . ':!evidence.md'
+    git grep -n -I "BEGIN PRIVATE KEY" -- .
+    git push origin main
+    npm run build
+    npm run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npx playwright test
+
+**Results:**
+
+| Step | Result |
+| --- | --- |
+| Secret scan | No `.env`, no service account files, no `AIza…` keys, no private key blocks in tracked files |
+| Push | `b8e5776..c52c8f5  main -> main`; 0 commits ahead afterwards |
+| Build | Clean; 110.66 kB JS / 4.92 kB CSS gzipped (budgets 150 / 25) |
+| Deploy | `hosting[project-006-e6ae1]: release complete` ? https://project-006-e6ae1.web.app |
+| Production suite | **62 passed, 1 skipped** (skipped = the dev-only R16 Firebase hook), exit 0 |
+
+**Live verification:** `/blog/mixture-of-experts` renders on the deployed site —
+the R23 test suite ran against `PLAYWRIGHT_BASE_URL` and passed in full, so the
+route, sticky rail, comments, related articles, contrast, and mobile layout are
+confirmed in production rather than only locally.
+
+**Evaluation:** R23 published. The live site now serves the blog detail page.
