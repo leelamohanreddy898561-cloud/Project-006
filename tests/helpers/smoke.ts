@@ -93,7 +93,7 @@ export const SMOKE_SUITE: SmokeTest[] = [
     tc: "TC-2411",
     spec: "r24-auth.spec.ts",
     covers: ["auth"],
-    why: "The auth seam answers on the deployed host instead of throwing.",
+    why: "A failed sign-in returns a real provider error and stays signed out.",
   },
   {
     tc: "TC-2003",

@@ -1454,6 +1454,78 @@ branches, and `main` only ever advances by fast-forward to an approved,
 deployed, verified tip.
 ---
 
+### 2026-10-22 - R29 live authentication: Google and email/password (implementation)
+
+**Scope:** R29 - make Google and email/password authentication work live, not
+report "not connected". Requested by the owner as: "Make Google Authentication
+and Email/Password Authentication work live in production seamlessly. For this,
+complete the setup in the firebase.js file and export it." The setup file is
+TypeScript - `src/lib/firebase.ts` - and it now exports the auth-only loader
+`getFirebaseAuth()` alongside `getFirebase()` and `isFirebaseConfigured()`.
+The auth pages, the header account menu and the seam in `src/lib/auth.ts` were
+wired to it; no page imports the SDK directly.
+
+**Branch:** `feature/r29-live-auth`, created from `main` at `1e4135b` (main's
+tip) with a clean tree. Before any commit the branch was level with `main`
+(`git rev-list --count HEAD..main` = 0), so the eventual publish fast-forwards.
+
+**Commands run, in order:**
+
+    git status --short
+    git diff --stat
+    npm.cmd run build        # npm.ps1 is blocked by the execution policy; npm.cmd is identical
+    Get-ChildItem dist/assets/*.js  # grep each chunk for identitytoolkit/securetoken
+    npm.cmd run lint
+    npx.cmd playwright test            # run 1
+    npx.cmd playwright test tests/r26-agents-state.spec.ts
+    npx.cmd playwright test            # run 2
+    git status --short
+
+**Results:**
+
+| Check | Result |
+| --- | --- |
+| Build (`tsc --noEmit && vite build`) | Exit 0; entry chunk **114.92 kB JS / 5.79 kB CSS** gzipped (was 112.28 / 5.59) - budgets 150 / 25 hold |
+| Auth SDK placement (AC29.6) | `identitytoolkit` / `securetoken` markers appear only in the lazy chunk `index.esm-DgMCtdZ1.js` (36.62 kB); the entry chunk is clean |
+| Lint | Exit 0, zero warnings |
+| Live sign-up (TC-2903) | **Passed** - a real account was created on the project, the header showed it, and the session survived a reload |
+| Live sign-in and sign-out (TC-2904) | **Passed** - sign-in landed on `/`, sign-out restored the signed-out header, a reload did not resurrect the session |
+| Test-account cleanup (TC-2905) | **Passed** - the throwaway account was deleted; signing in as it afterwards failed |
+| Real provider error (TC-2411, smoke) | **Passed** - an unknown account returns "Email or password is incorrect" and stays signed out |
+| Seam rule (TC-2902) | **Passed** - only `src/lib/auth.ts` and `src/lib/firebase.ts` import `firebase/auth` |
+| Full suite, run 1 | 99 passed, 1 failed - TC-2601 |
+| Full suite, run 2 (after fix) | **100 passed** |
+| Full suite, run 3 (after doc edits) | 99 passed, 1 failed - TC-2604, expected and resolved by this entry (see below) |
+| Working tree after runs (R25) | Only R29 changes listed; no test-run artifacts |
+
+**Two guard failures found and fixed while proving this.**
+
+1. TC-2601 failed on run 1: my first Section 9 sentence named R29 *before* the
+   "awaiting owner approval" marker, so the guard read R29 as published.
+   Section 9 now names R29 only inside the "Awaiting owner approval" line.
+2. TC-2604 failed on run 3: updating the bundle figures in `AGENTS.md` made it
+   disagree with the figure quoted in `evidence.md` until this entry was
+   appended. Both figures are now 114.9 kB JS / 5.8 kB CSS, within the guard's
+   1 kB tolerance of the measured 114.92 / 5.79.
+
+**What this run proves about the live project.** Email/Password is already
+enabled on `project-006-e6ae1`: the suite created, signed into and deleted a
+real account against it. Google is not proven by automation - the pop-up needs
+a human and a Google account - so AC29.4 stays a `manual` test case (TC-2906)
+for the owner's review, and TC-2910 asks the owner to confirm the provider is
+enabled in the console. If it is not, clicking "Sign in with Google" says
+"That sign-in method is not enabled for this project", which is the seam
+translating the provider's own error, not a silent failure.
+
+**Not done, deliberately:** no console change, no push, no deploy, no Firestore
+sync, no merge to `main`. Those wait for the owner's approval (AGENTS.md
+Section 3).
+
+**Evaluation:** R29 implemented and verified locally on its branch - full suite
+green, budgets intact, live email/password proven end to end. Awaiting the
+owner's visual review before anything is published.
+---
+
 ### 2026-10-23 - R30 lean loop and consolidated workflow guards (implementation)
 
 **Scope:** R30 - make the loop cheap without weakening the gate, as approved

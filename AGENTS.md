@@ -129,8 +129,10 @@ deploying and syncing stay gated.
 ### How a review works
 
 1. I finish steps 0–8 and confirm all automated tests are green.
-2. I start the dev server and give you **http://127.0.0.1:5173/** (restart with
-   `npm run dev` if it is not running).
+2. I start the dev server and give you **http://localhost:5173/** (restart with
+   `npm run dev` if it is not running). Use `localhost`, not `127.0.0.1`:
+   Firebase authorizes `localhost` for OAuth, so a pop-up sign-in opened from
+   `127.0.0.1` would be rejected as an unauthorized domain.
 3. I give you a short review list: the requirement, what to click, and what
    "correct" looks like — mapped to the acceptance criteria.
 4. You review locally and reply **OK** (or with what is wrong).
@@ -247,7 +249,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 112.3 kB JS / 5.6 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 114.9 kB JS / 5.8 kB CSS gzipped |
 
 ---
 
@@ -264,6 +266,9 @@ deliberately, so a growing repository is expected rather than a leak.
   requirement; `main` only receives approved work, fast-forwarded),
   R30 (lean loop; the sixteen workflow guards consolidated into one spec).
   **R30 is the most recent requirement published to production.**
+- **Awaiting owner approval:** R29 (live authentication — Google and
+  email/password), implemented on `feature/r29-live-auth`. Not merged, not
+  deployed, change log not synced.
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).
@@ -271,12 +276,13 @@ deliberately, so a growing repository is expected rather than a leak.
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 112.3 kB JS / 5.6 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 114.9 kB JS / 5.8 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore/Storage security rules must be tightened before either is used
     with real data.
   - Dark-mode `--color-text-subtle` (#64748b) measures ≈3.98:1, below AA for
     normal text. R24 avoids it; the rest of the site does not. Fix during R11.
-  - No Firebase Auth provider is enabled, so `src/lib/auth.ts` returns a
-    "not connected" outcome. Enabling it needs console access plus a one-file
-    change.
+  - Firebase Auth is wired to real sign-in in code (R29), but the Email/Password
+    and Google providers must be switched on in Firebase Console →
+    Authentication → Sign-in method before either works live. That is a console
+    action only the owner can perform; no code change is needed afterwards.

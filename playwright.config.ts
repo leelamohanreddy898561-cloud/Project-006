@@ -11,7 +11,7 @@ import { defineConfig, devices } from "@playwright/test";
  * When PLAYWRIGHT_BASE_URL is set, no local server is started.
  */
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:5173";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:5173";
 const useLocalServer = !process.env.PLAYWRIGHT_BASE_URL;
 
 export default defineConfig({
@@ -40,7 +40,7 @@ export default defineConfig({
     ? {
         webServer: {
           command: "npm run dev",
-          url: "http://127.0.0.1:5173",
+          url: "http://localhost:5173",
           reuseExistingServer: !process.env.CI,
           timeout: 60_000,
         },

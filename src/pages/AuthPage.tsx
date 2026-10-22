@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   EyeIcon,
   EyeOffIcon,
@@ -7,10 +7,13 @@ import {
   MailIcon,
 } from "../components/icons";
 import {
+  preloadAuth,
   signInWithEmail,
   signInWithGoogle,
+  signOutUser,
   signUpWithEmail,
 } from "../lib/auth";
+import { useAuth } from "../hooks/useAuth";
 import "./AuthPage.css";
 
 export type AuthMode = "signin" | "signup";
@@ -50,11 +53,13 @@ type FieldErrors = {
 };
 
 /**
- * R24 — sign in / sign up.
+ * R24 / R29 — sign in and sign up.
  *
- * UI only. Every authentication call goes through `src/lib/auth.ts`, which
- * currently reports that nothing is connected; these pages never pretend
- * otherwise. Validation, focus handling and announcements are real.
+ * Every authentication call goes through `src/lib/auth.ts`; this page never
+ * imports `firebase/auth` directly (R24.15, R29.7). On success the real session
+ * exists, so the page leaves for the home page and the header shows the
+ * account. On failure the provider's error arrives as a plain-English sentence
+ * in the live region.
  */
 export function AuthPage({ mode }: { mode: AuthMode }) {
   const copy = COPY[mode];
@@ -65,6 +70,9 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
+
+  const navigate = useNavigate();
+  const { status: sessionStatus, user } = useAuth();
 
   const emailId = useId();
   const passwordId = useId();
@@ -99,6 +107,23 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
     return found;
   }
 
+  // R29 — load the auth module before the click, so `signInWithPopup` runs
+  // inside the user gesture. Safari and Firefox block a pop-up that is opened
+  // after an await.
+  useEffect(() => {
+    void preloadAuth();
+  }, []);
+
+  async function handleSignOut() {
+    setPending(true);
+    setStatus("");
+
+    const outcome = await signOutUser();
+
+    setPending(false);
+    setStatus(outcome.ok ? "Signed out." : outcome.message);
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -119,23 +144,72 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         : await signUpWithEmail(email.trim(), password);
 
     setPending(false);
-    setStatus(
-      outcome.ok
-        ? mode === "signin"
-          ? "Signed in."
-          : "Account created."
-        : outcome.message,
-    );
+
+    if (outcome.ok) {
+      // R29 — the session is real. Leave the form; the header now shows who
+      // is signed in, which is the confirmation.
+      navigate("/", { replace: true });
+      return;
+    }
+
+    setStatus(outcome.message);
   }
 
   async function handleGoogle() {
     setPending(true);
-    setStatus("");
+    setStatus("Opening Google…");
 
     const outcome = await signInWithGoogle();
 
     setPending(false);
-    setStatus(outcome.ok ? "Signed in with Google." : outcome.message);
+
+    if (outcome.ok) {
+      navigate("/", { replace: true });
+      return;
+    }
+
+    setStatus(outcome.message);
+  }
+
+  // R29 — a signed-in visitor gets the session, not a form that would try to
+  // sign them in a second time.
+  if (sessionStatus === "signedIn" && user) {
+    return (
+      <div className="auth">
+        <div className="auth__glow auth__glow--indigo" aria-hidden="true" />
+        <div className="auth__glow auth__glow--cyan" aria-hidden="true" />
+        <div className="auth__glow auth__glow--violet" aria-hidden="true" />
+
+        <div className="auth__inner container">
+          <section className="auth-card" aria-labelledby="auth-heading">
+            <p className="auth-card__brand">AI Pulse</p>
+            <h1 className="auth-card__title" id="auth-heading">
+              You are signed in
+            </h1>
+            <p className="auth-card__subtitle">
+              {user.displayName || user.email}
+            </p>
+
+            <button
+              type="button"
+              className="btn btn--primary auth-form__submit"
+              onClick={handleSignOut}
+              disabled={pending}
+            >
+              {pending ? "Signing out…" : "Sign out"}
+            </button>
+
+            <p className="auth-card__status" role="status" aria-live="polite">
+              {status}
+            </p>
+
+            <p className="auth-card__switch">
+              <Link to="/">Back to the home page</Link>
+            </p>
+          </section>
+        </div>
+      </div>
+    );
   }
 
   return (

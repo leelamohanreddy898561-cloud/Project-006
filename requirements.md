@@ -469,6 +469,26 @@ a straight line of states that were each verified and published.
 
 ---
 
+### R29 — Live authentication: Google and email/password
+
+R24 built the sign-in and sign-up pages against a seam that reported
+"not connected", because no provider was enabled on the project. This
+requirement makes authentication real: the same pages and the same seam, now
+talking to a live Firebase project, so a visitor can create an account, sign
+in, stay signed in across reloads and sign out — with Google or with email and
+password — locally and on the deployed site.
+
+- **AC29.1** Email/Password is enabled for the project, and an account created through `/signup` produces a real session: the header shows the account, and a reload keeps the visitor signed in.
+- **AC29.2** An unknown email or wrong password on `/signin` returns the provider's own error as a plain-English sentence in the live region, and no session is created.
+- **AC29.3** Signing out — from the header account menu or from the auth page — ends the session, and a reload does not restore it.
+- **AC29.4** Google sign-in completes with a real Google account and lands the visitor signed in on the home page; a pop-up closed before it finishes leaves them signed out with an explanation. *(Manual: a Google account and a consent screen cannot be automated.)*
+- **AC29.5** A signed-in visitor who opens `/signin` or `/signup` sees the session and a way out, not a form that would sign them in a second time.
+- **AC29.6** The initial JS bundle stays inside the R14 budgets — the auth SDK is loaded on demand and the entry chunk never contains it.
+- **AC29.7** `firebase/auth` is imported only by `src/lib/auth.ts` and `src/lib/firebase.ts`; every page and component reaches authentication through the seam.
+- **AC29.8** With the Firebase SDK unreachable, the home page still renders completely and behaves as signed out — the first paint never depends on the network.
+- **AC29.9** Production verification includes a real failed sign-in against the deployed site, so the provider is proven to answer there as well as locally.
+- **AC29.10** The account the suite creates is deleted when the run ends; no test account survives in the project.
+
 ### R30 — Lean loop and consolidated workflow guards
 
 The workflow had accumulated cost that no longer bought quality: sixteen tests

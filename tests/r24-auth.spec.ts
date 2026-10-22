@@ -191,31 +191,27 @@ test.describe("R24 — Sign in and sign up pages", () => {
     }
   });
 
-  test("TC-2411: a valid submission reports the not-connected outcome @smoke", async ({
+  test("TC-2411: an unknown account reports a failed sign-in @smoke", async ({
     page,
   }) => {
     await page.goto("/signin");
 
-    await emailField(page).fill("ada@example.com");
+    await emailField(page).fill("r29-no-such-account@example.com");
     await passwordField(page).fill("correct horse battery");
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
     const status = page.locator(".auth-card__status");
     await expect(status).toHaveAttribute("role", "status");
     await expect(status).toHaveAttribute("aria-live", "polite");
-    await expect(status).toContainText(/not connected/i);
-    // Never claims success.
-    await expect(status).not.toContainText(/^signed in\.$/i);
-  });
 
-  test("TC-2412: the Google button reports its outcome", async ({ page }) => {
-    await page.goto("/signup");
+    // R29: the provider answers, and the page translates it.
+    await expect(status).toContainText(/email or password is incorrect/i, {
+      timeout: 20_000,
+    });
 
-    await page.getByRole("button", { name: "Sign in with Google" }).click();
-
-    const status = page.locator(".auth-card__status");
-    await expect(status).toContainText(/not connected/i);
-    await expect(status).not.toContainText(/signed in with google/i);
+    // Still signed out: the header must not claim otherwise.
+    await expect(page).toHaveURL(/\/signin$/);
+    await expect(page.getByRole("link", { name: "Sign In" })).toBeVisible();
   });
 
   test("TC-2413: the password can be revealed and hidden", async ({ page }) => {
@@ -257,14 +253,20 @@ test.describe("R24 — Sign in and sign up pages", () => {
       "utf8",
     );
 
-    const authImports = [...source.matchAll(/from\s+"([^"]*auth[^"]*)"/g)].map(
+    // The rule is about code, not prose: comments may name the SDK so the
+    // reason for the seam stays documented next to it.
+    const code = source
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/^\s*\/\/.*$/gm, "");
+
+    const authImports = [...code.matchAll(/from\s+"([^"]*auth[^"]*)"/g)].map(
       (match) => match[1],
     );
     expect(authImports).toEqual(["../lib/auth"]);
 
     // No Firebase SDK leaking into the page itself.
-    expect(source).not.toMatch(/firebase/i);
-    expect(source).toMatch(/from "\.\.\/lib\/auth"/);
+    expect(code).not.toMatch(/firebase/i);
+    expect(code).toMatch(/from "\.\.\/lib\/auth"/);
   });
 
   test("TC-2416: no horizontal overflow at 360px", async ({ page }) => {

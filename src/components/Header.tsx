@@ -1,7 +1,9 @@
 import { NavLink, Link } from "react-router-dom";
+import { AccountMenu } from "./AccountMenu";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { SearchIcon } from "./icons";
+import { useAuth } from "../hooks/useAuth";
 import "./Header.css";
 
 const NAV_ITEMS = [
@@ -13,6 +15,8 @@ const NAV_ITEMS = [
 
 /** R18 — glassmorphism site header (supersedes the flat R15 header). */
 export function Header() {
+  const { status, user } = useAuth();
+
   return (
     <header className="site-header">
       <div className="container site-header__inner">
@@ -46,12 +50,21 @@ export function Header() {
             <SearchIcon />
           </Link>
           <ThemeToggle />
-          <Link to="/signin" className="btn btn--primary btn--sm">
-            Sign In
-          </Link>
-          <Link to="/signup" className="btn btn--outline btn--sm">
-            Sign Up
-          </Link>
+          {/* R29: the header tells the truth about the session as soon as
+              Firebase answers; until then it shows the signed-out controls,
+              which is also the correct state for a first-time visitor. */}
+          {status === "signedIn" && user ? (
+            <AccountMenu user={user} />
+          ) : (
+            <>
+              <Link to="/signin" className="btn btn--primary btn--sm">
+                Sign In
+              </Link>
+              <Link to="/signup" className="btn btn--outline btn--sm">
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

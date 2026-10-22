@@ -4,7 +4,8 @@ import { test, expect } from "@playwright/test";
  * R16 — Firebase integration (lazy). Maps to TC-1606 and TC-1607 in
  * test-cases.md.
  *
- * TC-1606 proves no Firebase code loads on the home page (R14.1 budget).
+ * TC-1606 proves the home page renders without Firebase (R29 superseded the
+ * stricter "never loads" wording, because the header now shows the session).
  * TC-1607 proves the loader initializes against the real project, using the
  * dev-only `window.__getFirebase` hook.
  */
@@ -21,40 +22,35 @@ declare global {
   }
 }
 
-function firebaseRequestPaths(urls: string[]): string[] {
-  return urls
-    .map((url) => {
-      try {
-        return new URL(url).pathname;
-      } catch {
-        return url;
-      }
-    })
-    // Ignore our own source module; only the SDK assets matter.
-    .filter((path) => /firebase/i.test(path) && !path.startsWith("/src/"));
-}
-
 test.describe("R16 — Firebase integration (lazy)", () => {
-  test("TC-1606: home page renders and loads no Firebase code", async ({
+  test("TC-1606: the home page renders without waiting for Firebase", async ({
     page,
   }) => {
     const pageErrors: string[] = [];
-    const requested: string[] = [];
 
     page.on("pageerror", (error) => pageErrors.push(error.message));
-    page.on("request", (request) => requested.push(request.url()));
+
+    // R29 moved the session into the header, so the SDK now loads after the
+    // page is usable rather than never. The guarantee worth keeping is that the
+    // page does not depend on it: with the SDK unreachable, the home page must
+    // still render completely and behave as signed out.
+    //
+    // Only the SDK is blocked, never `src/lib/firebase.ts`. In a production
+    // build the chunks are hashed, so the bundle split is proven separately by
+    // the build check (TC-1608) that greps the entry chunk.
+    await page.route(/node_modules\/\.vite\/deps\/firebase/, (route) =>
+      route.abort(),
+    );
 
     await page.goto("/");
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator("header.site-header")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Sign In" })).toBeVisible();
 
-    expect(pageErrors).toEqual([]);
-    expect(
-      firebaseRequestPaths(requested),
-      "Firebase must not load on the home page",
-    ).toEqual([]);
+    expect(pageErrors, "the page must not throw when Firebase is unavailable").toEqual([]);
   });
+
 
   test("TC-1607: getFirebase() initializes on demand with real credentials", async ({
     page,

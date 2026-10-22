@@ -191,13 +191,26 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R28.6) Full suite green; `verify:prod` unchanged
 - [ ] Execute TC-2501–TC-2604; evidence entry; local commit; await owner approval
 
-## Phase 3l - Lean loop and consolidated guards (R30)
+## Phase 3l - Live authentication (R29)
+
+- [x] (R29.1) `getFirebaseAuth()` exported from `src/lib/firebase.ts` with localStorage persistence
+- [x] (R29.5) `useAuth` hook subscribes to the session; header shows the account menu when signed in
+- [x] (R29.1, R29.3) Email/password sign-up and sign-in wired to the live project; sign out from header and auth page
+- [x] (R29.4) Google pop-up sign-in wired with `prompt: "select_account"` and preloaded auth module
+- [x] (R29.5) A signed-in visitor sees the session and a sign-out on `/signin` and `/signup`
+- [x] (R29.6, R29.7) Auth-only loader keeps the SDK out of the entry chunk; seam is the only importer
+- [x] (R29.9) Smoke subset carries a real failed sign-in against the provider
+- [x] (R29.10) Suite creates a throwaway account and deletes it in `afterAll`
+- [ ] **Owner action:** enable Email/Password and Google in Firebase Console → Authentication → Sign-in method
+- [ ] Execute TC-2901–TC-2910; evidence entry; local commit; await owner approval
+
+## Phase 3m - Lean loop and consolidated guards (R30)
 
 - [x] (R30.1-R30.3) Section 2 rewritten as the lean loop: fast loop, one full run at the gate, four-TC cap, short evidence
 - [x] (R30.4-R30.6) 16 R25-R28 guards consolidated into `tests/workflow-guards.spec.ts`; four spec files retired; Section 5 map updated
 - [x] (R30.7) Full suite green at 86 tests; `verify:prod` unchanged
 - [x] (R30.8) Approval gate and non-negotiables untouched
-- [ ] Execute TC-3001-TC-3008; evidence entry; local commit; await owner approval
+- [x] Execute TC-3001-TC-3008; evidence entry; local commit; published
 
 ## Phase 5 — Routing & pages
 

@@ -375,6 +375,26 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2806 | cli | Run `git rev-list --count HEAD..main` while working | 0 — the branch is ahead of `main`, never behind it |
 | TC-2807 | cli | After publishing: compare `git rev-parse main` with `git rev-parse HEAD`, then `git log --merges --oneline main` | Same commit; no merge commits on `main` |
 
+## R29 — Live authentication (Google and email/password)
+
+The email/password cases run end to end against the real project, using an
+account created by the suite and deleted when the run ends (TC-2905). The
+Google flow needs a real Google account and a human consent screen, so it is
+`manual` and recorded in evidence.md.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-2901 | auto | Load `/` as a signed-out visitor | The header shows Sign In and Sign Up links and no Sign out button |
+| TC-2902 | auto | Grep every `src/**/*.ts(x)` file for `firebase/auth` imports | Only `src/lib/auth.ts` and `src/lib/firebase.ts` match (AC29.7) |
+| TC-2903 | auto | Fill `/signup` with a fresh address and a strong password, submit | The page leaves for `/`; the header shows the account and a Sign out button; a reload keeps the visitor signed in (AC29.1) |
+| TC-2904 | auto | Sign in on `/signin` with the TC-2903 account, then use Sign out in the header | Lands signed in; after sign out the header shows Sign In again, and a reload does not restore the session (AC29.2, AC29.3) |
+| TC-2905 | auto | After the run, attempt to sign in as the test account, then delete it | The sign-in succeeds before deletion and fails afterwards — the account did not survive the run (AC29.10) |
+| TC-2906 | manual | On the deployed site, click "Sign in with Google" and complete the consent screen | The pop-up opens, the chosen Google account is signed in, the header shows it, and a reload keeps the session (AC29.4) |
+| TC-2907 | cli | Run `npm run build`, then inspect the chunk report and `dist/assets` | Build passes; the entry chunk contains no `firebase/auth`; JS < 150 kB and CSS < 25 kB gzipped (AC29.6) |
+| TC-2908 | auto | Block the Firebase SDK chunks and load `/` | The home page renders completely, reports no page errors, and behaves as signed out (AC29.8) |
+| TC-2909 | cli | Run the full suite locally, then `git status --short` | Every test green; the working tree is unchanged afterwards (R25 still holds) |
+| TC-2910 | manual | In the Firebase console, check the sign-in providers page | Email/Password and Google are both listed as enabled |
+
 ## R30 — Lean loop and consolidated workflow guards
 
 The R25–R28 auto guards were sixteen tests across four files; R30 carries the
