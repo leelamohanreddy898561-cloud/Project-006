@@ -1334,3 +1334,67 @@ Per the documented order it cannot record its own commit.
 **Evaluation:** R27 published. Production verification is now a fixed 8-test
 subset covering every route class, it refuses to run without a deployed target,
 and it never retries to mask a failure.
+---
+
+### 2026-10-22 - R28 one branch per requirement (implementation)
+
+**Scope:** R28 - every requirement is built on its own branch; `main` only ever
+receives approved, verified work, merged with `--ff-only`. Requested by the
+owner to keep `main` safe.
+
+**Branch:** `feature/r28-feature-branches`, created from `main` at `59fc4aa`
+with a clean tree. This requirement is its own first demonstration.
+
+**Commands run, in order:**
+
+    git status --short
+    git fetch origin --prune
+    git checkout -b feature/r28-feature-branches
+    npx playwright test tests/r28-branch-workflow.spec.ts
+    npx playwright test tests/r26-agents-state.spec.ts tests/r27-production-smoke.spec.ts
+    npm run lint
+    npm run build
+    npx playwright test
+    git add -A && git commit
+    git branch --show-current
+    git rev-list --count main..HEAD
+    git rev-list --count HEAD..main
+    git rev-parse --short main
+
+**Results:**
+
+| Check | Result |
+| --- | --- |
+| Branch created from clean `main` | `feature/r28-feature-branches`, base `59fc4aa` |
+| R28 guards (TC-2801..TC-2804) | 4 passed |
+| R26 + R27 doc guards | 8 passed - Section 9 still agrees with `requirements.md`, smoke set still matches its manifest |
+| Lint | Exit 0 |
+| Build | Exit 0; 112.28 kB JS / 5.59 kB CSS gzipped - unchanged, no app code touched |
+| Full suite | **96 passed** (92 before R28 + 4 guards) |
+| Branch name pattern (TC-2805) | `feature/r28-feature-branches` matches `^(feature\|fix\|chore\|docs)/r[0-9]+-[a-z0-9-]+$` |
+| Branch behind `main` (TC-2806) | 0 commits - it is ahead, never behind, so the publish will fast-forward |
+| Branch ahead of `main` | 1 commit |
+| `main` after the work | Still `59fc4aa` - untouched, which is the whole point |
+
+**One failure found and fixed while proving this.** Two guards in
+`tests/r28-branch-workflow.spec.ts` first failed because their regexes assumed
+the sentence sat on one line, while `AGENTS.md` wraps prose at 80 columns
+("`main`" ended a line before "is never edited directly"). The document was
+correct; the guards were too literal. They now allow the line break
+(`\s+`) instead of a single space. Nothing in `AGENTS.md` was weakened to make
+a test pass - the failing assertion was the test.
+
+**Design notes.**
+
+- `main` is moved only at publish step 5, after deploy, evidence and the single
+  change-log cycle have all happened on the branch. So `main` never contains a
+  state that was not deployed and verified.
+- `--ff-only` is what keeps `main` linear. If it ever fails because `main`
+  moved, the rule is to rebase and re-verify, never to force-push and never to
+  add a merge commit.
+- Pushing the work branch before approval is now explicitly allowed and defined
+  as *not* publishing, because it cannot affect `main` or production. Merging,
+  deploying and the Firestore sync remain gated on the owner's OK.
+
+**Evaluation:** R28 implemented and verified locally on its branch. Awaiting
+owner approval before pushing the branch, deploying, or merging to `main`.
