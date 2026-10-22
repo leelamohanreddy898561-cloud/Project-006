@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-22T06:15:47.373Z",
+  "generatedAt": "2026-10-22T07:13:42.413Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 34,
+    "commits": 37,
     "fileChanges": {
-      "M": 144,
-      "D": 3,
-      "A": 77
+      "M": 158,
+      "A": 86,
+      "D": 3
     },
     "latestVerification": null,
     "requirementsImplemented": [
@@ -1321,6 +1321,131 @@
       "short": "7e6dee8",
       "date": "2026-10-22T11:45:32+05:30",
       "subject": "docs: evidence for R22 publish (R22)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "b8e577697b8be17692cc125b5dd0d326f7105961",
+      "short": "b8e5776",
+      "date": "2026-10-22T11:48:00+05:30",
+      "subject": "chore: regenerate changeLog.json (R22 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "c52c8f53072580dbd036ce32fbed1ef9dbbf5451",
+      "short": "c52c8f5",
+      "date": "2026-10-22T12:05:27+05:30",
+      "subject": "feat: blog detail page with sticky action rail (R23)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "package-lock.json"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/CommentSection.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/CommentSection.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/ShareRail.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/ShareRail.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/icons.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/data/postBodies.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/data/posts.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/markdown.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/PostDetail.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/PostDetail.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/styles/base.css"
+        },
+        {
+          "status": "M",
+          "path": "src/styles/tokens.css"
+        },
+        {
+          "status": "M",
+          "path": "src/types/post.ts"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r23-post-detail.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "04096f82883e8947ddf36f12a9a5b18f73bb92a3",
+      "short": "04096f8",
+      "date": "2026-10-22T12:43:17+05:30",
+      "subject": "docs: record R23 publish in evidence (R23)",
       "requirements": [],
       "verification": null,
       "notes": "",
