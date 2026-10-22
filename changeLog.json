@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-22T11:20:49.533Z",
+  "generatedAt": "2026-10-22T11:35:47.939Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 48,
+    "commits": 52,
     "fileChanges": {
-      "M": 196,
-      "A": 97,
+      "M": 204,
+      "A": 98,
       "D": 3
     },
     "latestVerification": null,
@@ -1759,6 +1759,86 @@
       "short": "d48703e",
       "date": "2026-10-22T16:50:16+05:30",
       "subject": "docs: record R27 publish; mark R27 latest (R27)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "59fc4aa8dc1c2e19d3d83e4eb30ee019dd7bb9cf",
+      "short": "59fc4aa",
+      "date": "2026-10-22T16:53:05+05:30",
+      "subject": "chore: regenerate changeLog.json (R27 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "8db28782e82df2a6f1f412e435d0ea5625f59c77",
+      "short": "8db2878",
+      "date": "2026-10-22T17:00:03+05:30",
+      "subject": "docs: one branch per requirement; main only receives published work (R28)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r28-branch-workflow.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "d954750dbc2ca7b004d1cddbfca7e1b934ac0b7f",
+      "short": "d954750",
+      "date": "2026-10-22T17:00:20+05:30",
+      "subject": "docs: evidence for R28 (R28)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "dfb872620f335c3d7593e2b88fdf2ded0e7232c9",
+      "short": "dfb8726",
+      "date": "2026-10-22T17:05:16+05:30",
+      "subject": "docs: record R28 publish; mark R28 latest (R28)",
       "requirements": [],
       "verification": null,
       "notes": "",
