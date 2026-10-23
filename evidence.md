@@ -923,11 +923,11 @@ themes in `tokens.css`; the R19 hover lift now actually casts a shadow.
 
 ---
 
-### 2026-10-22 — R23 published
+### 2026-10-22 ï¿½ R23 published
 
 **Approval:** owner replied "push to github and deploy it in my firebase" after
 reviewing the local build.
-**Scope:** R23 — blog detail page.
+**Scope:** R23 ï¿½ blog detail page.
 **Commands run, in order:**
 
     git status --short          # clean
@@ -943,13 +943,13 @@ reviewing the local build.
 
 | Step | Result |
 | --- | --- |
-| Secret scan | No `.env`, no service account files, no `AIza…` keys, no private key blocks in tracked files |
+| Secret scan | No `.env`, no service account files, no `AIzaï¿½` keys, no private key blocks in tracked files |
 | Push | `b8e5776..c52c8f5  main -> main`; 0 commits ahead afterwards |
 | Build | Clean; 110.66 kB JS / 4.92 kB CSS gzipped (budgets 150 / 25) |
 | Deploy | `hosting[project-006-e6ae1]: release complete` ? https://project-006-e6ae1.web.app |
 | Production suite | **62 passed, 1 skipped** (skipped = the dev-only R16 Firebase hook), exit 0 |
 
-**Live verification:** `/blog/mixture-of-experts` renders on the deployed site —
+**Live verification:** `/blog/mixture-of-experts` renders on the deployed site ï¿½
 the R23 test suite ran against `PLAYWRIGHT_BASE_URL` and passed in full, so the
 route, sticky rail, comments, related articles, contrast, and mobile layout are
 confirmed in production rather than only locally.
@@ -957,12 +957,12 @@ confirmed in production rather than only locally.
 **Evaluation:** R23 published. The live site now serves the blog detail page.
 ---
 
-### 2026-10-22 — Sign in and sign up pages (R24)
+### 2026-10-22 ï¿½ Sign in and sign up pages (R24)
 
 **Scope:** `/signin` and `/signup` as real glassmorphic pages with email +
 password, a "Sign in with Google" button, soft AI gradient glows, and a single
-Firebase seam. UI only — nothing is authenticated.
-**Test cases:** TC-2401–TC-2418, plus the full regression suite
+Firebase seam. UI only ï¿½ nothing is authenticated.
+**Test cases:** TC-2401ï¿½TC-2418, plus the full regression suite
 **Commands run:**
 
     npm run build
@@ -976,9 +976,9 @@ Firebase seam. UI only — nothing is authenticated.
 | --- | --- | --- | --- |
 | TC-2401 | R24.1 | pass | Both routes render an auth card; no `Coming soon` / `.placeholder` remains |
 | TC-2402 | R24.2 | pass | Email, password, Google and submit all present on both pages |
-| TC-2403 | R24.3 | pass | `Sign in — AI Pulse` / `Create your account — AI Pulse`; restored on leaving |
-| TC-2404 | R24.4 | pass | Card background alpha 0–1, `backdrop-filter` contains `blur`, border alpha > 0, shadow set |
-| TC-2405 | R24.5–24.6 | pass | Three glow layers, each with a gradient, `aria-hidden="true"`, `pointer-events: none` |
+| TC-2403 | R24.3 | pass | `Sign in ï¿½ AI Pulse` / `Create your account ï¿½ AI Pulse`; restored on leaving |
+| TC-2404 | R24.4 | pass | Card background alpha 0ï¿½1, `backdrop-filter` contains `blur`, border alpha > 0, shadow set |
+| TC-2405 | R24.5ï¿½24.6 | pass | Three glow layers, each with a gradient, `aria-hidden="true"`, `pointer-events: none` |
 | TC-2406 | R24.7 | pass | Empty submit ? two errors, live region still empty |
 | TC-2407 | R24.7 | pass | `not-an-email` ? email error; `short` ? 8-character error |
 | TC-2408 | R24.8 | pass | `aria-invalid="true"`, `aria-describedby` resolves to a `role="alert"` node |
@@ -1005,7 +1005,7 @@ colour that never appears on screen.
    and silently returned `""`. Switched to direct `getComputedStyle` properties.
 2. **TC-2417 (my own test, second failure):** then it failed *only inside the
    full suite*, reporting 2.90:1 for the switch link in dark mode. That is the
-   light-theme accent measured against the dark card — the sample landed
+   light-theme accent measured against the dark card ï¿½ the sample landed
    mid-transition, because `base.css` animates `a { transition: color }`. The
    resting colour is 6.3:1. Fixed by injecting a `transition: none` style before
    switching theme, so the test measures the settled state. Confirmed stable
@@ -1017,21 +1017,21 @@ colour that never appears on screen.
 4. **TC-1808 (R18) updated, not weakened:** it expected the placeholder headings
    "Sign In" / "Sign Up". R24 replaces those pages, so the expectation moved to
    the real headings ("Welcome back" / "Create your account"). The test still
-   asserts that every header destination renders a visible `h1` — its meaning is
+   asserts that every header destination renders a visible `h1` ï¿½ its meaning is
    unchanged.
 
 **Deliberate placeholder decisions (flagged for the owner):**
 1. **Nothing is authenticated.** `src/lib/auth.ts` returns a "not connected"
-   outcome for all three calls and the UI says exactly that — it never fakes a
+   outcome for all three calls and the UI says exactly that ï¿½ it never fakes a
    session or an account.
 2. **No Firebase Auth provider is enabled**, so enabling it is a separate step
    (console access) plus a one-file change in `src/lib/auth.ts`. The page code
    does not need to change.
-3. **Email format checking is client-side and permissive** — it exists to give
+3. **Email format checking is client-side and permissive** ï¿½ it exists to give
    fast feedback, not to decide what a valid account is. The provider decides.
-4. **No "forgot password", "remember me" or terms checkbox** — none were asked
+4. **No "forgot password", "remember me" or terms checkbox** ï¿½ none were asked
    for, and each implies behaviour that does not exist yet.
-5. **Dark-mode `--color-text-subtle` (#64748b) measures ˜3.98:1 on the dark
+5. **Dark-mode `--color-text-subtle` (#64748b) measures ï¿½3.98:1 on the dark
    background**, below AA for normal text. R24 avoids it entirely (the auth
    pages use `--color-text-muted`), but other pages still use it. This needs a
    token fix in the accessibility pass (R11) and is recorded here rather than
@@ -1039,13 +1039,13 @@ colour that never appears on screen.
 
 **Artifacts:** none new.
 **Evaluation:** R24 complete and green.
-**Commit:** local only — **awaiting owner approval before push/deploy**
+**Commit:** local only ï¿½ **awaiting owner approval before push/deploy**
 ---
 
-### 2026-10-22 — R24 published
+### 2026-10-22 ï¿½ R24 published
 
 **Approval:** owner replied "ok" after reviewing the local build.
-**Scope:** R24 — sign in and sign up pages.
+**Scope:** R24 ï¿½ sign in and sign up pages.
 **Commands run, in order:**
 
     git status --short
@@ -1061,7 +1061,7 @@ colour that never appears on screen.
 
 | Step | Result |
 | --- | --- |
-| Secret scan | No `.env`, no service account files, no `AIza…` keys. The single `BEGIN PRIVATE KEY` hit is this file's own recorded command text, not a key |
+| Secret scan | No `.env`, no service account files, no `AIzaï¿½` keys. The single `BEGIN PRIVATE KEY` hit is this file's own recorded command text, not a key |
 | Push | `eb2947c..2648d85  main -> main`; 0 commits ahead afterwards |
 | Build | Clean; 112.28 kB JS / 5.59 kB CSS gzipped (budgets 150 / 25) |
 | Deploy | `hosting[project-006-e6ae1]: release complete` ? https://project-006-e6ae1.web.app |
@@ -1077,13 +1077,13 @@ production rather than only locally.
 function exists behind them yet.
 ---
 
-### 2026-10-22 — Test runs no longer mutate evidence; AGENTS.md current state (R25, R26)
+### 2026-10-22 ï¿½ Test runs no longer mutate evidence; AGENTS.md current state (R25, R26)
 
 **Scope:** two fixes only, no new features.
-1. R25 — a test run must never change a committed file.
-2. R26 — `AGENTS.md` Section 9 must describe what is actually published.
+1. R25 ï¿½ a test run must never change a committed file.
+2. R26 ï¿½ `AGENTS.md` Section 9 must describe what is actually published.
 
-**Test cases:** TC-2501–TC-2508, TC-2601–TC-2604, plus the full regression suite
+**Test cases:** TC-2501ï¿½TC-2508, TC-2601ï¿½TC-2604, plus the full regression suite
 **Commands run:**
 
     npm run build
@@ -1100,7 +1100,7 @@ function exists behind them yet.
 | Test case | AC | Result | Notes |
 | --- | --- | --- | --- |
 | TC-2501 | R25.1 | pass | `git status --porcelain` byte-identical before and after a full run; repeated on the committed tree, empty after both runs |
-| TC-2502 | R25.2 | pass | Helper resolves to `test-results/screenshots/`; the three captures (r1-hero, r18-header-light, r18-header-dark, 140–145 kB each) exist there after the run |
+| TC-2502 | R25.2 | pass | Helper resolves to `test-results/screenshots/`; the three captures (r1-hero, r18-header-light, r18-header-dark, 140ï¿½145 kB each) exist there after the run |
 | TC-2503 | R25.3 | pass | Every `page.screenshot` in every spec goes through `screenshotPath(...)` |
 | TC-2504 | R25.4 | pass | No spec contains the tracked evidence path, quoted or bare |
 | TC-2505 | R25.5 | pass | No `.gitignore` rule matches `evidence/`; `test-results/` is ignored |
@@ -1112,7 +1112,7 @@ function exists behind them yet.
 `tests/helpers/screenshots.ts` resolves `test-results/screenshots/` by default
 and `evidence/screenshots/` only when `EVIDENCE_SCREENSHOTS=1`, which only
 `npm run evidence:screenshots` sets. The three specs that wrote literal
-`evidence/…` paths now call `screenshotPath(name)`.
+`evidence/ï¿½` paths now call `screenshotPath(name)`.
 
 **R26 results:**
 
@@ -1120,8 +1120,8 @@ and `evidence/screenshots/` only when `EVIDENCE_SCREENSHOTS=1`, which only
 | --- | --- | --- | --- |
 | TC-2601 | R26.1 | pass | Section 9 contains "R24 is the most recent requirement published to production" |
 | TC-2602 | R26.2 | pass | R15 still present and labelled "superseded by R18" |
-| TC-2603 | R26.3 | pass | Every `### R#` in `requirements.md` is either named in Section 9 or inside the declared R2–R13 range |
-| TC-2604 | R26.4 | pass | `AGENTS.md` 112.3 / 5.6 vs evidence 112.28 / 5.59 — within 1 kB |
+| TC-2603 | R26.3 | pass | Every `### R#` in `requirements.md` is either named in Section 9 or inside the declared R2ï¿½R13 range |
+| TC-2604 | R26.4 | pass | `AGENTS.md` 112.3 / 5.6 vs evidence 112.28 / 5.59 ï¿½ within 1 kB |
 
 **Guard test added so this cannot drift again:** `tests/r26-agents-state.spec.ts`
 parses `requirements.md` for every requirement ID and fails if Section 9 stops
@@ -1130,13 +1130,13 @@ the most recent figure recorded here.
 
 **One defect found during the run (my own guard, implementation untouched):**
 TC-2504 failed on its *own* source file. Its assertion message read
-`"evidence/ must stay committed…"`, and the guard's `["']evidence\/` pattern
+`"evidence/ must stay committedï¿½"`, and the guard's `["']evidence\/` pattern
 matched the quote in front of that word. Re-worded the message ("The evidence
-folder must stay committed…"); the guard then reported zero offenders.
+folder must stay committedï¿½"); the guard then reported zero offenders.
 
 **Outside the two requested items, one factual correction (flagged):** the
 bundle figure in `AGENTS.md` Section 8 said `83.3 kB / 1.4 kB`. That has been
-wrong since R19 — the real figure is 112.3 kB JS / 5.6 kB CSS. Corrected in the
+wrong since R19 ï¿½ the real figure is 112.3 kB JS / 5.6 kB CSS. Corrected in the
 same commit because Section 9's accuracy was the point of R26. Revert on
 request; it changes no behaviour.
 
@@ -1147,10 +1147,10 @@ commit, which lands before the change-log cycle.
 
 **Artifacts:** none new. `evidence/screenshots/*.png` unchanged by this work.
 **Evaluation:** R25 and R26 complete and green. 88 passed, no skips added.
-**Commit:** local only — **awaiting owner approval before push/deploy**
+**Commit:** local only ï¿½ **awaiting owner approval before push/deploy**
 ---
 
-### 2026-10-22 — R25 and R26 published
+### 2026-10-22 ï¿½ R25 and R26 published
 
 **Approval:** owner replied "ok" after reviewing the local build.
 **Scope:** R25 (test runs no longer mutate committed evidence), R26 (AGENTS.md
@@ -1171,12 +1171,12 @@ Section 9 kept accurate).
 
 | Step | Result |
 | --- | --- |
-| Secret scan | Clean — no `.env`, no service account files, no keys in tracked files |
+| Secret scan | Clean ï¿½ no `.env`, no service account files, no keys in tracked files |
 | Push | `1ad7b52..a96c101  main -> main` |
-| Build | Clean; 112.28 kB JS / 5.59 kB CSS gzipped — **byte-identical to R24** (`index-BJkolB8H.js`, `index-DJ3hfQbW.css`), because this release changed only tests, scripts and docs |
+| Build | Clean; 112.28 kB JS / 5.59 kB CSS gzipped ï¿½ **byte-identical to R24** (`index-BJkolB8H.js`, `index-DJ3hfQbW.css`), because this release changed only tests, scripts and docs |
 | Deploy | `hosting[project-006-e6ae1]: release complete` |
 | Production suite | **87 passed, 1 skipped**, exit 0 |
-| Working tree after production run | Clean — `evidence/` untouched, so R25 holds against the deployed target too |
+| Working tree after production run | Clean ï¿½ `evidence/` untouched, so R25 holds against the deployed target too |
 
 **Network incident during verification (worth recording):** the first three
 production runs came back red with *different* tests failing each time. The
@@ -1184,7 +1184,7 @@ cause was not the application. Measured against the same URL:
 
 | Asset | Time |
 | --- | --- |
-| `index.html` (1.5 kB) | 48–1753 ms |
+| `index.html` (1.5 kB) | 48ï¿½1753 ms |
 | `index-BJkolB8H.js` (344 kB) | 16.7 s, 19.1 s, 30.4 s, 39.8 s, 57.1 s, 17.3 s, 23.9 s |
 
 Every 344 kB bundle download was consuming most or all of the 30 s per-test
@@ -1452,3 +1452,36 @@ because nothing is awaiting.
 **Evaluation:** R28 published. Subsequent requirements are built on their own
 branches, and `main` only ever advances by fast-forward to an approved,
 deployed, verified tip.
+---
+
+### 2026-10-23 - R30 lean loop and consolidated workflow guards (implementation)
+
+**Scope:** R30 - make the loop cheap without weakening the gate, as approved
+after the cost review: tiered verification, capped test cases, short evidence,
+and the sixteen R25-R28 document guards consolidated into one spec. No
+application code changed.
+
+**Branch:** `chore/r30-lean-loop`, from `main` at `1e4135b`, level with it
+(`git rev-list --count HEAD..main` = 0).
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run lint
+    npx.cmd playwright test tests/workflow-guards.spec.ts --reporter=line
+    npx.cmd playwright test --reporter=dot
+    npm.cmd run verify:prod
+    git status --short
+
+**Results:** build exit 0 - 112.28 kB JS / 5.59 kB CSS gzipped, unchanged;
+lint exit 0; consolidated guards 6/6 green on the first run; full suite
+**86 passed** (96 - 16 retired + 6 consolidated); `verify:prod` exits 1 and
+names `PLAYWRIGHT_BASE_URL`; tree clean of run artifacts (R25 holds).
+
+**This entry is the new format in use,** and the run behind it is the new loop
+in use: the fast loop proved the consolidation alone (7.6 s), the full suite
+ran exactly once, and its output was three lines instead of a hundred. The two
+guard failures that cost R29 two extra full runs could not recur here.
+
+**Evaluation:** R30 implemented and verified on its branch - simpler rules,
+ten fewer tests, approval gate untouched. Awaiting the owner's review.

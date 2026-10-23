@@ -469,6 +469,26 @@ a straight line of states that were each verified and published.
 
 ---
 
+### R30 — Lean loop and consolidated workflow guards
+
+The workflow had accumulated cost that no longer bought quality: sixteen tests
+read our own documents back, a documentation typo forced a full-suite re-run,
+every requirement restated test cases that already existed, and evidence
+entries had grown to sixty lines. This requirement makes the loop cheap
+without weakening the gate — verification is tiered, test cases are capped,
+evidence is short, and the document guards live in one spec.
+
+- **AC30.1** `AGENTS.md` Section 2 describes the lean loop: a fast loop while working (build, lint, the touched spec), exactly **one** full-suite run before review, and after a fix re-running only the affected spec unless shared code changed.
+- **AC30.2** Section 2 caps new test cases at four per requirement (a consolidated group of existing guards counts as one) and requires citing an existing TC instead of writing a duplicate.
+- **AC30.3** Section 2 requires a short evidence entry — commands, a one-line result each, artifacts, an evaluation sentence — instead of an exhaustive one.
+- **AC30.4** The document and workflow guards from R25–R28 (16 tests) are consolidated into a single spec; every distinct assertion they made is still made. The guard count drops; the coverage does not.
+- **AC30.5** The four retired spec files are removed from the repository and from the `AGENTS.md` Section 5 file map, and the consolidated spec is named there.
+- **AC30.6** The branch rule, the fast-forward publish, the rebase rule, the ban on force-push and merge commits, and "pushing a work branch is not publishing" are all still asserted by the consolidated spec.
+- **AC30.7** The full local suite still passes and is smaller than before (86 expected, from 96), and `npm run verify:prod` is unchanged.
+- **AC30.8** The approval gate (Section 3) and the non-negotiables (Section 4) are unchanged — simplification never touches the gate.
+
+---
+
 ## 8. Open Questions
 
 - [ ] Confirm the blog name and branding (currently "Signal & Noise").

@@ -47,26 +47,37 @@ because it looks done — only because it was run and recorded.
 
 ## 2. The workflow — every request, every time
 
+The loop is deliberately cheap: targeted checks while working, **one**
+full-suite run at the gate, short evidence. Rigor lives in the gate, not in
+repetition — re-running every test to re-prove a typo is waste, not proof.
+
 0. **Branch** — before touching a file, branch off an up-to-date `main`:
    `<type>/r<N>-<slug>`, where `<type>` is `feature`, `fix`, `chore` or `docs`
    (for example `feature/r2-blog-list`). **One requirement per branch.** `main`
    is never edited directly; it only ever receives work that has been approved
    and published.
 1. **Specify** — add or update a requirement (`R#`) in `requirements.md` with
-   testable acceptance criteria. Even the smallest change gets an ID.
+   testable acceptance criteria. Even the smallest change gets an ID. Prose
+   only for new or changed criteria; cite existing ones by ID.
 2. **Plan tests** — add test cases (`TC#`) to `test-cases.md`, each mapped to
-   the requirement ID, with concrete steps and expected results, typed `auto`
-   or `manual`.
-3. **Checklist** — add the work items to `checklist.md`, tagged with the
+   the requirement ID, typed `auto` or `manual`. **Cap: four new test cases per
+   requirement** (a consolidated group of existing guards counts as one). If a
+   check already exists, cite its TC instead of writing a duplicate.
+3. **Checklist** — three to five work items in `checklist.md`, tagged with the
    requirement ID.
 4. **Implement** — write the code.
-5. **Execute automated tests** — Playwright for anything in a browser; CLI for
-   build, lint, and bundle sizes; read-backs for Firestore/git state.
-   **Never claim a test passed without running it.**
-6. **Evaluate** — pass/fail per test case. If anything fails, fix and re-run.
-   If it cannot be made green, **stop and ask**.
-7. **Evidence** — append a dated entry to `evidence.md`: exact commands,
-   results table, artifacts, and an evaluation summary.
+5. **Verify while working (fast loop)** — `npm run build`, `npm run lint`, and
+   the spec(s) you touched. Seconds, small output. **Never claim a test passed
+   without running it.**
+6. **Verify before review (the gate)** — **one** full run:
+   `npx playwright test --reporter=dot`. If something fails, fix it and re-run
+   only the affected spec; run the full suite again **only when the fix touched
+   shared code** (header, `src/lib/*`, routing, config, shared helpers). One
+   green full run before commit is the proof. If a test cannot be made green,
+   **stop and ask**.
+7. **Evidence** — append a dated entry to `evidence.md`: the commands, a
+   one-line result each, artifacts, and an evaluation sentence. Ten lines, not
+   sixty.
 8. **Commit locally** — commit on the branch with the requirement ID in the
    message. **Do not merge to `main` and do not deploy.**
 9. **Present for visual review** — start the dev server, give you the URL, and
@@ -171,7 +182,7 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/helpers/contrast.ts` | Shared WCAG contrast helper |
 | `tests/helpers/screenshots.ts` | Single source of truth for where captures are written (R25) |
 | `tests/helpers/smoke.ts` | The production smoke subset and its coverage map (R27) |
-| `tests/r28-branch-workflow.spec.ts` | Guards the branch rule in `AGENTS.md` (R28) |
+| `tests/workflow-guards.spec.ts` | The consolidated document and workflow guards (R30; absorbs the R25–R28 guards) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
 | `scripts/capture-evidence.mjs` | Runs the suite with `EVIDENCE_SCREENSHOTS=1` to refresh `evidence/screenshots/` (R25) |
 | `scripts/verify-prod.mjs` | Runs the `@smoke` subset against the deployed site — the production check (R27) |
@@ -252,6 +263,9 @@ deliberately, so a growing repository is expected rather than a leak.
   R27 (production verification runs a smoke subset), R28 (one branch per
   requirement; `main` only receives approved work, fast-forwarded).
   **R28 is the most recent requirement published to production.**
+- **Awaiting owner approval:** R30 (lean loop and consolidated workflow
+  guards), implemented on `chore/r30-lean-loop`. Not merged, not deployed,
+  change log not synced.
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).

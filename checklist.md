@@ -191,6 +191,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R28.6) Full suite green; `verify:prod` unchanged
 - [ ] Execute TC-2501–TC-2604; evidence entry; local commit; await owner approval
 
+## Phase 3l - Lean loop and consolidated guards (R30)
+
+- [x] (R30.1-R30.3) Section 2 rewritten as the lean loop: fast loop, one full run at the gate, four-TC cap, short evidence
+- [x] (R30.4-R30.6) 16 R25-R28 guards consolidated into `tests/workflow-guards.spec.ts`; four spec files retired; Section 5 map updated
+- [x] (R30.7) Full suite green at 86 tests; `verify:prod` unchanged
+- [x] (R30.8) Approval gate and non-negotiables untouched
+- [ ] Execute TC-3001-TC-3008; evidence entry; local commit; await owner approval
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

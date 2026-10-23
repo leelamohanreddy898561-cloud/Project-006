@@ -322,6 +322,8 @@ When a requirement area is implemented, add a spec named after it —
 
 ## R25 — Test runs must not mutate committed evidence
 
+> Auto cases TC-2502–TC-2505 were consolidated into TC-3004 by R30.
+
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
 | TC-2501 | cli | Run `npx playwright test`, then `git status --short` | No output — the tree is unchanged |
@@ -335,6 +337,8 @@ When a requirement area is implemented, add a spec named after it —
 
 ## R26 — `AGENTS.md` current state
 
+> Auto cases TC-2601–TC-2604 were consolidated into TC-3002 by R30.
+
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
 | TC-2601 | auto | Read Section 9 of `AGENTS.md` | It names the most recent published requirement, and that ID is the highest one listed as published |
@@ -343,6 +347,8 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2604 | auto | Compare the bundle figure in `AGENTS.md` with the latest evidence entry | Within 1 kB on both JS and CSS |
 
 ## R27 — Published-site smoke subset
+
+> Auto cases TC-2701–TC-2704 were consolidated into TC-3003 by R30.
 
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
@@ -357,6 +363,8 @@ When a requirement area is implemented, add a spec named after it —
 
 ## R28 — One branch per requirement
 
+> Auto cases TC-2801–TC-2804 were consolidated into TC-3005 by R30.
+
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
 | TC-2801 | auto | Read Section 2 step 0 and Section 4 of `AGENTS.md` | They require one branch per requirement, name the `<type>/r<N>-<slug>` pattern with all four types, and forbid editing `main` directly |
@@ -366,3 +374,25 @@ When a requirement area is implemented, add a spec named after it —
 | TC-2805 | cli | Run `git branch --show-current` during development | Matches `^(feature\|fix\|chore\|docs)/r[0-9]+-[a-z0-9-]+$` |
 | TC-2806 | cli | Run `git rev-list --count HEAD..main` while working | 0 — the branch is ahead of `main`, never behind it |
 | TC-2807 | cli | After publishing: compare `git rev-parse main` with `git rev-parse HEAD`, then `git log --merges --oneline main` | Same commit; no merge commits on `main` |
+
+## R30 — Lean loop and consolidated workflow guards
+
+The R25–R28 auto guards were sixteen tests across four files; R30 carries the
+same assertions in six tests in one file (`tests/workflow-guards.spec.ts`).
+The R25–R28 CLI cases stay where they are — they assert on real run and git
+state and are recorded in evidence.md.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-3001 | auto | Read Section 2 of `AGENTS.md` | States the fast loop, the one-full-run gate, re-run-only-the-affected-spec, the four-TC cap with cite-don't-duplicate, and the short evidence entry (AC30.1–AC30.3) |
+| TC-3002 | auto | Read Section 9 against `requirements.md` and the latest `evidence.md` entry | Latest published requirement named and highest; every requirement accounted for; superseded ones kept; bundle figure within 1 kB (was TC-2601–TC-2604) |
+| TC-3003 | auto | Compare `@smoke`-tagged tests with `SMOKE_SUITE`, check coverage and size, read `package.json` and `scripts/verify-prod.mjs` | Sets agree, every required route class covered, 6–12 members, `verify:prod` demands `PLAYWRIGHT_BASE_URL` and forbids retries (was TC-2701–TC-2704) |
+| TC-3004 | auto | Read `tests/helpers/screenshots.ts`, every spec, and `.gitignore` | Captures default to `test-results/screenshots/`, all go through `screenshotPath()`, no spec names a tracked evidence path, `evidence/` stays tracked and `test-results/` ignored (was TC-2502–TC-2505) |
+| TC-3005 | auto | Read Sections 2, 3 and 4 of `AGENTS.md` | One branch per requirement with all four types, `main` never edited directly, `--ff-only` publish, rebase-and-re-verify, force-push and merge commits forbidden, pushing a branch is not publishing (was TC-2801–TC-2804) |
+| TC-3006 | auto | List `tests/*.spec.ts` and read the Section 5 file map | The four retired guard specs are gone, the consolidated spec exists and carries at least six tests, and the file map names it and none of the retired four (AC30.4, AC30.5) |
+| TC-3007 | cli | Run the full suite, then `git status --short` | 86 tests green; the tree is unchanged (AC30.7) |
+| TC-3008 | cli | Run `npm run verify:prod` with `PLAYWRIGHT_BASE_URL` unset | Exits non-zero naming the variable; unchanged behaviour (AC30.7) |
+
+**Consolidated by R30** (auto cases only; the CLI and manual cases above them
+still stand as written): TC-2502–TC-2505 → TC-3004; TC-2601–TC-2604 →
+TC-3002; TC-2701–TC-2704 → TC-3003; TC-2801–TC-2804 → TC-3005.
