@@ -1485,3 +1485,42 @@ guard failures that cost R29 two extra full runs could not recur here.
 
 **Evaluation:** R30 implemented and verified on its branch - simpler rules,
 ten fewer tests, approval gate untouched. Awaiting the owner's review.
+---
+
+### 2026-10-23 - R30 published
+
+**Approval:** owner replied "Okay, push the ER30 lean loop fixes to GitHub and
+complete deploying the change log synchronizer."
+
+**Scope:** R30 - lean loop in Section 2 and the sixteen R25-R28 document guards
+consolidated into one six-test spec. No application code changed.
+
+**Branch:** `chore/r30-lean-loop` (base `1e4135b`). Everything below happened
+on the branch; `main` was moved only at step 5.
+
+**Commands:**
+
+    git ls-files | Select-String -Pattern '^\.env$|serviceAccount|\.pem$|\.key$'
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{35}" -- . ':!evidence.md'
+    git push -u origin chore/r30-lean-loop
+    npm.cmd run build
+    npm.cmd run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"
+    npm.cmd run verify:prod
+    npm.cmd run changelog
+    npm.cmd run sync:changes
+    npm.cmd run verify:changes
+    git checkout main; git merge --ff-only chore/r30-lean-loop
+    git push origin main
+
+**Results:** secret scan clean; branch pushed (`origin/main` still `1e4135b`);
+build exit 0, 112.28 kB JS / 5.59 kB CSS gzipped; deploy `hosting[project-006-e6ae1]:
+release complete`; production check **8 passed in 13.1 s**; change log synced
+and read-back verified; `main` fast-forwarded with no merge commit.
+
+**AGENTS.md updated in the same publish:** R30 joins the published list and is
+named the most recent requirement; the "awaiting owner approval" line is gone.
+R29 remains on its own branch, still awaiting the owner's OK.
+
+**Evaluation:** R30 published. The loop is now lean by default: fast checks
+while working, one full run at the gate, short evidence, guards in one file.

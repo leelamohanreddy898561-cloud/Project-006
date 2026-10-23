@@ -261,11 +261,9 @@ deliberately, so a growing repository is expected rather than a leak.
   R23 (blog detail page), R24 (sign in and sign up pages), R25 (test runs never
   mutate committed evidence), R26 (this section kept accurate by a guard test),
   R27 (production verification runs a smoke subset), R28 (one branch per
-  requirement; `main` only receives approved work, fast-forwarded).
-  **R28 is the most recent requirement published to production.**
-- **Awaiting owner approval:** R30 (lean loop and consolidated workflow
-  guards), implemented on `chore/r30-lean-loop`. Not merged, not deployed,
-  change log not synced.
+  requirement; `main` only receives approved work, fast-forwarded),
+  R30 (lean loop; the sixteen workflow guards consolidated into one spec).
+  **R30 is the most recent requirement published to production.**
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).
