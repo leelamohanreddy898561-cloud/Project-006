@@ -1685,3 +1685,36 @@ AND-based; combined `q` + `topic` + `tag` survives a direct load.
 **Evaluation:** R2's acceptance criteria are met on the branch and the suite is
 green. Awaiting the owner's visual review at http://localhost:5173/blog before
 anything is published.
+
+---
+
+### 2026-10-23 - R2 published
+
+**Approval:** owner replied "OK, great job on R2!" and asked for the publish
+sequence.
+
+**Commands:**
+
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{20,}|BEGIN ... PRIVATE KEY" -- . ':!changeLog.json'
+    git push -u origin feature/r2-blog-list
+    npm.cmd run build && npm.cmd run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+    npm.cmd run changelog && npm.cmd run sync:changes && npm.cmd run verify:changes
+    npx.cmd playwright test tests/workflow-guards.spec.ts --reporter=dot
+
+**Results:** secret scan clean (only the recorded command text in old evidence
+matches); branch pushed; build 116.20 kB JS / 6.13 kB CSS gzipped; Firebase
+`release complete`; production smoke **9 passed in 15.6 s**, including the new
+TC-201 against the live `/blog`; change log **61 entries, 3 new**, read-back
+"all entries present"; guard spec green.
+
+**Doc change:** R2 landed after R30, so "latest published" is no longer the
+highest requirement number. TC-3002 now checks the Section 9 claim against the
+newest publish entry in this file instead of `max(id)`; the rest of the guard is
+unchanged and the decision is recorded in `requirements.md`.
+
+**Publish state:** `main` is fast-forwarded to this branch after the evidence
+commit — no merge commit, no force-push.
+
+**Evaluation:** R2 is live: the blog index, search, topic and tag filters work on
+the deployed site, and the count/empty-state behaviour is proven in production.

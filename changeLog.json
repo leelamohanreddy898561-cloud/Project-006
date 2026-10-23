@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-23T10:26:26.254Z",
+  "generatedAt": "2026-10-23T11:46:15.404Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 58,
+    "commits": 61,
     "fileChanges": {
-      "M": 228,
-      "A": 104,
+      "M": 243,
+      "A": 107,
       "D": 7
     },
     "latestVerification": null,
@@ -2052,6 +2052,111 @@
         {
           "status": "M",
           "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "53e487ebe214ec412437a44a7fa44cbbaeddfb5f",
+      "short": "53e487e",
+      "date": "2026-10-23T15:58:45+05:30",
+      "subject": "chore: regenerate changeLog.json (R29 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "1eb7e3496f3ece68a1568b9ff21d75f2668167a7",
+      "short": "1eb7e34",
+      "date": "2026-10-23T16:46:26+05:30",
+      "subject": "feat: blog list with search, topic and tag filters (R2)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/BlogCard.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/BlogCard.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/data/posts.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/BlogList.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/BlogList.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/helpers/smoke.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r2-blog-list.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "9a048ad01fedcec799e562cf0a0ee5a11bafa8f5",
+      "short": "9a048ad",
+      "date": "2026-10-23T17:15:26+05:30",
+      "subject": "docs: record R2 publish; publish R2 in AGENTS Section 9 (R2)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/workflow-guards.spec.ts"
         }
       ]
     }
