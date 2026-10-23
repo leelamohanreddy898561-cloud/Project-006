@@ -85,9 +85,9 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R18) Glassmorphism `Header`: brand, navigation, search, theme toggle, auth buttons
 - [x] (R9, R18) `ThemeToggle` with `localStorage` persistence and system-preference default
 - [ ] (R1) `Footer` with navigation and copyright
-- [ ] (R1) `PostCard` (title, excerpt, date, reading time, tags)
-- [ ] (R2) `PostList` / grid with empty state (R2.5)
-- [ ] (R2) `SearchBar`
+- [x] (R1, R2, R19) `BlogCard` — title, excerpt, read time, category, author, bookmark; date and tags shown on `/blog`
+- [x] (R2) `BlogList` grid with empty state (R2.5) and result count (R2.6)
+- [x] (R2) Search bar and topic/tag filter chips (R2.2–R2.4, R2.7)
 - [ ] (R3) `TagList`
 - [ ] (R3) `Markdown` renderer + heading anchors (R3.1)
 - [ ] (R3) `TableOfContents` (R3.3)
@@ -212,12 +212,21 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R30.8) Approval gate and non-negotiables untouched
 - [x] Execute TC-3001-TC-3008; evidence entry; local commit; published
 
+## Phase 3n - Blogs list with search and filters (R2)
+
+- [x] (R2.1) `/blog` renders every post newest first with title, excerpt, date, read time, category, tags
+- [x] (R2.2) Search across title/excerpt/category/tags — case-insensitive, every term must match
+- [x] (R2.3, R2.7) Topic and tag chips filter; a second click (or "All") clears
+- [x] (R2.4) `q`, `topic`, `tag` live in the URL and survive a reload
+- [x] (R2.5, R2.6) Friendly empty state; the count matches the cards rendered
+- [x] Execute TC-201–TC-210; evidence entry; local commit; await owner approval
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table
 - [x] (R1) Home: hero + primary CTA button
 - [ ] (R1) Home: featured, latest, and category sections
-- [ ] (R2) AI Updates list with search + filters
+- [x] (R2) Blogs list with search + topic/tag filters
 - [ ] (R3) Post detail with TOC, prev/next, related
 - [ ] (R4) Categories index
 - [ ] (R5) Category detail
@@ -229,8 +238,8 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 ## Phase 6 — Features
 
-- [ ] (R2.2) Client-side search over title/excerpt/tags
-- [ ] (R2.3, R2.4) Category and tag filters reflected in URL params
+- [x] (R2.2) Client-side search over title/excerpt/category/tags
+- [x] (R2.3, R2.4) Topic and tag filters reflected in URL params
 - [ ] (R9.1–R9.4) Theme toggle, persistence, system preference, color change
 - [ ] (R3.1) Styled markdown: headings, code, blockquotes, images
 - [ ] (R3.4, R3.5) Prev/next and related posts

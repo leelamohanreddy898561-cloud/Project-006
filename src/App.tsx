@@ -3,6 +3,7 @@ import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
 import { AuthPage } from "./pages/AuthPage";
+import { BlogList } from "./pages/BlogList";
 import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 
@@ -14,15 +15,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/blog/:slug" element={<PostDetail />} />
-          <Route
-            path="/blog"
-            element={
-              <Placeholder
-                title="Blogs"
-                description="The full post list with search, topic, and tag filters arrives with R2."
-              />
-            }
-          />
+          <Route path="/blog" element={<BlogList />} />
           <Route
             path="/topics"
             element={

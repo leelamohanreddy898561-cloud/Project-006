@@ -169,6 +169,62 @@ export interface Category {
   count: number;
 }
 
+/** Every tag in use, alphabetical — the source for the /blog tag filter (R2). */
+export function getTags(): string[] {
+  return [...new Set(posts.flatMap((post) => post.tags))].sort((a, b) =>
+    a.localeCompare(b),
+  );
+}
+
+export interface PostFilters {
+  /** Free-text search over title, excerpt, category and tags (R2.2). */
+  query: string;
+  /** Topic slug, or "" for every topic (R2.3). */
+  topic: string;
+  /** Exact tag, or "" for every tag (R2.4). */
+  tag: string;
+}
+
+/**
+ * R2 — the /blog filter pipeline. Search is case-insensitive and every term
+ * must match; topic and tag narrow the set further, so all three combine.
+ */
+export function filterPosts(source: Post[], filters: PostFilters): Post[] {
+  const terms = filters.query
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  return source.filter((post) => {
+    if (filters.topic && slugify(post.category) !== filters.topic) {
+      return false;
+    }
+
+    if (
+      filters.tag &&
+      !post.tags.some(
+        (tag) => tag.toLowerCase() === filters.tag.toLowerCase(),
+      )
+    ) {
+      return false;
+    }
+
+    if (terms.length === 0) return true;
+
+    const haystack = [
+      post.title,
+      post.excerpt,
+      post.category,
+      post.tags.join(" "),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return terms.every((term) => haystack.includes(term));
+  });
+}
+
 /** Post categories, most-used first — the single source for topic links. */
 export function getCategories(): Category[] {
   const counts = new Map<string, number>();

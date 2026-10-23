@@ -69,18 +69,20 @@ When a requirement area is implemented, add a spec named after it —
 | TC-1911 | auto | Set viewport to 360×800 | Layout is a single column, articles above sidebar, no horizontal overflow |
 | TC-1912 | auto | Open `/` in both themes | Card title and excerpt contrast ≥ 4.5:1 |
 
-## R2 — AI Updates list with search and filters
+## R2 — Blogs list with search and filters
 
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
-| TC-201 | auto | Open `/blog` | All posts listed, newest first, each showing title, excerpt, date, reading time, category, tags |
-| TC-202 | auto | Type `prompting` in the search box | Only matching posts remain; URL contains `?q=prompting` |
-| TC-203 | auto | Type `routing` in the search box | Matching posts remain; count updates |
-| TC-204 | auto | Click the "News" category chip | Only News posts shown; chip is active; URL contains `?category=news` |
-| TC-205 | auto | Click "All" | Filter cleared, all posts shown again |
-| TC-206 | auto | Type a nonsense term (`zzzz`) | Empty-state message shown |
-| TC-207 | auto | Apply any filter | Displayed count ("N posts") equals number of rendered cards |
-| TC-208 | auto | Load `/blog?category=news` directly | Page opens with the News filter pre-applied |
+| TC-201 | auto | Open `/blog` | All posts listed newest first; each shows title, excerpt, date, reading time, category, and tags (AC2.1) — **@smoke** |
+| TC-202 | auto | Type `PROMPTING` in the search box | Only the Prompting post remains; matching is case-insensitive; URL contains `?q=PROMPTING` (AC2.2, AC2.4) |
+| TC-203 | auto | Type `routing` in the search box | Only the post whose excerpt mentions routing remains; count updates (AC2.2) |
+| TC-204 | auto | Click the "News" topic chip | Only News posts shown; chip is active; URL contains `?topic=news` (AC2.3, AC2.4) |
+| TC-205 | auto | Click "All" | Topic filter cleared; all posts shown again (AC2.3) |
+| TC-206 | auto | Type a nonsense term (`zzzz`) | Empty-state message shown (AC2.5) |
+| TC-207 | auto | Apply any filter | Displayed count ("N posts") equals the number of rendered cards (AC2.6) |
+| TC-208 | auto | Load `/blog?topic=news` directly | Page opens with the News chip active and only News posts shown (AC2.4) |
+| TC-209 | auto | Click the `#models` tag chip, then reload | 3 cards; the chip stays active; the URL still contains `?tag=models` (AC2.4, AC2.7) |
+| TC-210 | auto | Load `/blog?q=small%20local&topic=guides&tag=prompting`, then search `small vision` | First view: exactly 1 post with all three params retained; second: empty state — every search term must match (AC2.2, AC2.4) |
 
 ## R3 — Post detail page
 

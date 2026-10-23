@@ -66,6 +66,12 @@ export const SMOKE_SUITE: SmokeTest[] = [
     why: "Every header destination — and the 404 route — renders a real page.",
   },
   {
+    tc: "TC-201",
+    spec: "r2-blog-list.spec.ts",
+    covers: ["blog-list"],
+    why: "The blog index renders every post, newest first, with its full card.",
+  },
+  {
     tc: "TC-2301",
     spec: "r23-post-detail.spec.ts",
     covers: ["article"],

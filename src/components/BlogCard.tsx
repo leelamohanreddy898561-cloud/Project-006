@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Post } from "../types/post";
-import { slugify } from "../data/posts";
+import { formatDate, slugify } from "../data/posts";
 import { BookmarkIcon, ClockIcon } from "./icons";
 import "./BlogCard.css";
 
 type BlogCardProps = {
   post: Post;
+  /** R2.1 — the /blog list also shows the publication date. */
+  showDate?: boolean;
+  /** R2.1 — the /blog list also shows its tags, each linking to that filter. */
+  showTags?: boolean;
 };
 
 /**
@@ -16,7 +20,7 @@ type BlogCardProps = {
  * The bookmark is a local UI toggle for now; persisting it needs an account
  * (Firebase Auth) and will be wired up with the auth requirement.
  */
-export function BlogCard({ post }: BlogCardProps) {
+export function BlogCard({ post, showDate = false, showTags = false }: BlogCardProps) {
   const [bookmarked, setBookmarked] = useState(false);
 
   return (
@@ -68,6 +72,21 @@ export function BlogCard({ post }: BlogCardProps) {
 
         <p className="blog-card__excerpt">{post.excerpt}</p>
 
+        {showTags && (
+          <ul className="blog-card__tags" aria-label={`Tags for ${post.title}`}>
+            {post.tags.map((tag) => (
+              <li key={tag}>
+                <Link
+                  to={`/blog?tag=${encodeURIComponent(tag)}`}
+                  className="blog-card__tag"
+                >
+                  #{tag}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
         <div className="blog-card__meta">
           <span className="author">
             <span className="author__avatar" aria-hidden="true">
@@ -76,9 +95,16 @@ export function BlogCard({ post }: BlogCardProps) {
             <span className="author__name">{post.author.name}</span>
           </span>
 
-          <span className="blog-card__readtime">
-            <ClockIcon />
-            {post.readingTime} min read
+          <span className="blog-card__meta-end">
+            {showDate && (
+              <time className="blog-card__date" dateTime={post.date}>
+                {formatDate(post.date)}
+              </time>
+            )}
+            <span className="blog-card__readtime">
+              <ClockIcon />
+              {post.readingTime} min read
+            </span>
           </span>
         </div>
       </div>

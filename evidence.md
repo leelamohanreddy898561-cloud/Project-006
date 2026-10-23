@@ -1651,3 +1651,37 @@ Email/Password is proven live by the suite itself.
 
 **Evaluation:** R29 published. Authentication works live: sign up, sign in,
 stay signed in across reloads, sign out - Google pop-up included.
+
+---
+
+### 2026-10-23 - R2 blogs list with search and filters (implementation)
+
+**Scope:** R2 - `/blog` replaces its placeholder with the real index: every post
+newest first, full-text search (`?q=`), topic chips (`?topic=`), tag chips
+(`?tag=`), an empty state and a count that matches the cards. TC-201 joins the
+production smoke subset. No new dependency.
+
+**Branch:** `feature/r2-blog-list`, from `main` at `53e487e`, level with it.
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run lint
+    npx.cmd playwright test tests/r2-blog-list.spec.ts --reporter=dot
+    npx.cmd playwright test --reporter=dot
+    git status --short
+
+**Results:** build exit 0 - **116.20 kB JS / 6.13 kB CSS gzipped** (budgets
+150 / 25); lint exit 0; R2 spec **10 passed** after one race fix in TC-207 (the
+count was read before the filter re-rendered); full suite **100 passed** in
+54.7 s; the run left no change outside this requirement's files (R25 holds).
+
+**Test cases:** TC-201-TC-210, all pass. Search is proven case-insensitive and
+AND-based; combined `q` + `topic` + `tag` survives a direct load.
+
+**Artifacts:** `playwright-report/index.html` (git-ignored),
+`test-results/` failure capture from the first TC-207 run only.
+
+**Evaluation:** R2's acceptance criteria are met on the branch and the suite is
+green. Awaiting the owner's visual review at http://localhost:5173/blog before
+anything is published.

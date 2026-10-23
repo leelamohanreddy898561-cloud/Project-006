@@ -1,8 +1,8 @@
 # Requirements: AI Blog — "Signal & Noise"
 
-**Version:** 2.0 (ID-based format)
-**Date:** 2026-10-21
-**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17, R18, R1 (hero) and R19 implemented, verified and published; R2–R13 not started**
+**Version:** 2.1 (ID-based format)
+**Date:** 2026-10-23
+**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17, R18, R1 (hero) and R19 implemented, verified and published; R2 implemented on `feature/r2-blog-list`, awaiting owner review; R3–R13 not started**
 
 ---
 
@@ -48,6 +48,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-21 | Add Firebase (Auth, Firestore, Storage, Analytics, Hosting) | Supersedes the earlier "no backend in v1" scope note. Content stays in markdown for now; Firebase provides auth, storage, analytics, and hosting. Config via git-ignored `.env`. |
 | 2026-10-21 | Firebase is **lazily initialized** (`getFirebase()`), not eagerly imported | Eager init put 137 kB of SDK in the initial bundle, breaking the R14.1 budget. Nothing in the app uses Firebase yet, so on-demand init restores the budget with zero feature loss. |
 | 2026-10-21 | Brand renamed to **AI Pulse**; nav becomes Home / Topics / Blogs / About; flat header replaced by a glassmorphism design (R18 supersedes R15) | Project owner's new direction. "Categories" renamed to "Topics" everywhere; "AI Updates" relabelled "Blogs". Auth UI (Sign In / Sign Up) enters scope as header controls, backed by the already-integrated Firebase Auth. |
+| 2026-10-23 | `/blog` keeps its filter state in the URL (`q`, `topic`, `tag`); typing replaces the history entry instead of pushing one per keystroke | A filtered view is shareable and reload-safe (R2.4) without the back button stepping through every character typed. |
 
 ## 5. Out of Scope (v1)
 
@@ -140,6 +141,7 @@ Readers can find any post from the main index.
 - **AC2.4** Filters are reflected in the URL (`?q=`, `?topic=`, `?tag=`) so a filtered view is shareable.
 - **AC2.5** When no posts match, an empty-state message is shown.
 - **AC2.6** The result count ("N posts") matches the number of cards rendered.
+- **AC2.7** Clicking a tag chip filters to that tag; clicking it again clears it.
 
 ### R3 — Post detail page
 
