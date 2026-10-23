@@ -407,7 +407,7 @@ state and are recorded in evidence.md.
 | ID | Type | Steps | Expected |
 | --- | --- | --- | --- |
 | TC-3001 | auto | Read Section 2 of `AGENTS.md` | States the fast loop, the one-full-run gate, re-run-only-the-affected-spec, the four-TC cap with cite-don't-duplicate, and the short evidence entry (AC30.1–AC30.3) |
-| TC-3002 | auto | Read Section 9 against `requirements.md` and the latest `evidence.md` entry | Latest published requirement named and highest; every requirement accounted for; superseded ones kept; bundle figure within 1 kB (was TC-2601–TC-2604) |
+| TC-3002 | auto | Read Section 9 against `requirements.md` and the latest `evidence.md` entry | Latest published requirement named and matching the newest publish entry; every requirement accounted for; superseded ones kept; bundle figure within 1 kB (was TC-2601–TC-2604) |
 | TC-3003 | auto | Compare `@smoke`-tagged tests with `SMOKE_SUITE`, check coverage and size, read `package.json` and `scripts/verify-prod.mjs` | Sets agree, every required route class covered, 6–12 members, `verify:prod` demands `PLAYWRIGHT_BASE_URL` and forbids retries (was TC-2701–TC-2704) |
 | TC-3004 | auto | Read `tests/helpers/screenshots.ts`, every spec, and `.gitignore` | Captures default to `test-results/screenshots/`, all go through `screenshotPath()`, no spec names a tracked evidence path, `evidence/` stays tracked and `test-results/` ignored (was TC-2502–TC-2505) |
 | TC-3005 | auto | Read Sections 2, 3 and 4 of `AGENTS.md` | One branch per requirement with all four types, `main` never edited directly, `--ff-only` publish, rebase-and-re-verify, force-push and merge commits forbidden, pushing a branch is not publishing (was TC-2801–TC-2804) |

@@ -140,21 +140,36 @@ test.describe("R30 — AGENTS.md current state still tells the truth", () => {
     // Everything the section claims is published, excluding anything still
     // marked as awaiting approval.
     const publishedPart = section.split(/awaiting owner approval/i)[0];
-    const numbers = [...publishedPart.matchAll(/\bR(\d+)\b/g)].map((match) =>
-      Number(match[1]),
+    const publishedIds = new Set(
+      [...publishedPart.matchAll(/\bR(\d+)\b/g)].map((match) => `R${match[1]}`),
     );
-    expect(numbers.length).toBeGreaterThan(0);
+    expect(publishedIds.size).toBeGreaterThan(0);
 
-    const highest = Math.max(...numbers);
     const claim = section.match(
       /\bR(\d+)\b is the most recent requirement published/i,
     );
 
     expect(claim, "Section 9 must say which requirement is the latest").not.toBeNull();
+    const claimed = `R${claim?.[1]}`;
+
     expect(
-      Number(claim?.[1]),
-      `Section 9 claims R${claim?.[1]} is latest, but R${highest} is listed as published`,
-    ).toBe(highest);
+      publishedIds.has(claimed),
+      `Section 9 claims ${claimed} is the latest, but does not list it as published`,
+    ).toBe(true);
+
+    // Requirement numbers are not publication order — R2 shipped after R30 — so
+    // the claim is checked against the newest publish entry in evidence.md,
+    // not against the highest number in the list.
+    const publishEntries = [...EVIDENCE.matchAll(/^### .*$/gm)]
+      .map((match) => match[0])
+      .filter((line) => /published/i.test(line));
+    const newestPublish = publishEntries.at(-1) ?? "";
+
+    expect(newestPublish, "evidence.md must record a publish entry").not.toBe("");
+    expect(
+      newestPublish,
+      `The newest publish entry in evidence.md does not name ${claimed}`,
+    ).toMatch(new RegExp(`\\b${claimed}\\b`));
 
     // Superseded requirements are kept and labelled, not deleted.
     expect(section).toContain("R15");

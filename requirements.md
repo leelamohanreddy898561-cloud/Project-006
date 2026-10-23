@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17, R18, R1 (hero) and R19 implemented, verified and published; R2 implemented on `feature/r2-blog-list`, awaiting owner review; R3–R13 not started**
+**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17, R18, R1 (hero), R19, R29, R30 and R2 implemented, verified and published; R3–R13 not started**
 
 ---
 
@@ -49,6 +49,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-21 | Firebase is **lazily initialized** (`getFirebase()`), not eagerly imported | Eager init put 137 kB of SDK in the initial bundle, breaking the R14.1 budget. Nothing in the app uses Firebase yet, so on-demand init restores the budget with zero feature loss. |
 | 2026-10-21 | Brand renamed to **AI Pulse**; nav becomes Home / Topics / Blogs / About; flat header replaced by a glassmorphism design (R18 supersedes R15) | Project owner's new direction. "Categories" renamed to "Topics" everywhere; "AI Updates" relabelled "Blogs". Auth UI (Sign In / Sign Up) enters scope as header controls, backed by the already-integrated Firebase Auth. |
 | 2026-10-23 | `/blog` keeps its filter state in the URL (`q`, `topic`, `tag`); typing replaces the history entry instead of pushing one per keystroke | A filtered view is shareable and reload-safe (R2.4) without the back button stepping through every character typed. |
+| 2026-10-23 | Requirements may be published out of numeric order; R26's truth guard checks the latest claim against the newest publish entry in `evidence.md`, not against the highest requirement number | R2 shipped after R30. The old "highest ID = latest" assumption was a property of past sequencing, not a requirement; tying the claim to the recorded publish event keeps the check honest when a lower-numbered requirement is backfilled. |
 
 ## 5. Out of Scope (v1)
 

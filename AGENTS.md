@@ -256,6 +256,7 @@ deliberately, so a growing repository is expected rather than a leak.
 ## 9. Current state (updated as work lands)
 
 - **Implemented, verified and published:** R0 (scaffold), R1 (home hero),
+  R2 (blogs list with search, topic, and tag filters),
   R14 (performance budget), R15 (header — **superseded by R18**), R16 (Firebase),
   R17 (change log export), R18 (glassmorphism header), R19 (home main content
   layout — article grid + discovery sidebar), R20 (footer and newsletter),
@@ -266,15 +267,15 @@ deliberately, so a growing repository is expected rather than a leak.
   requirement; `main` only receives approved work, fast-forwarded),
   R29 (live authentication — Google and email/password),
   R30 (lean loop; the sixteen workflow guards consolidated into one spec).
-  **R30 is the most recent requirement published to production.**
-- **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
-  topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
-  accessibility pass, SEO, content model).
+  **R2 is the most recent requirement published to production** — it was
+  backfilled after R30, so requirement numbers are no longer publication order.
+- **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
+  theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 114.9 kB JS / 5.8 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 116.2 kB JS / 6.1 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore/Storage security rules must be tightened before either is used
     with real data.

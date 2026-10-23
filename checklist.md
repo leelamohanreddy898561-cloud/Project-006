@@ -219,7 +219,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R2.3, R2.7) Topic and tag chips filter; a second click (or "All") clears
 - [x] (R2.4) `q`, `topic`, `tag` live in the URL and survive a reload
 - [x] (R2.5, R2.6) Friendly empty state; the count matches the cards rendered
-- [x] Execute TC-201–TC-210; evidence entry; local commit; await owner approval
+- [x] Execute TC-201–TC-210; evidence entry; local commit; published (2026-10-23)
 
 ## Phase 5 — Routing & pages
 
