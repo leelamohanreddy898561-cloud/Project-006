@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-23T10:07:22.104Z",
+  "generatedAt": "2026-10-23T10:26:26.254Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 55,
+    "commits": 58,
     "fileChanges": {
-      "M": 212,
-      "D": 7,
-      "A": 99
+      "M": 228,
+      "A": 104,
+      "D": 7
     },
     "latestVerification": null,
     "requirementsImplemented": [
@@ -1924,6 +1924,123 @@
       "short": "58e0ec3",
       "date": "2026-10-23T15:36:57+05:30",
       "subject": "docs: record R30 publish; mark R30 latest (R30)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "19c76e1f5fe15e088db66d6aaf9bddf4266fc8e5",
+      "short": "19c76e1",
+      "date": "2026-10-23T15:39:51+05:30",
+      "subject": "chore: regenerate changeLog.json (R30 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "298b1e07199abf4f895152547c771491e529def4",
+      "short": "298b1e0",
+      "date": "2026-10-22T18:41:26+05:30",
+      "subject": "feat: live Google and email/password authentication (R29)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "playwright.config.ts"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "src/components/AccountMenu.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/AccountMenu.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Header.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/hooks/useAuth.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/auth.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/firebase.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/AuthPage.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/helpers/auth-account.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/helpers/smoke.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r16-firebase.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r24-auth.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r29-live-auth.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "583a7b620ba3d30d2263b96a7d3f0106bf699028",
+      "short": "583a7b6",
+      "date": "2026-10-23T15:55:44+05:30",
+      "subject": "docs: record R29 publish; rebase evidence; mark R29 published (R29)",
       "requirements": [],
       "verification": null,
       "notes": "",
