@@ -264,11 +264,9 @@ deliberately, so a growing repository is expected rather than a leak.
   mutate committed evidence), R26 (this section kept accurate by a guard test),
   R27 (production verification runs a smoke subset), R28 (one branch per
   requirement; `main` only receives approved work, fast-forwarded),
+  R29 (live authentication — Google and email/password),
   R30 (lean loop; the sixteen workflow guards consolidated into one spec).
   **R30 is the most recent requirement published to production.**
-- **Awaiting owner approval:** R29 (live authentication — Google and
-  email/password), implemented on `feature/r29-live-auth`. Not merged, not
-  deployed, change log not synced.
 - **Not yet built:** R2–R13 (blogs list with search and filters, topic index,
   topic detail, tag detail, about, 404, theme toggle wiring, responsive pass,
   accessibility pass, SEO, content model).

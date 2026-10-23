@@ -1596,3 +1596,58 @@ R29 remains on its own branch, still awaiting the owner's OK.
 
 **Evaluation:** R30 published. The loop is now lean by default: fast checks
 while working, one full run at the gate, short evidence, guards in one file.
+---
+
+### 2026-10-23 - R29 rebased onto main (R30 published)
+
+**Why:** `main` advanced to `19c76e1` while R29 waited for approval; AC28.3
+requires a rebase and full re-verification before publishing.
+
+**Rebase:** five documentation conflicts resolved by keeping both requirements
+(`requirements.md`, `test-cases.md`, `checklist.md`, `AGENTS.md` Section 9,
+`evidence.md` entry order). Code files applied cleanly.
+
+**Verification on the rebased tree:** build exit 0 - 114.92 kB JS / 5.79 kB CSS
+gzipped; lint exit 0; full suite **90 passed** (86 after R30, +5 R29 tests, -1
+TC-2412 retired by R29).
+---
+
+### 2026-10-23 - R29 published
+
+**Approval:** owner replied "merge to main branch" after reviewing the R29
+branch. `main` had moved to `19c76e1` (R30), so the branch was rebased and
+fully re-verified first (AC28.3).
+
+**Scope:** R29 - live Google and email/password authentication. `getFirebaseAuth()`
+is exported from `src/lib/firebase.ts`; the header shows the account; the auth
+pages sign in, sign up and sign out against the real project.
+
+**Branch:** `feature/r29-live-auth`, rebased onto `main` at `19c76e1`.
+
+**Commands:**
+
+    git rebase main
+    npm.cmd run build
+    npm.cmd run lint
+    npx.cmd playwright test --reporter=dot
+    npm.cmd run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"
+    npm.cmd run verify:prod
+    npm.cmd run changelog
+    npm.cmd run sync:changes
+    npm.cmd run verify:changes
+    git checkout main; git merge --ff-only feature/r29-live-auth
+    git push origin main
+
+**Results:** five doc conflicts resolved (both requirements kept); build
+114.92 kB JS / 5.79 kB CSS gzipped; lint clean; full suite **90 passed**;
+deploy `release complete`; production check **8 passed in 8.3 s**, including a
+real failed sign-in against the live provider; change log synced and read-back
+verified; `main` fast-forwarded with no merge commit.
+
+**Still manual:** TC-2906 (Google pop-up with a real Google account) and
+TC-2910 (confirm the provider is enabled in the console) remain owner checks.
+Email/Password is proven live by the suite itself.
+
+**Evaluation:** R29 published. Authentication works live: sign up, sign in,
+stay signed in across reloads, sign out - Google pop-up included.
