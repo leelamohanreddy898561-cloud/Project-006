@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-22T11:35:47.939Z",
+  "generatedAt": "2026-10-23T10:07:22.104Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 52,
+    "commits": 55,
     "fileChanges": {
-      "M": 204,
-      "A": 98,
-      "D": 3
+      "M": 212,
+      "D": 7,
+      "A": 99
     },
     "latestVerification": null,
     "requirementsImplemented": [
@@ -1839,6 +1839,91 @@
       "short": "dfb8726",
       "date": "2026-10-22T17:05:16+05:30",
       "subject": "docs: record R28 publish; mark R28 latest (R28)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "1e4135bb804d9a3963c88d3f3d426ebfde9eb3b0",
+      "short": "1e4135b",
+      "date": "2026-10-22T17:07:57+05:30",
+      "subject": "chore: regenerate changeLog.json (R28 published)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "4092b26ebecdaffeba204a9add7c864dbbe25ca9",
+      "short": "4092b26",
+      "date": "2026-10-23T14:57:49+05:30",
+      "subject": "chore: lean loop and consolidated workflow guards (R30)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "D",
+          "path": "tests/r25-evidence-artifacts.spec.ts"
+        },
+        {
+          "status": "D",
+          "path": "tests/r26-agents-state.spec.ts"
+        },
+        {
+          "status": "D",
+          "path": "tests/r27-production-smoke.spec.ts"
+        },
+        {
+          "status": "D",
+          "path": "tests/r28-branch-workflow.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/workflow-guards.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "58e0ec31a59df8cdedceb644a6138ec88fb61cd1",
+      "short": "58e0ec3",
+      "date": "2026-10-23T15:36:57+05:30",
+      "subject": "docs: record R30 publish; mark R30 latest (R30)",
       "requirements": [],
       "verification": null,
       "notes": "",
