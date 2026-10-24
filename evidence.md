@@ -1814,3 +1814,26 @@ present in Firestore."**
 
 **Evaluation:** the published repository history and the Firestore change log
 agree. This is the single change-log cycle for R31.
+
+---
+
+### 2026-10-24 - R31 checklist encoding repaired
+
+**Cause:** checking the last R31 item with a PowerShell `Get-Content` /
+`Set-Content` rewrite re-read the UTF-8 checklist as ANSI, so every em dash and
+middle dot became mojibake.
+
+**Fix:** restored `checklist.md` from `14e1860` and re-added Phase 3o with the
+editing tool. Nothing changed except the intended R31 section.
+
+**Commands:**
+
+    git grep -n -I -E "<known mojibake sequences>" -- . ':!changeLog.json'
+    npx.cmd playwright test tests/workflow-guards.spec.ts --reporter=dot
+
+**Results:** the mojibake search returned no matches; workflow guards **6
+passed**.
+
+**Evaluation:** the documentation is correct again. This commit lands after the
+R31 change-log cycle, so it is not represented in `changeLog.json` — the known
+final-commit gap, accepted rather than running a second sync pass.

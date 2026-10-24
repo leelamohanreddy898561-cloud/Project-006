@@ -1,21 +1,21 @@
-﻿# Checklist: AI Blog â€” "Signal & Noise"
+# Checklist: AI Blog — "Signal & Noise"
 
 Every item is tagged with the requirement ID(s) it serves (see `requirements.md`).
 Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
-**Legend:** `[ ]` not started Â· `[~]` in progress Â· `[x]` done (with evidence entry)
+**Legend:** `[ ]` not started · `[~]` in progress · `[x]` done (with evidence entry)
 
 ---
 
-## Phase 0 â€” Workflow foundation
+## Phase 0 — Workflow foundation
 
 - [x] Create `AGENTS.md` with the standing requirement loop
-- [x] Restructure `requirements.md` to ID-based format (R0â€“R14)
+- [x] Restructure `requirements.md` to ID-based format (R0–R14)
 - [x] Create `test-cases.md` mapped to requirement IDs
 - [x] Create `evidence.md` with the entry format
 - [x] (R0) Install Playwright and verify the runner executes
 - [x] (R0) Initialize git and make the initial commit
 
-## Phase 1 â€” Project scaffold (R0)
+## Phase 1 — Project scaffold (R0)
 
 - [x] (R0.1) Scaffold Vite + React + TypeScript project
 - [x] (R0.1) Enable TypeScript strict mode
@@ -25,7 +25,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R0.4) Wire Playwright config (`playwright.config.ts`, `tests/`)
 - [x] (R0.4) Enable the `webServer` block once a `dev` script exists
 
-## Phase 1b â€” Firebase integration (R16)
+## Phase 1b — Firebase integration (R16)
 
 - [x] (R16.1) Install the `firebase` SDK (v13) and approve required install scripts
 - [x] (R16.1) Create `src/lib/firebase.ts` reading config from `import.meta.env`
@@ -34,32 +34,32 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R16.6) Create `firebase.json` (serve `dist/` with SPA rewrite)
 - [x] (R16.7) Create `.firebaserc` with project `project-006-e6ae1`
 - [x] (R16.9) Add real credentials to `.env` and verify initialization (TC-1607)
-- [x] (R16.8) Deploy to Firebase Hosting â€” live at https://project-006-e6ae1.web.app
+- [x] (R16.8) Deploy to Firebase Hosting — live at https://project-006-e6ae1.web.app
 - [ ] Configure Firestore/Storage security rules before either is used with real data
 
-## Phase 1c â€” Change log export (R17)
+## Phase 1c — Change log export (R17)
 
 - [x] (R17.1) Create `scripts/generate-changelog.mjs` (builds from real git history)
 - [x] (R17.2) Generate and commit `changeLog.json`
 - [x] (R17.3, R17.4) Create `scripts/sync-changes.mjs` with a credentials guard
-- [x] (R17.3) Run `npm run sync:changes` against Firestore â€” 4 entries live, verified by read-back
+- [x] (R17.3) Run `npm run sync:changes` against Firestore — 4 entries live, verified by read-back
 
-## Phase 1d â€” Glassmorphism header (R18, supersedes R15)
+## Phase 1d — Glassmorphism header (R18, supersedes R15)
 
-- [x] (R18) Add R18 to `requirements.md`; mark R15 superseded; rename Categoriesâ†’Topics, AI Updatesâ†’Blogs
-- [x] (R18) Add TC-1801â€“TC-1812 to `test-cases.md`
+- [x] (R18) Add R18 to `requirements.md`; mark R15 superseded; rename Categories→Topics, AI Updates→Blogs
+- [x] (R18) Add TC-1801–TC-1812 to `test-cases.md`
 - [x] (R18.1) Glass treatment: translucent background, backdrop blur, subtle border, both themes
 - [x] (R18.2) Glowing AI logo + "AI Pulse" brand linking to `/`
 - [x] (R18.3) Nav: Home / Topics / Blogs / About with smooth gradient hover
-- [x] (R18.4) Search icon â†’ `/blog`; Sign In â†’ `/signin`; Sign Up â†’ `/signup`
+- [x] (R18.4) Search icon → `/blog`; Sign In → `/signin`; Sign Up → `/signup`
 - [x] (R9, R18.5, R18.6) Theme toggle: switch, persist, respect system preference
 - [x] (R18.8) Placeholder pages for `/signin`, `/signup`, `/topics`, `/blog`, `/about`
 - [x] (R18.9) Active-route highlighting
 - [x] (R18.11) `prefers-reduced-motion` disables the logo glow (and all transitions)
 - [x] (R18) Brand rename in `index.html` (title, meta, OG) and home hero copy
-- [x] (R18) Execute TC-1801â€“TC-1812; verify contrast in both themes
+- [x] (R18) Execute TC-1801–TC-1812; verify contrast in both themes
 - [x] (R18) Evidence entry + local commit; published after owner approval
-## Phase 2 â€” Content model (R13)
+## Phase 2 — Content model (R13)
 
 - [ ] (R13.1) Define the `Post` type (frontmatter fields)
 - [ ] (R13.1) Create markdown loader with frontmatter parsing
@@ -70,7 +70,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] Helpers: `getAllPosts`, `getPostBySlug`, `getCategories`, `getTags`,
       `getRelatedPosts`, `getAdjacentPosts`, `searchPosts`
 
-## Phase 3 â€” Design tokens & global styles (R1, R9, R10, R11)
+## Phase 3 — Design tokens & global styles (R1, R9, R10, R11)
 
 - [x] Define CSS custom properties: colors, spacing, typography, radii, shadows
 - [x] Light and dark theme values from the same tokens (R9)
@@ -79,31 +79,31 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] Visible `:focus-visible` styles (R11.2)
 - [ ] Reusable button, card, and badge styles (buttons done; cards/badges pending)
 
-## Phase 4 â€” Core components
+## Phase 4 — Core components
 
 - [ ] (R1, R11) `Layout` wrapper with skip link (R11.1) and landmarks (R11.3)
 - [x] (R18) Glassmorphism `Header`: brand, navigation, search, theme toggle, auth buttons
 - [x] (R9, R18) `ThemeToggle` with `localStorage` persistence and system-preference default
 - [ ] (R1) `Footer` with navigation and copyright
-- [x] (R1, R2, R19) `BlogCard` â€” title, excerpt, read time, category, author, bookmark; date and tags shown on `/blog`
+- [x] (R1, R2, R19) `BlogCard` — title, excerpt, read time, category, author, bookmark; date and tags shown on `/blog`
 - [x] (R2) `BlogList` grid with empty state (R2.5) and result count (R2.6)
-- [x] (R2) Search bar and topic/tag filter chips (R2.2â€“R2.4, R2.7)
+- [x] (R2) Search bar and topic/tag filter chips (R2.2–R2.4, R2.7)
 - [ ] (R3) `TagList`
 - [ ] (R3) `Markdown` renderer + heading anchors (R3.1)
 - [ ] (R3) `TableOfContents` (R3.3)
 - [ ] (R8) `NotFound` page component
 
-## Phase 3b â€” Hero section (R1.1â€“R1.6)
+## Phase 3b — Hero section (R1.1–R1.6)
 
-- [x] (R1.1) Hero copy: "Explore the Future of AI", description, "Start Reading" â†’ `/blog`
+- [x] (R1.1) Hero copy: "Explore the Future of AI", description, "Start Reading" → `/blog`
 - [x] (R1.2) `NetworkBackground`: canvas particle network, slow ambient drift
 - [x] (R1.3) `TopicCard`: floating popular-topic card with float animation + rotation
 - [x] (R1.4) All hero animation disabled under `prefers-reduced-motion`
 - [x] (R1.5) Mobile stacking at 360px with no overflow
-- [x] (R1.6) Hero text contrast â‰¥ 4.5:1 in both themes
-- [x] Execute TC-101â€“TC-106; evidence entry; local commit; published after owner approval
+- [x] (R1.6) Hero text contrast ≥ 4.5:1 in both themes
+- [x] Execute TC-101–TC-106; evidence entry; local commit; published after owner approval
 
-## Phase 3c â€” Home main content layout (R19)
+## Phase 3c — Home main content layout (R19)
 
 - [x] (R19.1) 70/30 two-column layout below the hero
 - [x] (R19.2) Article grid: 2 columns desktop, 1 mobile, newest first
@@ -115,21 +115,21 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R19.12) Empty state when nothing matches
 - [x] (R19.3, R19.8) Single column on mobile; AA contrast in both themes
 - [x] Seed post data + local AI-themed cover art (placeholder until R13)
-- [x] Execute TC-1901â€“TC-1912; evidence entry; local commit; published after owner approval (2026-10-21)
+- [x] Execute TC-1901–TC-1912; evidence entry; local commit; published after owner approval (2026-10-21)
 
-## Phase 3d â€” Footer + newsletter (R20)
+## Phase 3d — Footer + newsletter (R20)
 
 - [x] (R20.1) Newsletter box above the footer: email field + Subscribe + value statement
-- [x] (R20.2â€“R20.4) Validation, success state, live region, label + `aria-describedby`
+- [x] (R20.2–R20.4) Validation, success state, live region, label + `aria-describedby`
 - [x] (R20.5) Four footer columns: brand, Quick Links, AI Categories, Social Links
 - [x] (R20.6) Quick Links use the router (no full reloads)
 - [x] (R20.7) AI Categories from the shared site config
 - [x] (R20.8) X, GitHub, LinkedIn links with accessible names + `rel="noopener noreferrer"`
 - [x] (R20.9, R20.10) Bottom bar: copyright with current year + Privacy Policy route
 - [x] (R20.11, R20.12) Single column below 900px; AA contrast both themes
-- [x] Execute TC-2001â€“TC-2012; evidence entry; local commit; **awaiting owner approval**
+- [x] Execute TC-2001–TC-2012; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3e â€” Repository and workflow hygiene (R21)
+## Phase 3e — Repository and workflow hygiene (R21)
 
 - [x] (R21.1) Untrack `.firebase/` and add it to `.gitignore`
 - [x] (R21.2) Delete `tests/example.spec.ts`; document the convention in `test-cases.md`
@@ -138,9 +138,9 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R21.5) Pin `firebase-tools` as a devDependency + `npm run deploy`
 - [x] (R21.6) Distinct accessible names for the header and footer home links
 - [x] (R21.7) Document that screenshots and `changeLog.json` are retained on purpose
-- [x] Execute TC-2101â€“TC-2107; evidence entry; local commit; **awaiting owner approval**
+- [x] Execute TC-2101–TC-2107; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3f â€” Deploy tooling footprint (R22)
+## Phase 3f — Deploy tooling footprint (R22)
 
 - [x] (R22.1) `deploy` script uses `npx --yes firebase-tools@15.34.1`
 - [x] (R22.2) Remove `firebase-tools` from devDependencies
@@ -148,30 +148,30 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R22.4) Deploy target and flags unchanged
 - [x] (R22.5) Measure `node_modules`, re-run build/lint/tests; evidence entry; local commit
 
-## Phase 3g â€” Blog detail page (R23)
+## Phase 3g — Blog detail page (R23)
 
-- [x] (R23.1â€“R23.3) `/blog/:slug` route, not-found state, document title
-- [x] (R23.4â€“R23.7) Header image, markdown body, readable measure, mobile bar
-- [x] (R23.8â€“R23.13) Sticky left rail: Like, Share, Bookmark with a11y state
-- [x] (R23.14â€“R23.17) Comment section with validation + non-persistence notice
-- [x] (R23.18â€“R23.19) Related articles
-- [x] (R23.20â€“R23.21) AA contrast; build, lint, tests, budget
+- [x] (R23.1–R23.3) `/blog/:slug` route, not-found state, document title
+- [x] (R23.4–R23.7) Header image, markdown body, readable measure, mobile bar
+- [x] (R23.8–R23.13) Sticky left rail: Like, Share, Bookmark with a11y state
+- [x] (R23.14–R23.17) Comment section with validation + non-persistence notice
+- [x] (R23.18–R23.19) Related articles
+- [x] (R23.20–R23.21) AA contrast; build, lint, tests, budget
 - [x] Article body content for the six seed posts (markdown)
-- [x] Execute TC-2301â€“TC-2320; evidence entry; local commit; **awaiting owner approval**
+- [x] Execute TC-2301–TC-2320; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3h â€” Sign in and sign up pages (R24)
+## Phase 3h — Sign in and sign up pages (R24)
 
-- [x] (R24.1â€“R24.6) Real `/signin` and `/signup` routes, glass card, gradient glows
-- [x] (R24.7â€“R24.10) Field validation, error association, error clearing, autocomplete
-- [x] (R24.11â€“R24.14) Live-region outcomes, Google button, password reveal, cross links
+- [x] (R24.1–R24.6) Real `/signin` and `/signup` routes, glass card, gradient glows
+- [x] (R24.7–R24.10) Field validation, error association, error clearing, autocomplete
+- [x] (R24.11–R24.14) Live-region outcomes, Google button, password reveal, cross links
 - [x] (R24.15) Single auth seam in `src/lib/auth.ts`
-- [x] (R24.16â€“R24.18) Mobile overflow, AA contrast, build/lint/tests/budget
-- [x] Execute TC-2401â€“TC-2418; evidence entry; local commit; **awaiting owner approval**
+- [x] (R24.16–R24.18) Mobile overflow, AA contrast, build/lint/tests/budget
+- [x] Execute TC-2401–TC-2418; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3i â€” Test hygiene and documentation truth (R25, R26)
+## Phase 3i — Test hygiene and documentation truth (R25, R26)
 
-- [x] (R25.1â€“R25.3) Capture helper, redirect to `test-results/`, explicit `evidence:screenshots` command
-- [x] (R25.4â€“R25.5) Guard test against literal/`evidence/` paths; keep the proof images tracked
+- [x] (R25.1–R25.3) Capture helper, redirect to `test-results/`, explicit `evidence:screenshots` command
+- [x] (R25.4–R25.5) Guard test against literal/`evidence/` paths; keep the proof images tracked
 - [x] (R26.1-R26.4) `AGENTS.md` Section 9 lists R0-R24 with R15 still marked superseded
 
 ## Phase 3j - Production smoke subset (R27)
@@ -189,7 +189,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R28.4) Approval gate corrected: pushing a work branch is not publishing
 - [x] (R28.5) Guard test asserts every documented branch rule
 - [x] (R28.6) Full suite green; `verify:prod` unchanged
-- [ ] Execute TC-2501â€“TC-2604; evidence entry; local commit; await owner approval
+- [ ] Execute TC-2501–TC-2604; evidence entry; local commit; await owner approval
 
 ## Phase 3l - Live authentication (R29)
 
@@ -201,8 +201,8 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R29.6, R29.7) Auth-only loader keeps the SDK out of the entry chunk; seam is the only importer
 - [x] (R29.9) Smoke subset carries a real failed sign-in against the provider
 - [x] (R29.10) Suite creates a throwaway account and deletes it in `afterAll`
-- [ ] **Owner action:** enable Email/Password and Google in Firebase Console â†’ Authentication â†’ Sign-in method
-- [ ] Execute TC-2901â€“TC-2910; evidence entry; local commit; await owner approval
+- [ ] **Owner action:** enable Email/Password and Google in Firebase Console → Authentication → Sign-in method
+- [ ] Execute TC-2901–TC-2910; evidence entry; local commit; await owner approval
 
 ## Phase 3m - Lean loop and consolidated guards (R30)
 
@@ -215,22 +215,22 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 ## Phase 3n - Blogs list with search and filters (R2)
 
 - [x] (R2.1) `/blog` renders every post newest first with title, excerpt, date, read time, category, tags
-- [x] (R2.2) Search across title/excerpt/category/tags â€” case-insensitive, every term must match
+- [x] (R2.2) Search across title/excerpt/category/tags — case-insensitive, every term must match
 - [x] (R2.3, R2.7) Topic and tag chips filter; a second click (or "All") clears
 - [x] (R2.4) `q`, `topic`, `tag` live in the URL and survive a reload
 - [x] (R2.5, R2.6) Friendly empty state; the count matches the cards rendered
-- [x] Execute TC-201â€“TC-210; evidence entry; local commit; published (2026-10-23)
+- [x] Execute TC-201-TC-210; evidence entry; local commit; published (2026-10-23)
 
-## Phase 3o - User roles and the protected admin route (R31)
+## Phase 3o — User roles and the protected admin route (R31)
 
 - [x] (R31.1, R31.2) `src/lib/users.ts`: ensure/read the `users/{uid}` profile, default `student`, never overwrite a role
 - [x] (R31.1) Seed the profile after email/password sign-up, sign-in, and Google sign-in without blocking the session
-- [x] (R31.3â€“R31.6) `RequireAdmin` guard + `/admin` page: admin allowed, standard user â†’ `/`, signed-out â†’ `/signin`, loading status
+- [x] (R31.3–R31.6) `RequireAdmin` guard + `/admin` page: admin allowed, standard user → `/`, signed-out → `/signin`, loading status
 - [x] (R31.7) Role read failure fails closed without breaking the shell
 - [x] (R31.8) `firestore.rules` (own doc, no self-promotion), `firebase.json`, `npm run deploy:rules` (deployed at publish)
-- [ ] (R31.9) Execute TC-3101â€“TC-3103; evidence entry; local commit; await owner approval
+- [x] (R31.9) Execute TC-3101–TC-3103; evidence entry; local commit; await owner approval
 
-## Phase 5 â€” Routing & pages
+## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table
 - [x] (R1) Home: hero + primary CTA button
@@ -245,24 +245,24 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] Scroll-to-top on route change
 - [ ] (R12.1) Per-page document title updates
 
-## Phase 6 â€” Features
+## Phase 6 — Features
 
 - [x] (R2.2) Client-side search over title/excerpt/category/tags
 - [x] (R2.3, R2.4) Topic and tag filters reflected in URL params
-- [ ] (R9.1â€“R9.4) Theme toggle, persistence, system preference, color change
+- [ ] (R9.1–R9.4) Theme toggle, persistence, system preference, color change
 - [ ] (R3.1) Styled markdown: headings, code, blockquotes, images
 - [ ] (R3.4, R3.5) Prev/next and related posts
 
-## Phase 7 â€” SEO & performance (R12, R14)
+## Phase 7 — SEO & performance (R12, R14)
 
 - [ ] (R12.1) Unique title + meta description per page
 - [ ] (R12.3) Open Graph tags
 - [ ] (R12.2) `sitemap.xml` and `robots.txt`
-- [x] (R14.1) JS bundle < 150 kB gzipped â€” **83.32 kB** after lazy-loading Firebase
-- [x] (R14.2) CSS bundle < 25 kB gzipped â€” **1.38 kB**
+- [x] (R14.1) JS bundle < 150 kB gzipped — **83.32 kB** after lazy-loading Firebase
+- [x] (R14.2) CSS bundle < 25 kB gzipped — **1.38 kB**
 - [ ] (R14.3) No console errors on home page
 
-## Phase 8 â€” Accessibility & responsive (R10, R11)
+## Phase 8 — Accessibility & responsive (R10, R11)
 
 - [ ] (R11.1) Skip-to-content link, visible on focus
 - [ ] (R11.2) Full keyboard operability with visible focus
@@ -271,7 +271,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] (R10.1, R10.2) No horizontal overflow at 360/768/1024/1920px
 - [ ] (R10.3) Navigation and search reachable at 360px
 
-## Phase 9 â€” Verification & handoff
+## Phase 9 — Verification & handoff
 
 - [ ] Execute all `auto` test cases via Playwright
 - [ ] Execute all `manual` test cases and record results
@@ -279,4 +279,3 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] Update `requirements.md` open questions
 - [ ] Document how to add a post (frontmatter format)
 - [ ] Configure SPA fallback and deploy to a static host
-
