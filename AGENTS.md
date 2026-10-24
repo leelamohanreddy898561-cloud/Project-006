@@ -269,12 +269,10 @@ deliberately, so a growing repository is expected rather than a leak.
   R27 (production verification runs a smoke subset), R28 (one branch per
   requirement; `main` only receives approved work, fast-forwarded),
   R29 (live authentication — Google and email/password),
-  R30 (lean loop; the sixteen workflow guards consolidated into one spec).
-  **R2 is the most recent requirement published to production** — it was
-  backfilled after R30, so requirement numbers are no longer publication order.
-- **Awaiting owner approval:** R31 (user roles and the protected admin route) —
-  implemented and verified on `feature/r31-admin-role`; not merged, deployed or
-  synced.
+  R30 (lean loop; the sixteen workflow guards consolidated into one spec),
+  R31 (user roles and the protected admin route).
+  **R31 is the most recent requirement published to production** — R2 was
+  backfilled after R30, so requirement numbers are not publication order.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
@@ -283,8 +281,12 @@ deliberately, so a growing repository is expected rather than a leak.
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
 - **Current bundle:** 117.38 kB JS / 6.28 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
-  - Firestore/Storage security rules must be tightened before either is used
-    with real data.
+  - Firestore `users` is protected by `firestore.rules` (R31: own document only,
+    no self-promotion). `changeLog` remains client-writable until R17's sync
+    scripts authenticate. Storage rules still need tightening before Storage is
+    used with real data.
+  - Role management is console-only for now: `/admin` is a protected landing
+    page, and a user-management screen is not built.
   - Dark-mode `--color-text-subtle` (#64748b) measures ≈3.98:1, below AA for
     normal text. R24 avoids it; the rest of the site does not. Fix during R11.
   - Firebase Auth is wired to real sign-in in code (R29), but the Email/Password

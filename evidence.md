@@ -1763,3 +1763,37 @@ secured `firestore.rules` deploy is part of the publish sequence.
 **Result:** **6 passed in 7.7 s**. Only documentation changed after the full
 run (AGENTS.md Section 9 and this file), so the affected spec was re-run rather
 than the whole suite.
+
+---
+
+### 2026-10-24 - R31 published
+
+**Approval:** owner replied "ok".
+
+**Commands:**
+
+    git grep -n -I -E "AIza[0-9A-Za-z_-]{20,}|BEGIN [A-Z ]*PRIVATE KEY" -- . ':!changeLog.json' ':!evidence.md'
+    git push -u origin feature/r31-admin-role
+    npm.cmd run build
+    npm.cmd run deploy:rules
+    npx.cmd playwright test tests/r31-admin-role.spec.ts tests/r29-live-auth.spec.ts --reporter=dot
+    npm.cmd run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** secret scan clean (only the recorded command text in this file
+matches); branch pushed; build **117.38 kB JS / 6.28 kB CSS gzipped**; rules
+compiled successfully and released to `cloud.firestore`; R31 + R29 **7 passed
+in 19.9 s** against the deployed rules; hosting `release complete`; production
+smoke **10 passed in 13.4 s** (`verify:prod` 15.6 s), including TC-3101 on the
+live `/admin`.
+
+**Test cases:** TC-3101 and TC-3102 green locally, TC-3101 green in production;
+TC-3103 manual — a promoted throwaway account rendered the admin page and
+standard accounts are denied.
+
+**Publish state:** the change-log cycle follows in its own commit; `main` is
+fast-forwarded after it — no merge commit, no force-push.
+
+**Evaluation:** R31 is live: `/admin` sends signed-out visitors to sign in and
+standard users home, only `role: "admin"` reaches the page, and
+`firestore.rules` now blocks client-side self-promotion.
