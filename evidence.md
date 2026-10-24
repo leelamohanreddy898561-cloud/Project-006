@@ -1797,3 +1797,20 @@ fast-forwarded after it — no merge commit, no force-push.
 **Evaluation:** R31 is live: `/admin` sends signed-out visitors to sign in and
 standard users home, only `role: "admin"` reaches the page, and
 `firestore.rules` now blocks client-side self-promotion.
+
+---
+
+### 2026-10-24 - R31 change log synced
+
+**Commands:**
+
+    npm.cmd run changelog
+    npm.cmd run sync:changes
+    npm.cmd run verify:changes
+
+**Results:** `changeLog.json` regenerated — **64 commits**; sync wrote **3 new**
+entries (61 already present); read-back **"All changeLog.json entries are
+present in Firestore."**
+
+**Evaluation:** the published repository history and the Firestore change log
+agree. This is the single change-log cycle for R31.

@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-23T11:46:15.404Z",
+  "generatedAt": "2026-10-24T03:46:41.100Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 61,
+    "commits": 64,
     "fileChanges": {
-      "M": 243,
-      "A": 107,
+      "M": 259,
+      "A": 114,
       "D": 7
     },
     "latestVerification": null,
@@ -2157,6 +2157,131 @@
         {
           "status": "M",
           "path": "tests/workflow-guards.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "14e18606a3fae0986b0b93627c6a50bc9ca625e5",
+      "short": "14e1860",
+      "date": "2026-10-23T17:19:25+05:30",
+      "subject": "chore: R2 publish evidence and change log (R2)",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "8db5a112149c32bacacfe9b7d455f4af8f5ea027",
+      "short": "8db5a11",
+      "date": "2026-10-24T08:54:29+05:30",
+      "subject": "feat(r31): add user roles and protect /admin",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "firebase.json"
+        },
+        {
+          "status": "A",
+          "path": "firestore.rules"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/RequireAdmin.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/hooks/useUserRole.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/auth.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/users.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Admin.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Admin.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/helpers/auth-account.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/helpers/smoke.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r29-live-auth.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r31-admin-role.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "75eb13ea4b0c261180024fc5405746f2e6753756",
+      "short": "75eb13e",
+      "date": "2026-10-24T09:16:09+05:30",
+      "subject": "docs(r31): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
         }
       ]
     }
