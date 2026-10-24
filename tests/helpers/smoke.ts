@@ -66,6 +66,12 @@ export const SMOKE_SUITE: SmokeTest[] = [
     why: "Every header destination — and the 404 route — renders a real page.",
   },
   {
+    tc: "TC-3101",
+    spec: "r31-admin-role.spec.ts",
+    covers: ["auth"],
+    why: "The deployed site still protects /admin: signed-out visitors are sent to sign in.",
+  },
+  {
     tc: "TC-201",
     spec: "r2-blog-list.spec.ts",
     covers: ["blog-list"],

@@ -1718,3 +1718,48 @@ commit — no merge commit, no force-push.
 
 **Evaluation:** R2 is live: the blog index, search, topic and tag filters work on
 the deployed site, and the count/empty-state behaviour is proven in production.
+
+---
+
+### 2026-10-24 - R31 implemented, awaiting approval
+
+**Requirement:** R31 — a role in `users/{uid}`, and `/admin` reachable only by
+`role: "admin"`. Branch `feature/r31-admin-role`; nothing merged, deployed or
+synced.
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run lint
+    npx.cmd playwright test tests/r31-admin-role.spec.ts tests/r29-live-auth.spec.ts --reporter=dot
+    npx.cmd playwright test --reporter=dot
+
+**Results:** build **117.38 kB JS / 6.28 kB CSS gzipped** (budgets 150 / 25);
+lint clean; R31 + R29 **7 passed in 28.9 s**; full suite **101 passed / 1
+failed in 1.8 min** — the only failure was TC-3002, which requires every
+requirement to be named in AGENTS.md Section 9. Section 9 now lists R31 as
+awaiting approval and quotes the current bundle.
+
+**Test cases:** TC-3101 and TC-3102 green. TC-3103 (manual): a throwaway
+account promoted to `admin` rendered `/admin` with its email and the admin
+badge, then the profile and account were deleted; the permanent suite keeps the
+signed-out and standard-user denial paths. The account created by the first
+TC-3102 attempt was also deleted.
+
+**Note on the failure:** the first TC-3102 run timed out at 30 s under parallel
+workers while the Firestore connection was cold; the test now allows 90 s and
+passes. Firestore itself was reachable (REST 200, SDK role `student`).
+
+**Evaluation:** R31's acceptance criteria are met on the branch. Awaiting the
+owner's visual review at http://localhost:5173/admin before publishing; the
+secured `firestore.rules` deploy is part of the publish sequence.
+
+---
+
+### 2026-10-24 - R31 guard re-run after the document correction
+
+    npx.cmd playwright test tests/workflow-guards.spec.ts --reporter=dot
+
+**Result:** **6 passed in 7.7 s**. Only documentation changed after the full
+run (AGENTS.md Section 9 and this file), so the affected spec was re-run rather
+than the whole suite.

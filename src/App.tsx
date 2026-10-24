@@ -4,6 +4,8 @@ import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
 import { AuthPage } from "./pages/AuthPage";
 import { BlogList } from "./pages/BlogList";
+import { Admin } from "./pages/Admin";
+import { RequireAdmin } from "./components/RequireAdmin";
 import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 
@@ -36,6 +38,14 @@ export default function App() {
           />
           <Route path="/signin" element={<AuthPage mode="signin" />} />
           <Route path="/signup" element={<AuthPage mode="signup" />} />
+          <Route
+            path="/admin"
+            element={
+              <RequireAdmin>
+                <Admin />
+              </RequireAdmin>
+            }
+          />
           <Route
             path="/privacy"
             element={

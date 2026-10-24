@@ -86,3 +86,38 @@ export async function deleteTestAccount(
 
   return deletion.ok;
 }
+
+/**
+ * R31 — removes the users/{uid} profile while the account can still sign in.
+ * Must run before deleteTestAccount. Uses the Firestore REST API with the same
+ * public API key; the owner-delete rule permits it.
+ */
+export async function deleteTestProfile(
+  project: TestProject,
+  email: string,
+  password: string,
+): Promise<boolean> {
+  const signIn = await fetch(`${IDENTITY}:signInWithPassword?key=${project.apiKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, returnSecureToken: true }),
+  });
+
+  const credentials = (await signIn.json()) as {
+    idToken?: string;
+    localId?: string;
+  };
+
+  if (!credentials.idToken || !credentials.localId) return false;
+
+  const url =
+    `https://firestore.googleapis.com/v1/projects/${project.projectId}` +
+    `/databases/(default)/documents/users/${credentials.localId}`;
+
+  const deletion = await fetch(url, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${credentials.idToken}` },
+  });
+
+  return deletion.ok || deletion.status === 404;
+}

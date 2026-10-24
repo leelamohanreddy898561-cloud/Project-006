@@ -50,6 +50,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-21 | Brand renamed to **AI Pulse**; nav becomes Home / Topics / Blogs / About; flat header replaced by a glassmorphism design (R18 supersedes R15) | Project owner's new direction. "Categories" renamed to "Topics" everywhere; "AI Updates" relabelled "Blogs". Auth UI (Sign In / Sign Up) enters scope as header controls, backed by the already-integrated Firebase Auth. |
 | 2026-10-23 | `/blog` keeps its filter state in the URL (`q`, `topic`, `tag`); typing replaces the history entry instead of pushing one per keystroke | A filtered view is shareable and reload-safe (R2.4) without the back button stepping through every character typed. |
 | 2026-10-23 | Requirements may be published out of numeric order; R26's truth guard checks the latest claim against the newest publish entry in `evidence.md`, not against the highest requirement number | R2 shipped after R30. The old "highest ID = latest" assumption was a property of past sequencing, not a requirement; tying the claim to the recorded publish event keeps the check honest when a lower-numbered requirement is backfilled. |
+| 2026-10-24 | Roles live in `users/{uid}.role`; the client guard is UX, `firestore.rules` is the enforcement; self-promotion is blocked by rules, not by hiding a button | A route guard can always be bypassed by editing the client. The rule that `role` cannot change on update is what makes "admin" meaningful, and it also keeps an admin's role safe from accidental overwrite on sign-in. |
 
 ## 5. Out of Scope (v1)
 
@@ -508,7 +509,42 @@ evidence is short, and the document guards live in one spec.
 - **AC30.5** The four retired spec files are removed from the repository and from the `AGENTS.md` Section 5 file map, and the consolidated spec is named there.
 - **AC30.6** The branch rule, the fast-forward publish, the rebase rule, the ban on force-push and merge commits, and "pushing a work branch is not publishing" are all still asserted by the consolidated spec.
 - **AC30.7** The full local suite still passes and is smaller than before (86 expected, from 96), and `npm run verify:prod` is unchanged.
-- **AC30.8** The approval gate (Section 3) and the non-negotiables (Section 4) are unchanged — simplification never touches the gate.
+- **AC30.8** The approval gate (Section 3) and the non-negotiables (Section 4) are unchanged - simplification never touches the gate.
+
+---
+
+### R31 — User roles and the protected admin route
+
+Every account carries a role in a Firestore `users/{uid}` document, and `/admin`
+is reachable only by accounts with `role: "admin"`. Everyone else is sent away
+before any admin content renders. Role checks in the browser are convenience;
+the committed Firestore rules are what actually stop a user from promoting
+themselves.
+
+- **AC31.1** Signing in or signing up (email/password or Google) ensures a
+  `users/{uid}` document exists with `email` and a `role`; it is created with
+  `"student"` when absent, and an existing document — including an admin's — is
+  never overwritten.
+- **AC31.2** Roles are `"admin" | "student" | "user"`, and only `"admin"` grants
+  admin access; any other value, an unknown value, or a missing document is
+  treated as a standard user.
+- **AC31.3** `/admin` renders an admin page (heading **Admin**, the signed-in
+  email, and the role) for a signed-in account whose role is `"admin"`.
+- **AC31.4** A signed-in standard user who opens `/admin` is redirected to `/`
+  and never sees admin content.
+- **AC31.5** A signed-out visitor who opens `/admin` is redirected to `/signin`.
+- **AC31.6** While the session or role is loading, `/admin` shows an accessible
+  status message and never renders admin content.
+- **AC31.7** If the role cannot be read (Firestore unreachable or permission
+  denied), access fails closed — treated as a standard user — and the rest of the
+  site still renders and behaves as signed in/out normally.
+- **AC31.8** `firestore.rules` lets an account read, create, update and delete
+  only its own `users/{uid}` document, forbids creating or changing a role to
+  `"admin"` from the client, and denies every other users-collection operation.
+  `npm run deploy:rules` publishes the file; the existing `changeLog` access is
+  deliberately unchanged until R17's sync authenticates.
+- **AC31.9** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
 
 ---
 

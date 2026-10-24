@@ -4,6 +4,7 @@ import { test, expect } from "@playwright/test";
 import {
   accountExists,
   deleteTestAccount,
+  deleteTestProfile,
   readProject,
   uniqueEmail,
 } from "./helpers/auth-account";
@@ -81,6 +82,7 @@ test.describe("R29 — email and password, end to end", () => {
 
   test.afterAll(async () => {
     if (created && project) {
+      await deleteTestProfile(project, email, PASSWORD);
       await deleteTestAccount(project, email, PASSWORD);
     }
   });

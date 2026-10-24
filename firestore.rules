@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// R31 — Firestore rules.
+//
+// A user owns exactly one profile document. The role is fixed after creation,
+// so a browser cannot promote itself to admin: only the Firebase console (or a
+// future Admin SDK path) can change it. Reads, creates and deletes are limited
+// to the signed-in account's own uid.
+//
+// The changeLog block keeps R17's existing access: its sync and read-back
+// scripts run without a signed-in user. Locking it down is tracked in the known
+// open items and needs those scripts to authenticate first.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /changeLog/{entry} {
+      allow read, write: if true;
+    }
+
+    match /users/{uid} {
+      allow read: if owns(uid);
+      allow create: if owns(uid)
+        && request.resource.data.role in ['student', 'user'];
+      allow update: if owns(uid)
+        && request.resource.data.role == resource.data.role;
+      allow delete: if owns(uid);
+    }
+
+    function owns(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

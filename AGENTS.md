@@ -89,7 +89,8 @@ repetition — re-running every test to re-prove a typo is waste, not proof.
     1. Secret-scan, then `git push` the branch.
     2. `npm run build`, then `npm run deploy`, then `npm run verify:prod`
        (smoke subset against the live site; it refuses to run without
-       `PLAYWRIGHT_BASE_URL`).
+       `PLAYWRIGHT_BASE_URL`). If `firestore.rules` changed, run
+       `npm run deploy:rules` before verification.
     3. Write the publish entry in `evidence.md`, move the requirement into the
        published list in `AGENTS.md` Section 9, then commit and push both.
     4. **One** change-log cycle: `npm run changelog` → `npm run sync:changes` →
@@ -191,6 +192,8 @@ necessary but never sufficient** — your visual approval is the gate.
 | `scripts/sync-changes.mjs` | Writes `changeLog.json` to Firestore |
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
+| `src/lib/users.ts` | User profile + role seam (`users/{uid}`, R31) |
+| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31) |
 | `.env` / `.env.example` | Firebase credentials (local only) / documented template |
 
 **Committed on purpose, and they grow with each release:** `evidence/screenshots/*.png`
@@ -249,7 +252,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 114.9 kB JS / 5.8 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 117.38 kB JS / 6.28 kB CSS gzipped |
 
 ---
 
@@ -269,13 +272,16 @@ deliberately, so a growing repository is expected rather than a leak.
   R30 (lean loop; the sixteen workflow guards consolidated into one spec).
   **R2 is the most recent requirement published to production** — it was
   backfilled after R30, so requirement numbers are no longer publication order.
+- **Awaiting owner approval:** R31 (user roles and the protected admin route) —
+  implemented and verified on `feature/r31-admin-role`; not merged, deployed or
+  synced.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 116.2 kB JS / 6.1 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 117.38 kB JS / 6.28 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore/Storage security rules must be tightened before either is used
     with real data.

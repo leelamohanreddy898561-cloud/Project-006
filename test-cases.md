@@ -418,3 +418,11 @@ state and are recorded in evidence.md.
 **Consolidated by R30** (auto cases only; the CLI and manual cases above them
 still stand as written): TC-2502–TC-2505 → TC-3004; TC-2601–TC-2604 →
 TC-3002; TC-2701–TC-2704 → TC-3003; TC-2801–TC-2804 → TC-3005.
+
+## R31 — User roles and the protected admin route
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-3101 | auto | Open `/admin` as a signed-out visitor | Redirects to `/signin`; no admin heading or admin content is shown (AC31.5) — **@smoke** |
+| TC-3102 | auto | Sign up with a fresh email, read the role through the dev hook, then open `/admin` | `users/{uid}` exists with `role: "student"`; `/admin` redirects to `/` and no admin content appears; the header still shows the session (AC31.1, AC31.2, AC31.4) |
+| TC-3103 | manual | In the Firestore console set the owner's `users/{uid}.role` to `"admin"`, reload `/admin`; also try to change your own role from the browser console | The admin page renders for the admin account; a standard account is still redirected home; the rules reject a client-side role change (AC31.3, AC31.8) |

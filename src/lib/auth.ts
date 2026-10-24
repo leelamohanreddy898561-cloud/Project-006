@@ -1,5 +1,6 @@
 import type { User } from "firebase/auth";
 import { getFirebaseAuth, isFirebaseConfigured } from "./firebase";
+import { ensureUserProfile } from "./users";
 
 /**
  * R24.15 / R29 — the single seam between the auth UI and Firebase
@@ -90,6 +91,18 @@ function toAuthUser(user: User | null): AuthUser | null {
 }
 
 /**
+ * R31 — makes sure the Firestore profile exists for the account that just
+ * signed in. Deliberately fire-and-forget: authentication must never fail or
+ * stall because Firestore is slow, unreachable or still locked down. If the
+ * write fails, /admin fails closed and the rest of the site is unaffected.
+ */
+function seedProfile(user: User | null): void {
+  if (!user) return;
+
+  void ensureUserProfile({ uid: user.uid, email: user.email }).catch(() => {});
+}
+
+/**
  * Loads the auth module ahead of a click.
  *
  * `signInWithPopup` must be called inside the user-gesture handler or Safari
@@ -117,6 +130,8 @@ export async function signInWithEmail(
     ]);
 
     const credential = await signInWithEmailAndPassword(auth, email, password);
+
+    seedProfile(credential.user);
 
     return { ok: true, user: toAuthUser(credential.user) };
   } catch (error) {
@@ -149,6 +164,8 @@ export async function signUpWithEmail(
       }
     }
 
+    seedProfile(credential.user);
+
     return { ok: true, user: toAuthUser(credential.user) };
   } catch (error) {
     return { ok: false, ...friendly(error) };
@@ -174,6 +191,8 @@ export async function signInWithGoogle(): Promise<AuthOutcome> {
     provider.setCustomParameters({ prompt: "select_account" });
 
     const credential = await signInWithPopup(auth, provider);
+
+    seedProfile(credential.user);
 
     return { ok: true, user: toAuthUser(credential.user) };
   } catch (error) {
