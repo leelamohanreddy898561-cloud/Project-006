@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-24T03:46:41.100Z",
+  "generatedAt": "2026-10-26T02:52:59.044Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 64,
+    "commits": 68,
     "fileChanges": {
-      "M": 259,
-      "A": 114,
+      "M": 274,
+      "A": 119,
       "D": 7
     },
     "latestVerification": null,
@@ -2282,6 +2282,130 @@
         {
           "status": "M",
           "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "b72d93d4ff9a17c2b3a5e013233dc65e436bfb6d",
+      "short": "b72d93d",
+      "date": "2026-10-24T09:19:17+05:30",
+      "subject": "chore(r31): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "9e00833026ced09a97dc07f41275c1b52cae0ee7",
+      "short": "9e00833",
+      "date": "2026-10-24T09:21:33+05:30",
+      "subject": "docs(r31): repair checklist encoding",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "2cc4daface3aa0e5a08291bf6cb592b44705ca61",
+      "short": "2cc4daf",
+      "date": "2026-10-26T07:39:35+05:30",
+      "subject": "feat(r32): add the admin dashboard with sidebar navigation",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/admin/AdminPanels.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/admin/AdminPanels.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/icons.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/Admin.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/AdminDashboard.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/AdminDashboard.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r32-admin-dashboard.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "ec59a3668c20ed785d4235786cdf7ac12fabbad6",
+      "short": "ec59a36",
+      "date": "2026-10-26T08:22:14+05:30",
+      "subject": "docs(r32): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
         }
       ]
     }
