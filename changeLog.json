@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T03:40:13.723Z",
+  "generatedAt": "2026-10-26T05:37:18.954Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 72,
+    "commits": 77,
     "fileChanges": {
-      "M": 291,
-      "A": 125,
+      "M": 313,
+      "A": 130,
       "D": 7
     },
     "latestVerification": null,
@@ -2523,6 +2523,169 @@
       "short": "d5f151f",
       "date": "2026-10-26T09:09:45+05:30",
       "subject": "docs(r33): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        }
+      ]
+    },
+    {
+      "commit": "a9553f570af8a0224ab5269d073826495baddf58",
+      "short": "a9553f5",
+      "date": "2026-10-26T09:12:35+05:30",
+      "subject": "chore(r33): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "44ff4136f5ee2785e33125602b93aaf5757b68e2",
+      "short": "44ff413",
+      "date": "2026-10-26T09:52:36+05:30",
+      "subject": "fix(r34): pass the owner's uid into the storage admin check",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "storage.rules"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r33-add-blog.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r34-storage-rules.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "f09e325d8a7d8e95e2803204dd06c5a973511eea",
+      "short": "f09e325",
+      "date": "2026-10-26T09:53:40+05:30",
+      "subject": "docs(r34): record the rules deploy and the deny-path probe",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "b50519f6c540abb5244a88de56141c321d916fd5",
+      "short": "b50519f",
+      "date": "2026-10-26T10:53:15+05:30",
+      "subject": "feat(r35): upload blog images through an admin-gated Cloud Function",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "firebase.json"
+        },
+        {
+          "status": "A",
+          "path": "functions/index.js"
+        },
+        {
+          "status": "A",
+          "path": "functions/package-lock.json"
+        },
+        {
+          "status": "A",
+          "path": "functions/package.json"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r33-add-blog.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r35-upload-function.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "18970a56e722fcbd78d036a20b5cb92f105ef73d",
+      "short": "18970a5",
+      "date": "2026-10-26T11:06:29+05:30",
+      "subject": "docs(r35): record the publish and update current state",
       "requirements": [],
       "verification": null,
       "notes": "",
