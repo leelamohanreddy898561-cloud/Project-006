@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T05:37:18.954Z",
+  "generatedAt": "2026-10-26T06:17:10.121Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 77,
+    "commits": 80,
     "fileChanges": {
-      "M": 313,
-      "A": 130,
+      "M": 323,
+      "A": 131,
       "D": 7
     },
     "latestVerification": null,
@@ -2705,6 +2705,83 @@
         {
           "status": "M",
           "path": "requirements.md"
+        }
+      ]
+    },
+    {
+      "commit": "48c3df82068cf8a781bcefd6672a1d7c8753787c",
+      "short": "48c3df8",
+      "date": "2026-10-26T11:09:40+05:30",
+      "subject": "chore(r35): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "66e9a06fb245cea9443e1fa1cd3492d64c7f67ed",
+      "short": "66e9a06",
+      "date": "2026-10-26T11:33:37+05:30",
+      "subject": "feat(r36): show an Admin link in the account menu",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/components/AccountMenu.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/AccountMenu.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r36-account-admin-link.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "bf0f785bae12274a30d3effb14f20ac42c1b2370",
+      "short": "bf0f785",
+      "date": "2026-10-26T11:46:06+05:30",
+      "subject": "docs(r36): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
         }
       ]
     }
