@@ -34,10 +34,25 @@
 }
 
 .blog-card__media img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 400ms ease;
+}
+
+/* R40 — below 640px a card is full width, so the featured image is shown in
+   full instead of being cropped to the desktop thumbnail ratio. The
+   `width`/`height` attributes keep reserving the 8/5 box until the image
+   loads; an authored `height: auto` stops them forcing it afterwards. */
+@media (max-width: 639px) {
+  .blog-card__media {
+    aspect-ratio: auto;
+  }
+
+  .blog-card__media img {
+    height: auto;
+  }
 }
 
 /* R19.5 — image zoom on hover */

@@ -2417,3 +2417,40 @@ composer, saving a `blogs` document with its uploaded cover; the duplicate
 markdown composer is gone. The change-log cycle and the fast-forward of `main`
 follow in their own commits.
 
+
+---
+
+### 2026-10-26 - R40 implemented: mobile blog reading, the featured image is never cropped
+
+**Scope:** the owner reported that on mobile the featured image is cut off on
+every blog. Root cause: `height={500}` on the cover `<img>` is a presentational
+hint, and `PostDetail.css` declared no `height`, so the box was 500px tall at
+every width while `aspect-ratio: 8 / 5` never applied — a 16:9 cover measured
+328x500 on a 360px phone and `object-fit: cover` cut ~63% of its width. The cover
+now renders at its own ratio (capped and contained when taller than the
+viewport); card thumbnails show the full image below 640px and keep the
+editorial crop above it. The mobile audit also fixed: the action rail hiding
+behind the 100px wrapped header, an 18px search tap target, and the dark-mode
+`--color-text-subtle` contrast (3.98:1 → 4.85:1).
+
+**Commands:**
+
+    npm.cmd run build                        # 127.79 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run lint                         # clean
+    npx.cmd playwright test tests/r40-mobile-featured-images.spec.ts --reporter=line   # 4 passed
+    npx.cmd playwright test --reporter=dot   # 126 passed in 1.6 m
+    npx.cmd playwright test tests/r23-post-detail.spec.ts --reporter=line  # 19 passed (TC-2309 scroll depth re-tuned)
+
+**Specs:** `tests/r40-mobile-featured-images.spec.ts` — TC-4001 (the cover shows
+in full at 360px and 1280px, tall covers capped and undistorted), TC-4002 (card
+media matches the image ratio below 640px, 8/5 crop above it), TC-4003 (the rail
+sticks clear of the wrapped header), TC-4004 (search field is one tap target;
+dark subtle text ≥ 4.5:1). TC-4001 is `@smoke` and declared in
+`tests/helpers/smoke.ts` (11 members).
+
+**Evaluation:** measured against the owner's live Firestore posts - the "20
+skilss" cover went from a 328x500 box showing ~37% of the image width to a
+328x185 box showing 100%; the same post's card thumbnail is now 326x183. TC-2309
+needed a deeper scroll because the cover is its intended 720px height, not the
+500px box the defect produced. Nothing merged, deployed or synced - the branch
+is `fix/r40-mobile-featured-image`, awaiting visual review.

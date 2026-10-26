@@ -295,6 +295,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R39.5, R39.6) Sidebar unchanged (three items, exact `aria-current`); build, lint, full suite and bundle budget; execute TC-3901/TC-3902; evidence entry; local commit
 - [x] TC-3903: owner's walkthrough — add a demo post with an image from the dashboard sidebar; approved and **published 2026-10-26**
 
+## Phase 3x — Mobile blog reading (R40)
+
+- [x] (R40.1, R40.2) `PostDetail.tsx` + `PostDetail.css`: the cover renders at its own aspect ratio — the presentational `height` attribute and the forced 8/5 box are gone, tall covers are capped and contained
+- [x] (R40.3) `BlogCard.css`: card thumbnails show the full featured image below 640 px; the editorial thumbnail crop stays at and above it
+- [x] (R40.4, R40.5) `ShareRail.css` + tokens: the mobile rail sticks below the wrapped header; `Sidebar.tsx` / `BlogList.tsx`: the search field is one tap target
+- [x] (R40.6) `tokens.css`: dark-mode `--color-text-subtle` meets AA
+- [x] (R40.7) Execute TC-4001–TC-4004; build, lint, full suite (126 passed); evidence entry; local commit; **awaiting owner approval**
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

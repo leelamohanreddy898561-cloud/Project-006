@@ -152,7 +152,10 @@ test.describe("R23 — Blog detail page", () => {
       "sticky",
     );
 
-    await page.evaluate(() => window.scrollTo(0, 900));
+    // R40 — the cover now renders at its own ratio, so an 8/5 cover is 720px
+    // tall at this width instead of the 500px box the old forced height
+    // produced. Scroll past it to reach the body the rail must stay beside.
+    await page.evaluate(() => window.scrollTo(0, 1300));
 
     await expect
       .poll(async () => {

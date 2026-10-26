@@ -556,3 +556,19 @@ already proved by TC-3201 and is cited, not repeated.
 | TC-3901 | auto | Read `src/App.tsx`, `src/components/admin/AdminPanels.tsx` and `src/pages/AddBlog.tsx` | `/admin/dashboard/blogs/new` and `/admin/add-blog` both render `<AddBlog />` inside `<RequireAdmin>`; `AdminPanels.tsx` no longer exports a markdown composer, and no `Compose markdown` control remains in `src/`; the sidebar still declares exactly the three R32.1 items (AC39.1, AC39.4, AC39.5) |
 | TC-3902 | auto | Read `src/pages/AddBlog.tsx` and record the index of each field's label | `htmlFor={titleId}` < `htmlFor={categoryId}` < `htmlFor={excerptId}` < `htmlFor={imageId}` < `htmlFor={tagsId}` < `htmlFor={contentId}`, so the featured image sits directly before Tags; the image input is `type="file"` with `accept="image/*"`, and the category options come from `categoryOptions` (AC39.2, AC39.3) |
 | TC-3903 | manual | Sign in as the console-promoted admin, open **Add New Blog** from the dashboard sidebar, fill title, category, excerpt, tags and content, choose a demo image and save; then open the public `/blog` and the new article; finally open `/admin/add-blog` | The form shows title, category, excerpt, featured image, tags and content in that order, previews the image and reports the saved document in the live region; the post appears on the public archive and its article page with the uploaded cover; `/admin/add-blog` renders the same form; no second, markdown-only composer exists (AC39.1–AC39.5) |
+
+## R40 — Mobile blog reading: the featured image is never cropped
+
+The reported defect is geometry, so the cases measure geometry: a cover of a
+known ratio is routed into the page and the rendered box is compared with the
+image's own ratio. A forced box or a `cover` crop fails that comparison. The
+cases reuse the existing R23 spec's article and the R19 cards, and cite rather
+than repeat the per-surface 360 px overflow guards (TC-1911, TC-2011, TC-2307,
+TC-2416, TC-3204, TC-3604, TC-3804).
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-4001 | auto | Route a 1600 × 600 cover into `/blog/mixture-of-experts`; measure the cover box at 360 px and at 1280 px; then route a 900 × 1200 cover and measure again | The rendered box matches the image's natural ratio at both widths, `object-fit` is not `cover`, and the full width is on screen; the tall cover is fully visible inside a capped box and is not stretched (AC40.1, AC40.2) — **@smoke** |
+| TC-4002 | auto | Route a 1600 × 900 cover into every card image; measure the first card's media box on `/` at 360 px, then at 900 px | Below 640 px the media box matches the image's natural ratio, so the whole featured image is visible; at 900 px the media box is 8 / 5 and the image is cropped to it, and the hover zoom still applies (AC40.3) |
+| TC-4003 | auto | Open an article at 360 px, scroll down, and compare the rail's box with the header's box | The rail is `position: sticky`, its offset from the top is at least the header's height, and no part of the rail sits behind the header (AC40.4) |
+| TC-4004 | auto | At 360 px: tap the search field's padding area on `/` and `/blog`; then read dark-mode `--color-text-subtle` against the real backgrounds of the card meta, the article meta line and the sidebar | Each tap focuses the input, so the target is the field's height (≥ 32 px); every measured pair is ≥ 4.5:1 (AC40.5, AC40.6) |

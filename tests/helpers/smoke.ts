@@ -96,6 +96,12 @@ export const SMOKE_SUITE: SmokeTest[] = [
     why: "Markdown renders as real HTML on the deployed build.",
   },
   {
+    tc: "TC-4001",
+    spec: "r40-mobile-featured-images.spec.ts",
+    covers: ["article"],
+    why: "The deployed article shows its featured image in full at every width — the R40 crop fix is live.",
+  },
+  {
     tc: "TC-2406",
     spec: "r24-auth.spec.ts",
     covers: ["auth"],

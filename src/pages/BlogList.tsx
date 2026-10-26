@@ -70,7 +70,9 @@ export function BlogList() {
       </header>
 
       <div className="blog-list__toolbar">
-        <div className="blog-list__search">
+        {/* R40 — a <label>, not a <div>: the whole field is the tap target,
+            not just the 18px input inside it. */}
+        <label className="blog-list__search">
           <SearchIcon />
           <input
             type="search"
@@ -89,7 +91,7 @@ export function BlogList() {
               <CloseIcon size={12} />
             </button>
           )}
-        </div>
+        </label>
 
         <p className="blog-list__count" role="status" aria-live="polite">
           {visible.length} {visible.length === 1 ? "post" : "posts"}

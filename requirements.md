@@ -54,6 +54,8 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-26 | A document in `blogs` is published the moment it is saved; the collection is public to read and admin-only to write (R37) | There is no draft workflow, so a `published` flag could only lie. Making the collection the published set means the post saved before this change — which carries `published: false` — is visible too, without a migration. The public read also retired `authorEmail` from the document: an address that is fine in an admin-only collection must not be published with the post. |
 | 2026-10-26 | Blog management lives in the existing **All Blogs** dashboard section rather than a fourth sidebar item (R38) | R32.1 fixes the sidebar at exactly three items. Making All Blogs the management view satisfies "a Manage Blogs page" without reopening that criterion: the same route, the same nav label, and the list R32.5 already requires, now with Edit/Delete for the Firestore posts that can actually be changed from the browser. Repository articles stay read-only there because editing one is a commit, not a Firestore write. |
 | 2026-10-26 | Uploads move from the browser Storage SDK to an admin-gated Cloud Function (R35) | This project's Storage bucket does not apply Storage Security Rules: `allow read, write: if true` at the root still returns 403 for anonymous and Firebase-authenticated callers, and the fault survived re-provisioning the bucket through Firebase's own `defaultBucket` API, a correct rules release, billing enabled, App Check off and IAM bindings. The Admin SDK is not subject to those rules, so the write moved server-side, where the same `users/{uid}.role` check is enforceable and cannot be bypassed by the client. Covers are made public per object because a cover is meant to be public; `storage.rules` stays in the repo as the rule the client path would need once the bucket behaves. |
+| 2026-10-26 | The article featured image is rendered at its own aspect ratio, capped and contained; card thumbnails crop only at and above 640 px (R40) | `<img height={500}>` is a presentational hint, and the cover's CSS declared no `height`, so the box was 500 px tall at every width while `aspect-ratio: 8 / 5` never applied. A 16:9 cover therefore lost ~63% of its width on a 360 px phone. A fixed-ratio content image is a defect, not a design, so the article cover now shows in full everywhere; the desktop card crop is kept only where the thumbnail is a uniform preview, and only above the width at which a card stops being full width. |
+| 2026-10-26 | Dark-mode `--color-text-subtle` is raised to meet AA in R40 instead of waiting for R11 | The R40 mobile audit found the 3.98:1 token under every card's meta line, in the article meta row and across the sidebar — the exact surfaces a mobile reader scans. The fix is one token and only lightens secondary text, so the recorded R11 deferral is settled early; R11 keeps the rest of its scope. |
 
 ## 5. Out of Scope (v1)
 
@@ -921,6 +923,52 @@ the same R33 composer, with the featured image directly above **Tags**.
 **Quality**
 
 - **AC39.6** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
+
+---
+
+### R40 — Mobile blog reading: the featured image is never cropped
+
+On a phone the article page's featured image was drawn into a fixed 328 × 500
+box, so a 16:9 cover lost roughly two-thirds of its width to `object-fit:
+cover` — the owner's report ("the left and right sides are completely cropped
+out, leaving only the middle part"). The `height={500}` attribute was the
+cause: it is a presentational hint, and the CSS never declared a `height`, so
+the box was 500 px tall at every viewport width while `aspect-ratio: 8 / 5`
+sat unused. The same forced ratio cropped card thumbnails on the list surfaces.
+The mobile audit that followed found three more defects, fixed here.
+
+R23.4 required a header image to *appear*; it never said the image must be
+shown in full. This requirement adds that criterion.
+
+**The featured image**
+
+- **AC40.1** `/blog/<slug>` renders the featured image at its own aspect ratio:
+  the rendered box matches the image's natural ratio, no rule crops it
+  (`object-fit` is not `cover`), and no presentational `height` attribute forces
+  a box. Proven at 360 px and 1280 px with a wide cover routed in.
+- **AC40.2** A cover taller than the viewport is still shown in full and is
+  never distorted: the box is capped (`max-height`) and the image is contained
+  inside it, so nothing is cut off and nothing is stretched.
+- **AC40.3** Card thumbnails show the full featured image below 640 px, where a
+  card is full width; at and above 640 px the uniform editorial thumbnail crop
+  is retained, and the R19 hover zoom is unaffected.
+
+**The mobile reading surface**
+
+- **AC40.4** The article action rail sticks below the full height of the wrapped
+  mobile header and is never overlapped by it — at 360 px the header is 100 px
+  tall, not the 4 rem the offset assumed.
+- **AC40.5** The search field on `/` and `/blog` is a single tap target: the
+  whole field focuses the input, so the effective target is the field's height
+  (≥ 32 px), not the 18 px input inside it.
+- **AC40.6** Dark-mode `--color-text-subtle` meets WCAG AA (4.5:1) on the
+  surfaces that use it — card meta, the article meta line and the sidebar — so
+  the deferral recorded for R11 is settled here.
+
+**Quality**
+
+- **AC40.7** Build and lint pass, all previously passing tests stay green, and
   the bundle stays within the R14 budgets.
 
 ---

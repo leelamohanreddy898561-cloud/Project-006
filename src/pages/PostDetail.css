@@ -58,11 +58,18 @@
   font-weight: 600;
 }
 
+/* R23.4 — header image at the top of the article.
+   R40 — the cover is content, so it is shown in full: the box follows the
+   image's own ratio (no `aspect-ratio`, no `object-fit: cover`), and a cover
+   taller than the viewport is capped and contained rather than cropped or
+   stretched. The `width`/`height` attributes stay as a pre-load size hint
+   only — an authored `height: auto` is what stops them forcing a box. */
 .post-page__cover {
   display: block;
   width: 100%;
-  aspect-ratio: 8 / 5;
-  object-fit: cover;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
   margin-top: var(--space-8);
   border-radius: var(--radius-lg);
   background-color: var(--color-surface-2);

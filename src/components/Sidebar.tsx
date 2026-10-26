@@ -29,7 +29,9 @@ export function Sidebar({
     <aside className="sidebar" aria-label="Discover">
       <section className="sidebar__panel">
         <h2 className="sidebar__heading">Search</h2>
-        <div className="sidebar__search">
+        {/* R40 — a <label>, not a <div>: the whole field is the tap target,
+            not just the 18px input inside it. */}
+        <label className="sidebar__search">
           <SearchIcon />
           <input
             type="search"
@@ -48,7 +50,7 @@ export function Sidebar({
               <CloseIcon size={12} />
             </button>
           )}
-        </div>
+        </label>
         <p className="sidebar__count" role="status">
           {resultCount} {resultCount === 1 ? "article" : "articles"}
         </p>

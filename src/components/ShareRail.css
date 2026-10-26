@@ -80,7 +80,9 @@
   }
 }
 
-/* Mobile: a horizontal sticky bar under the site header (R23.7). */
+/* Mobile: a horizontal sticky bar under the site header (R23.7).
+   R40 — below 560px the header wraps onto a second row and is 100px tall, so
+   the bar parks below the whole header instead of behind it. */
 @media (max-width: 999px) {
   .share-rail {
     top: var(--header-height);
@@ -94,5 +96,11 @@
   .share-rail__status {
     flex-basis: 100%;
     text-align: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .share-rail {
+    top: var(--header-height-compact);
   }
 }
