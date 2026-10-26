@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T08:59:26.293Z",
+  "generatedAt": "2026-10-26T11:35:21.078Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 90,
+    "commits": 94,
     "fileChanges": {
-      "M": 378,
-      "A": 141,
+      "M": 399,
+      "A": 143,
       "D": 7
     },
     "latestVerification": null,
@@ -3152,6 +3152,142 @@
         {
           "status": "M",
           "path": "requirements.md"
+        }
+      ]
+    },
+    {
+      "commit": "96546292707472985509b59f92d46ac117fda494",
+      "short": "9654629",
+      "date": "2026-10-26T14:31:52+05:30",
+      "subject": "chore(r39): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "f90f79fe1a2f8a3d5e67ab7ce1ae0e00c7fabcb3",
+      "short": "f90f79f",
+      "date": "2026-10-26T16:30:20+05:30",
+      "subject": "fix(r40): show the featured image in full on mobile",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/components/BlogCard.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/ShareRail.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Sidebar.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/BlogList.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/PostDetail.css"
+        },
+        {
+          "status": "M",
+          "path": "src/styles/tokens.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/helpers/smoke.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r23-post-detail.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r40-mobile-featured-images.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "5d6dd046a8f02e286b90183717435209dc72fa19",
+      "short": "5d6dd04",
+      "date": "2026-10-26T16:46:00+05:30",
+      "subject": "fix(r40): open an article at the top of the page",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/ScrollToTop.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r40-mobile-featured-images.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "fd3c52e2dc02fa9e90d59e9f3aa0d5fd9b39c20a",
+      "short": "fd3c52e",
+      "date": "2026-10-26T17:04:31+05:30",
+      "subject": "docs(r40): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
         }
       ]
     }
