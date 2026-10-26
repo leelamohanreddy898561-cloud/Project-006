@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0, R14, R15 (superseded by R18), R16, R17, R18, R1 (hero), R19, R29, R30 and R2 implemented, verified and published; R3–R13 not started**
+**Status:** In progress — **R0–R2 and R14–R31 implemented, verified and published (R15 superseded by R18); R32 specified on `feature/r32-admin-dashboard`; R3–R13 not started**
 
 ---
 
@@ -544,6 +544,60 @@ themselves.
   `npm run deploy:rules` publishes the file; the existing `changeLog` access is
   deliberately unchanged until R17's sync authenticates.
 - **AC31.9** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
+
+---
+
+### R32 — Admin dashboard
+
+`/admin/dashboard` is the administrator's workspace: a sidebar navigation that
+switches between the sections an admin actually works in, and a content panel
+for each. It sits behind the R31 guard, so only an account whose role is
+`"admin"` reaches it — the guard is not redefined here, it is reused.
+
+**Shell and navigation**
+
+- **AC32.1** `/admin/dashboard` renders an admin shell whose sidebar navigation
+  contains exactly three items — **All Blogs**, **Add New Blog** and
+  **Manage Users** — each a link to its own route, each with an accessible name.
+- **AC32.2** Every dashboard route is behind the R31 guard: a signed-out
+  visitor is sent to `/signin`, a signed-in standard account to `/` (TC-3102
+  covers that account class), and an unknown `/admin/dashboard/*` path shows a
+  not-found panel rather than a blank one.
+- **AC32.3** Selecting a sidebar item opens the matching panel, and the item for
+  the panel on screen is marked as the current one (`aria-current="page"`).
+  Exactly one item is ever current.
+- **AC32.4** The sidebar and the content sit side by side on desktop and stack
+  to a single column below 1000px, with no horizontal overflow at 360px.
+
+**All Blogs**
+
+- **AC32.5** The panel lists every post — title, category, publication date and
+  reading time — newest first, and each title links to its public
+  `/blog/<slug>`.
+
+**Add New Blog**
+
+- **AC32.6** The panel is a composer with a title, a category, tags, an excerpt
+  and a body. Every field is labelled; a missing title, category, excerpt or
+  body shows an inline error tied to that field (`aria-invalid` +
+  `aria-describedby`, announced with `role="alert"`) and blocks submission.
+- **AC32.7** A valid submission composes the post's markdown frontmatter and
+  body, reports the outcome in a live region, and offers the text for copying.
+  It never claims the post is published: posts are markdown files in the
+  repository, so committing the file is the publish step (R13 is not built).
+
+**Manage Users**
+
+- **AC32.8** The panel shows the signed-in admin's own account and role, and
+  states plainly that a role is changed in the Firebase console — the committed
+  rules let an account read only its own `users/{uid}` document and forbid
+  changing a role from the browser (R31.8).
+
+**Quality**
+
+- **AC32.9** Dashboard text meets WCAG AA contrast (4.5:1) in both themes.
+- **AC32.10** Build and lint pass, all previously passing tests stay green, and
   the bundle stays within the R14 budgets.
 
 ---

@@ -230,6 +230,15 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R31.8) `firestore.rules` (own doc, no self-promotion), `firebase.json`, `npm run deploy:rules` (deployed at publish)
 - [x] (R31.9) Execute TC-3101–TC-3103; evidence entry; local commit; await owner approval
 
+## Phase 3p — Admin dashboard (R32)
+
+- [x] (R32.1, R32.3) `AdminDashboard` shell: sidebar nav with exactly All Blogs, Add New Blog, Manage Users; exact-match `aria-current`
+- [x] (R32.4) Register `/admin/dashboard` + `blogs` + `blogs/new` + `users` + not-found behind the existing `RequireAdmin`; desktop side-by-side, stacked below 1000px
+- [x] (R32.5) All Blogs panel: every post newest first with title, category, date, read time, link to `/blog/<slug>`
+- [x] (R32.6, R32.7) Add New Blog composer: labelled fields, inline validation, markdown output + copy, live region that never claims a publish
+- [x] (R32.8) Manage Users panel: the signed-in account, the role legend, and the console-only rule stated plainly
+- [x] (R32.9, R32.10) Contrast check in both themes; execute TC-3201–TC-3204; evidence entry; local commit
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

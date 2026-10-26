@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "./Admin.css";
 
 /**
  * R31 — the protected landing page. At least one real admin surface, so the
- * guard has something worth protecting; user management comes later.
+ * guard has something worth protecting; the working sections live in the
+ * dashboard at /admin/dashboard (R32).
  */
 export function Admin() {
   const { user } = useAuth();
@@ -31,9 +33,11 @@ export function Admin() {
       </dl>
 
       <p className="admin__note">
-        User management is not built yet. Roles live in the Firestore{" "}
-        <code>users</code> collection and are changed there — the browser cannot
-        promote an account.
+        The <Link to="/admin/dashboard">admin dashboard</Link> carries the
+        day-to-day sections — all blogs, the new-post composer, and user
+        management. Roles live in the Firestore <code>users</code> collection and
+        are changed in the Firebase console; the browser cannot promote an
+        account.
       </p>
     </div>
   );

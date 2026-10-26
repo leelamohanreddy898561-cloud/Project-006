@@ -5,9 +5,17 @@ import { Home } from "./pages/Home";
 import { AuthPage } from "./pages/AuthPage";
 import { BlogList } from "./pages/BlogList";
 import { Admin } from "./pages/Admin";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import { RequireAdmin } from "./components/RequireAdmin";
 import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
+import {
+  AdminBlogEditor,
+  AdminBlogs,
+  AdminOverview,
+  AdminSectionMissing,
+  AdminUsers,
+} from "./components/admin/AdminPanels";
 
 export default function App() {
   return (
@@ -46,6 +54,24 @@ export default function App() {
               </RequireAdmin>
             }
           />
+          {/* R32 — the admin workspace. One guard for the whole family: the
+              shell renders the sidebar, and each child is the panel for the
+              section on screen. An unknown section gets a real panel, not a
+              blank one. */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <RequireAdmin>
+                <AdminDashboard />
+              </RequireAdmin>
+            }
+          >
+            <Route index element={<AdminOverview />} />
+            <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="blogs/new" element={<AdminBlogEditor />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="*" element={<AdminSectionMissing />} />
+          </Route>
           <Route
             path="/privacy"
             element={

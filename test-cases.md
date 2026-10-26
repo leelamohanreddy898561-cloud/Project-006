@@ -426,3 +426,22 @@ TC-3002; TC-2701–TC-2704 → TC-3003; TC-2801–TC-2804 → TC-3005.
 | TC-3101 | auto | Open `/admin` as a signed-out visitor | Redirects to `/signin`; no admin heading or admin content is shown (AC31.5) — **@smoke** |
 | TC-3102 | auto | Sign up with a fresh email, read the role through the dev hook, then open `/admin` | `users/{uid}` exists with `role: "student"`; `/admin` redirects to `/` and no admin content appears; the header still shows the session (AC31.1, AC31.2, AC31.4) |
 | TC-3103 | manual | In the Firestore console set the owner's `users/{uid}.role` to `"admin"`, reload `/admin`; also try to change your own role from the browser console | The admin page renders for the admin account; a standard account is still redirected home; the rules reject a client-side role change (AC31.3, AC31.8) |
+
+## R32 — Admin dashboard
+
+The signed-out and route-wiring cases run without an account. The admin-session
+walkthrough needs an account promoted in the Firebase console, so it stays
+`manual` for the same reason TC-3103 does — that is a console action only the
+owner can perform.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-3201 | auto | Open `/admin/dashboard`, `/admin/dashboard/blogs`, `/admin/dashboard/blogs/new` and `/admin/dashboard/users` as a signed-out visitor; then open `/admin/not-a-dashboard-route` | All four dashboard routes redirect to `/signin` with no admin heading and no sidebar nav rendered, while the unknown `/admin/...` path renders the 404 page — so the redirects are the guard at work, not a missing route (AC32.2) |
+| TC-3202 | auto | Read `src/App.tsx` and `src/pages/AdminDashboard.tsx` | All four dashboard routes are registered and every one is wrapped by `RequireAdmin`; the sidebar declares exactly All Blogs, Add New Blog and Manage Users, each with an accessible name and pointing at a registered route (AC32.1, AC32.2) |
+| TC-3203 | manual | Sign in as the console-promoted admin, open `/admin/dashboard`, then click each sidebar item and load each route directly | Sidebar shows exactly the three items; each opens its panel and is the only item marked `aria-current="page"`; All Blogs lists every post newest first with title, category, date, read time and a working `/blog/<slug>` link; Add New Blog blocks an empty submit with inline field errors, then composes markdown and reports it in a live region without claiming the post is published; Manage Users shows the signed-in account and states that roles change in the console; at 360px the layout stacks with no horizontal overflow; all text is ≥ 4.5:1 in both themes (AC32.1, AC32.3–AC32.9) |
+| TC-3204 | cli | Run `npm run build`, `npm run lint`, `npx playwright test`, then `git status --short` | Build and lint pass, the whole suite is green, the bundle stays under 150 kB JS / 25 kB CSS gzipped, and the working tree is unchanged (AC32.10) |
+
+**Cites rather than duplicates:** TC-3101 (signed-out → `/signin`) and
+TC-3102 (a standard account is redirected home and never sees admin content)
+already prove the guard for the `/admin` route; TC-3201 proves the same guard
+for the new route family, and the account-class behaviour is not re-proved here.

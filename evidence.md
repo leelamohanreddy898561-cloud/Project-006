@@ -1837,3 +1837,58 @@ passed**.
 **Evaluation:** the documentation is correct again. This commit lands after the
 R31 change-log cycle, so it is not represented in `changeLog.json` — the known
 final-commit gap, accepted rather than running a second sync pass.
+
+---
+
+### 2026-10-26 - R32 admin dashboard implemented, awaiting approval
+
+**Requirement:** R32 — `/admin/dashboard` with a sidebar navigation over All
+Blogs, Add New Blog and Manage Users, behind the existing R31 guard. Branch
+`feature/r32-admin-dashboard`; nothing merged, deployed or synced.
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run lint
+    npx.cmd playwright test tests/r32-admin-dashboard.spec.ts tests/r31-admin-role.spec.ts --reporter=dot
+    npx.cmd playwright test --reporter=dot
+    npx.cmd playwright test tests/workflow-guards.spec.ts --reporter=dot
+
+**Results:** build **120.90 kB JS / 7.07 kB CSS gzipped** (budgets 150 / 25);
+lint clean; R32 + R31 **4 passed in 50.2 s**; full suite **103 passed / 1 failed
+in 1.5 min** — the single failure was TC-3002, which requires every requirement
+to be named in AGENTS.md Section 9. Section 9 now records R32 as awaiting owner
+approval and quotes the current bundle; the affected spec then returned **5
+passed in 6.5 s**.
+
+**Artifacts:** `src/pages/AdminDashboard.tsx` + `.css` (shell and sidebar),
+`src/components/admin/AdminPanels.tsx` + `.css` (the four panels), the route
+family in `src/App.tsx`, `tests/r32-admin-dashboard.spec.ts`.
+
+**Test cases:** TC-3201 and TC-3202 green. TC-3203 (manual): the owner walks the
+dashboard as the console-promoted admin. TC-3204 (cli): the gate above.
+
+**Evaluation:** the sidebar carries exactly the three requested sections, each
+opening its own panel and marked current with `aria-current="page"`; Add New
+Blog composes the markdown file a post really is and never claims a publish;
+Manage Users states plainly that a role is changed in the console, because the
+committed rules make anything else impossible from the browser. The dashboard
+adds 3.52 kB to the entry chunk, still well inside budget. Awaiting the owner's
+visual review at http://localhost:5173/admin/dashboard before publishing.
+
+**Contrast (AC32.9):** measured over every dashboard token pair with the same
+luminance maths as `tests/helpers/contrast.ts`, in both themes, including the
+translucent `--field-fill` composited over its backdrop — **42/42 pass AA,
+worst 5.36:1**. The dashboard only renders for a promoted admin, so this is
+measured here rather than in the browser; TC-3203 re-checks it visually.
+
+---
+
+### 2026-10-26 - R32 full gate, clean
+
+    npx.cmd playwright test --reporter=dot
+
+**Result:** **104 passed in 1.4 min**, and `git status --short` afterwards shows
+only the twelve intended R32 changes — no `test-results/` or
+`evidence/screenshots/` mutation, so R25 still holds. The first full run's only
+failure was the TC-3002 documentation guard, corrected before this run.

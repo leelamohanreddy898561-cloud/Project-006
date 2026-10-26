@@ -139,6 +139,37 @@ export function EyeOffIcon({ size = 16 }: IconProps) {
   );
 }
 
+/* Admin dashboard sections (R32). */
+
+export function DocsIcon({ size = 16 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+      <path d="M14 3v5h5" />
+      <path d="M9 13h6M9 17h4" />
+    </svg>
+  );
+}
+
+export function PlusIcon({ size = 16 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+export function UsersIcon({ size = 16 }: IconProps) {
+  return (
+    <svg {...iconProps(size)}>
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2.5 20v-0.5a5 5 0 0 1 5-5h3a5 5 0 0 1 5 5V20" />
+      <path d="M16.5 5.2a3.5 3.5 0 0 1 0 6.6" />
+      <path d="M18 14.4a5 5 0 0 1 3.5 4.6V20" />
+    </svg>
+  );
+}
+
 /* Brand marks are solid glyphs, so they fill rather than stroke. */
 
 function brandIconProps(size: number) {

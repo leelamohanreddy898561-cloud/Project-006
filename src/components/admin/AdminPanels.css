@@ -1,0 +1,398 @@
+/* ==========================================================================
+   R32 — the admin dashboard panels
+   Overview, All Blogs, Add New Blog, Manage Users and the not-found state.
+   ========================================================================== */
+
+/* Panel scaffold ----------------------------------------------------------- */
+
+.admin-panel {
+  min-width: 0;
+}
+
+.admin-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.admin-panel__title {
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+}
+
+.admin-panel__count {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.admin-panel__lead {
+  max-width: 60ch;
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.admin-block {
+  margin-top: var(--space-8);
+}
+
+.admin-block__title {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-lg);
+}
+
+.admin-card {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+.admin-card__title {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-base);
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-note {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.admin-note h2 {
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+  font-size: var(--text-base);
+}
+
+.admin-note p {
+  max-width: 70ch;
+}
+
+.admin-note ol,
+.admin-note ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-5);
+}
+
+.admin-note code,
+.admin-output__file code {
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-2);
+  color: var(--color-text);
+  font-size: var(--text-xs);
+}
+
+/* Overview ----------------------------------------------------------------- */
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-6) 0 0;
+}
+
+@media (min-width: 640px) {
+  .admin-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.admin-stat {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+.admin-stat dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-stat dd {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.admin-recent {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-recent__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-recent__item:last-child {
+  border-bottom: 0;
+}
+
+.admin-recent__title {
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-recent__title:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.admin-recent__date {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+/* All Blogs ---------------------------------------------------------------- */
+
+.admin-blogs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-blogs__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+@media (max-width: 560px) {
+  .admin-blogs__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.admin-blogs__main {
+  min-width: 0;
+}
+
+.admin-blogs__title {
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-blogs__title:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.admin-blogs__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+/* Add New Blog ------------------------------------------------------------- */
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 40rem;
+  margin-top: var(--space-6);
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-field__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-field__control {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--field-fill);
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.admin-field__control:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.admin-field__control[data-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.admin-field__input {
+  width: 100%;
+  min-width: 0;
+  padding-block: var(--space-3);
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.admin-field__input--area {
+  resize: vertical;
+}
+
+.admin-field__hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.admin-field__error {
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+}
+
+.admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.admin-form__status {
+  min-height: 1.25rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.admin-output {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+.admin-output__file {
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.admin-output__code {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-2);
+  color: var(--color-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Manage Users ------------------------------------------------------------- */
+
+.admin-account {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.admin-account__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.admin-account__row dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.admin-account__row dd {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.admin-roles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-roles__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-field__control {
+    transition: none;
+  }
+}
