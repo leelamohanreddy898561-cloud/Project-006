@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T06:17:10.121Z",
+  "generatedAt": "2026-10-26T07:34:01.953Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 80,
+    "commits": 84,
     "fileChanges": {
-      "M": 323,
-      "A": 131,
+      "M": 349,
+      "A": 136,
       "D": 7
     },
     "latestVerification": null,
@@ -2771,6 +2771,174 @@
       "short": "bf0f785",
       "date": "2026-10-26T11:46:06+05:30",
       "subject": "docs(r36): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "2d02c5ebd03ec6bb62b4e4963d9d9c0ac1f50981",
+      "short": "2d02c5e",
+      "date": "2026-10-26T11:49:34+05:30",
+      "subject": "chore(r36): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "f9d5f118fd2ead1697c4887da1f1211ba6f8c9a2",
+      "short": "f9d5f11",
+      "date": "2026-10-26T12:27:10+05:30",
+      "subject": "feat(r37): show saved blog posts to visitors",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "firestore.rules"
+        },
+        {
+          "status": "A",
+          "path": "public/covers/cover-default.svg"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/data/posts.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/hooks/useSavedBlogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blog-draft.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/blog-posts.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/markdown.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/AddBlog.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/BlogList.css"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/BlogList.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/Home.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/PostDetail.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/helpers/firestore.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r1-home.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r19-home-layout.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r2-blog-list.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r23-post-detail.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r33-add-blog.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r37-saved-blogs.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "6749882dd2de0c103d1be793c8085485c3df55e3",
+      "short": "6749882",
+      "date": "2026-10-26T12:30:23+05:30",
+      "subject": "fix(r37): read saved posts after auth state restores",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blogs.ts"
+        }
+      ]
+    },
+    {
+      "commit": "0dbda237a2bc4934611263cf5d80d0b372ec343b",
+      "short": "0dbda23",
+      "date": "2026-10-26T13:03:04+05:30",
+      "subject": "docs(r37): record the publish and update current state",
       "requirements": [],
       "verification": null,
       "notes": "",
