@@ -2213,3 +2213,25 @@ the owner's admin check.
 **Evaluation:** the shortcut is visible only to an admin and grants nothing -
 `/admin/dashboard` still enforces the R31 guard. Awaiting visual approval before
 the merge, deploy and change-log sync.
+
+---
+
+### 2026-10-26 - R36 published
+
+**Approval:** the owner reviewed the Admin link locally and replied OK.
+
+**Commands:**
+
+    npm.cmd run build                      # 124.32 kB JS / 7.33 kB CSS gzipped
+    npm.cmd run deploy                     # hosting, index-QTpo6Jg8.js
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** secret scan clean; branch pushed; hosting release complete;
+production smoke **10 passed in 19.3 s** (`verify:prod` 21.0 s). The deployed
+bundle carries `account__admin` and links to `/admin/dashboard`. No rules or
+functions changed, so neither was redeployed.
+
+**Evaluation:** an admin now has a visible way into the workspace from any page,
+while a signed-out visitor and a standard account never see it - the link is a
+shortcut over the unchanged R31 guard. The change-log cycle follows in its own
+commit; `main` is fast-forwarded after it.

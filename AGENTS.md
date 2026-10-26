@@ -287,11 +287,12 @@ deliberately, so a growing repository is expected rather than a leak.
   cannot see),
   R35 (uploads through an admin-gated Cloud Function — the project's Storage
   bucket does not apply Storage Security Rules, so the write moved server-side
-  where the admin check cannot be bypassed).
-  **R35 is the most recent requirement published to production** — R2 was
+  where the admin check cannot be bypassed),
+  R36 (an **Admin** link in the header's account menu — a shortcut to the
+  dashboard, shown only to an account the same role seam calls `"admin"`, and
+  granting nothing on its own).
+  **R36 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **R36** (the **Admin** link in the header's account menu) is built and
-  verified, **awaiting owner approval** — it is not published yet.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
