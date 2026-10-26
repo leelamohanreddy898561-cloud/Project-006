@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0–R2 and R14–R31 implemented, verified and published (R15 superseded by R18); R32 specified on `feature/r32-admin-dashboard`; R3–R13 not started**
+**Status:** In progress — **R0–R2 and R14–R32 implemented, verified and published (R15 superseded by R18); R3–R13 not started**
 
 ---
 

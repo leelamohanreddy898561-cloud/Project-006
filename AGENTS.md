@@ -270,12 +270,11 @@ deliberately, so a growing repository is expected rather than a leak.
   requirement; `main` only receives approved work, fast-forwarded),
   R29 (live authentication — Google and email/password),
   R30 (lean loop; the sixteen workflow guards consolidated into one spec),
-  R31 (user roles and the protected admin route).
-  **R31 is the most recent requirement published to production** — R2 was
+  R31 (user roles and the protected admin route),
+  R32 (the admin dashboard — sidebar navigation over All Blogs, Add New Blog
+  and Manage Users, behind the R31 guard).
+  **R32 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Implemented and verified, awaiting owner approval:** R32 (the admin
-  dashboard at `/admin/dashboard` — sidebar navigation over All Blogs, Add New
-  Blog and Manage Users, behind the R31 guard).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

@@ -1892,3 +1892,31 @@ measured here rather than in the browser; TC-3203 re-checks it visually.
 only the twelve intended R32 changes — no `test-results/` or
 `evidence/screenshots/` mutation, so R25 still holds. The first full run's only
 failure was the TC-3002 documentation guard, corrected before this run.
+
+---
+
+### 2026-10-26 - R32 published
+
+**Approval:** the owner confirmed the dashboard renders at
+http://localhost:5173/admin/dashboard and replied to proceed with the publish
+sequence.
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run deploy
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** secret scan clean (the `BEGIN PRIVATE KEY` hits are this file's own
+recorded command text, and `.env` is untracked); branch pushed as off-machine
+backup; build **120.90 kB JS / 7.07 kB CSS gzipped** (budgets 150 / 25); hosting
+`release complete`; production smoke **10 passed in 15.0 s** (`verify:prod`
+19.5 s), including TC-3101 on the live `/admin`. `firestore.rules` was unchanged
+by R32, so no rules deploy was required.
+
+**Evaluation:** the admin dashboard is live at
+https://project-006-e6ae1.web.app/admin/dashboard — reachable only by the
+account the owner promoted to `role: "admin"`, with the three-section sidebar,
+the markdown composer that never claims a publish, and a Manage Users panel
+that states the console-only rule. The change-log cycle follows in its own
+commit; `main` is fast-forwarded after it — no merge commit, no force-push.
