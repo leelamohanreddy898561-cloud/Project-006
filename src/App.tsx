@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import { ScrollToTop } from "./components/ScrollToTop";
 import { Home } from "./pages/Home";
 import { AuthPage } from "./pages/AuthPage";
 import { BlogList } from "./pages/BlogList";
@@ -21,6 +22,8 @@ export default function App() {
   return (
     <>
       <Header />
+      {/* R40 — every navigation starts at the top of the new page. */}
+      <ScrollToTop />
       <main id="main">
         <Routes>
           <Route path="/" element={<Home />} />

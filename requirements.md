@@ -936,7 +936,10 @@ out, leaving only the middle part"). The `height={500}` attribute was the
 cause: it is a presentational hint, and the CSS never declared a `height`, so
 the box was 500 px tall at every viewport width while `aspect-ratio: 8 / 5`
 sat unused. The same forced ratio cropped card thumbnails on the list surfaces.
-The mobile audit that followed found three more defects, fixed here.
+The mobile audit that followed found three more defects, fixed here; the
+owner's review then found a fourth — opening an article from a scrolled list
+left the reader halfway down the page, so the cover sat cut off at the bottom
+of the screen and the opening of the post was never seen.
 
 R23.4 required a header image to *appear*; it never said the image must be
 shown in full. This requirement adds that criterion.
@@ -965,10 +968,14 @@ shown in full. This requirement adds that criterion.
 - **AC40.6** Dark-mode `--color-text-subtle` meets WCAG AA (4.5:1) on the
   surfaces that use it — card meta, the article meta line and the sidebar — so
   the deferral recorded for R11 is settled here.
+- **AC40.7** Opening an article from a scrolled list lands the reader at the
+  top of the article, with the whole cover in view: a route change resets the
+  scroll, while a filter change on `/blog` (`?q=`, `?topic=`, `?tag=`) does
+  not.
 
 **Quality**
 
-- **AC40.7** Build and lint pass, all previously passing tests stay green, and
+- **AC40.8** Build and lint pass, all previously passing tests stay green, and
   the bundle stays within the R14 budgets.
 
 ---

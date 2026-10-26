@@ -97,6 +97,37 @@ test.describe("R40 — the featured image is never cropped", () => {
     expect(tall.height).toBeLessThan(uncapped - 1);
     expect(tall.height).toBeLessThanOrEqual(700 * 0.8 + 1);
     expect(tall.width).toBeGreaterThan(400);
+
+    // R40.7 — tapping a card from a scrolled list opens the article at the
+    // top, so the reader sees the whole cover instead of its lower half.
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto("/blog");
+    await page.evaluate(() => window.scrollTo(0, 1200));
+
+    await page.locator(".blog-card__title a").first().click();
+    await expect(page).toHaveURL(/\/blog\/[a-z0-9-]+$/);
+
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY))
+      .toBe(0);
+
+    const opened = await page.evaluate(() => {
+      const rect = document
+        .querySelector(".post-page__cover")!
+        .getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom };
+    });
+    expect(opened.top).toBeGreaterThanOrEqual(0);
+    expect(opened.bottom).toBeGreaterThan(0);
+
+    // A filter change is the same page: it must not jump to the top.
+    await page.goto("/blog?q=prompting");
+    await page.evaluate(() => window.scrollTo(0, 300));
+    await page.getByRole("searchbox", { name: /search/i }).fill("prompting ");
+
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY))
+      .toBeGreaterThan(0);
   });
 
   test("TC-4002: card thumbnails show the full featured image on mobile", async ({

@@ -2454,3 +2454,46 @@ skilss" cover went from a 328x500 box showing ~37% of the image width to a
 needed a deeper scroll because the cover is its intended 720px height, not the
 500px box the defect produced. Nothing merged, deployed or synced - the branch
 is `fix/r40-mobile-featured-image`, awaiting visual review.
+
+---
+
+### 2026-10-26 - R40 review round: opening an article starts at the top
+
+**Scope:** the owner reviewed the branch and reported that the featured image
+is still cropped inside the article view on a phone, and that the page does not
+scroll to the top when an article is opened. Two findings, one of them not a
+regression:
+
+1. **The crop is the live site, not the branch.** Measured on the deployed
+   site: cover box 328x500, `object-fit: cover`, **37% of a 1600x900 cover's
+   width visible** - the pre-R40 code, because nothing has been deployed while
+   the branch awaits approval. The same measurement on the branch: 328x185,
+   `object-fit: contain`, **100% visible**. The branch was never broken.
+2. **The scroll defect is real, and is in the code.** A single-page app keeps
+   the document scroll position across a navigation, so tapping a card halfway
+   down `/blog` opened the article at scrollY ~500 of the new page: the reader
+   landed under the header with the lower part of the cover at the bottom of
+   the screen and never saw the opening of the post. Fixed with
+   `src/components/ScrollToTop.tsx`, which resets the scroll on a pathname
+   change before paint (`useLayoutEffect`), and deliberately not on a
+   `/blog` filter change, where jumping would fight the reader typing.
+
+**Commands:**
+
+    npm.cmd run build                        # 127.79 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run lint                         # clean
+    npx.cmd playwright test tests/r40-mobile-featured-images.spec.ts --reporter=line   # 4 passed
+    npx.cmd playwright test --reporter=dot   # 126 passed in 2.1 m
+
+**Specs:** TC-4001 now also proves the navigation behaviour - a card tapped
+from a list scrolled to 1200px opens the article at scrollY 0 with the whole
+cover in view, and a search-box edit on `/blog` does not reset the scroll. No
+new test case was added: the cap is four per requirement, and this is the same
+"opening an article" surface as the cover itself (AC40.7).
+
+**Evaluation:** re-measured on the branch - tapping the "20 skilss" card from
+the bottom of `/blog` lands at scrollY 0 with the cover fully in view
+(533px to 738px of an 800px viewport), where it previously landed at 518. The
+crop the owner saw on the phone is the deployed build and goes away with the
+publish; the scroll fix is in the code and tested. Still nothing merged,
+deployed or synced - `fix/r40-mobile-featured-image`, awaiting approval.
