@@ -52,6 +52,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-23 | Requirements may be published out of numeric order; R26's truth guard checks the latest claim against the newest publish entry in `evidence.md`, not against the highest requirement number | R2 shipped after R30. The old "highest ID = latest" assumption was a property of past sequencing, not a requirement; tying the claim to the recorded publish event keeps the check honest when a lower-numbered requirement is backfilled. |
 | 2026-10-24 | Roles live in `users/{uid}.role`; the client guard is UX, `firestore.rules` is the enforcement; self-promotion is blocked by rules, not by hiding a button | A route guard can always be bypassed by editing the client. The rule that `role` cannot change on update is what makes "admin" meaningful, and it also keeps an admin's role safe from accidental overwrite on sign-in. |
 | 2026-10-26 | A document in `blogs` is published the moment it is saved; the collection is public to read and admin-only to write (R37) | There is no draft workflow, so a `published` flag could only lie. Making the collection the published set means the post saved before this change — which carries `published: false` — is visible too, without a migration. The public read also retired `authorEmail` from the document: an address that is fine in an admin-only collection must not be published with the post. |
+| 2026-10-26 | Blog management lives in the existing **All Blogs** dashboard section rather than a fourth sidebar item (R38) | R32.1 fixes the sidebar at exactly three items. Making All Blogs the management view satisfies "a Manage Blogs page" without reopening that criterion: the same route, the same nav label, and the list R32.5 already requires, now with Edit/Delete for the Firestore posts that can actually be changed from the browser. Repository articles stay read-only there because editing one is a commit, not a Firestore write. |
 | 2026-10-26 | Uploads move from the browser Storage SDK to an admin-gated Cloud Function (R35) | This project's Storage bucket does not apply Storage Security Rules: `allow read, write: if true` at the root still returns 403 for anonymous and Firebase-authenticated callers, and the fault survived re-provisioning the bucket through Firebase's own `defaultBucket` API, a correct rules release, billing enabled, App Check off and IAM bindings. The Admin SDK is not subject to those rules, so the write moved server-side, where the same `users/{uid}.role` check is enforceable and cannot be bypassed by the client. Covers are made public per object because a cover is meant to be public; `storage.rules` stays in the repo as the rule the client path would need once the bucket behaves. |
 
 ## 5. Out of Scope (v1)
@@ -816,6 +817,70 @@ and the read half of **AC33.10** (public read, admin-only write).
   (`javascript:`, `data:` and the like) are refused, so stored HTML cannot
   execute in a visitor's browser. Repository Markdown keeps rendering normally.
 - **AC37.9** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
+
+---
+
+### R38 — The admin manages blogs: edit, delete and replace covers
+
+The dashboard's **All Blogs** panel becomes the blog management view. R37 made
+every document in the Firestore `blogs` collection public content; until now the
+only way to change or remove one was the Firebase console. The panel lists every
+written post in one card layout and, for a Firestore post, offers **Edit** and
+**Delete** — including adding, replacing or removing its featured image — with
+every change written back to the same `blogs/<id>` document.
+
+**The list**
+
+- **AC38.1** `/admin/dashboard/blogs` lists every written post — Firestore
+  `blogs` documents and repository articles — in one card layout, newest first,
+  each showing its cover, title, category, publication date, reading time and
+  source (`Firestore` or `Repository`); the title opens its public
+  `/blog/<slug>`.
+- **AC38.2** A Firestore post shows **Edit** and **Delete** controls; a
+  repository article shows **View** only and says it is a repository file, so
+  the panel never offers an action the browser cannot perform.
+- **AC38.3** While the saved posts are loading the repository articles still
+  render; a failed read leaves them and shows a `role="status"` notice. The
+  panel never invents a saved post.
+
+**Editing**
+
+- **AC38.4** **Edit** opens an inline editor on the same page, pre-filled with
+  the document's title, category, excerpt, tags and Markdown content. Required
+  fields are validated with inline errors, and a save calls the one Firebase
+  seam (`updateBlogPost` → `updateDoc`) on that same `blogs/<id>` document.
+  Success and failure are reported in a live region; nothing claims a write
+  Firestore did not confirm.
+- **AC38.5** The editor adds, replaces or removes the featured image. A chosen
+  file passes the R33 image rules and uploads through the R35 admin-gated
+  function; saving stores its `imageUrl` and `imagePath`. **Remove image** clears
+  `imageUrl` on save and deletes the old object best-effort; a cancelled or
+  undone change keeps the current image. A newly uploaded image is removed again
+  if the document update fails.
+- **AC38.6** The other document fields (slug, reading time, author name and uid,
+  creation date) are re-derived by the same `buildBlogDocument` the composer
+  uses, so an edited post stays shaped like a created one and gains an
+  `updatedAt` server timestamp.
+
+**Deleting**
+
+- **AC38.7** **Delete** asks for confirmation inline; confirming calls
+  `deleteBlogPost` → `deleteDoc` for that `blogs/<id>` and then deletes the cover
+  object best-effort. The post disappears from the admin list and from the
+  public archive on the next read; a failed delete keeps the post and reports
+  the failure.
+
+**Access and quality**
+
+- **AC38.8** The page stays behind the R31 guard and the write stays admin-only:
+  `firestore.rules` is unchanged (`allow write: if isAdmin()`), and the cover
+  deletion stays behind the admin-gated `deleteBlogImage` function. No rule is
+  relaxed for this feature.
+- **AC38.9** Variables, text and controls meet WCAG AA contrast (4.5:1) in both
+  themes, every control has an accessible name, and the layout has no horizontal
+  overflow at 360px.
+- **AC38.10** Build and lint pass, all previously passing tests stay green, and
   the bundle stays within the R14 budgets.
 
 ---

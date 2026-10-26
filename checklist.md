@@ -278,6 +278,15 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R37.6–R37.8) Seed content still renders while the read is pending/failed, with a `role="status"` notice; the document drops `authorEmail`; remote Markdown is sanitised
 - [x] (R37.9) Execute TC-3701–TC-3703; build, lint, full suite (117 passed), bundle within budget; evidence entry; local commit
 
+## Phase 3v — Manage blogs: edit, delete, replace covers (R38)
+
+- [x] (R38.1–R38.3) `All Blogs` becomes the management view: merged repository + Firestore list, source badge, Edit/Delete only on Firestore posts, loading/failed-read states
+- [x] (R38.4, R38.6) Inline editor pre-filled from the document; validation; `updateBlogPost` → `updateDoc` on `blogs/<id>` with re-derived fields and `updatedAt`
+- [x] (R38.5) Add / replace / remove cover: upload through `uploadBlogImage`, store `imageUrl` + `imagePath`, remove the stale object best-effort, clean up a new upload if the write fails
+- [x] (R38.7) Delete with inline confirmation: `deleteBlogPost` → `deleteDoc`, then best-effort cover deletion; failures reported and the post kept
+- [x] (R38.8–R38.10) Rules unchanged (admin-only write), accessible labels/contrast/360px, build + lint + full suite + bundle; execute TC-3801–TC-3803
+- [ ] TC-3804: owner's live walkthrough (admin account) before approval
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

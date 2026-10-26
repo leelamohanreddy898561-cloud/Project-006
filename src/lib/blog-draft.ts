@@ -59,6 +59,11 @@ export interface BlogDocument {
   content: string;
   /** The Storage download URL, or "" when no image was chosen. */
   imageUrl: string;
+  /**
+   * R38 — the object path behind `imageUrl`, so a later replace or delete can
+   * remove exactly that file. "" when the post has no image.
+   */
+  imagePath: string;
   /** Minutes, at `WORDS_PER_MINUTE`. */
   readingTime: number;
   authorName: string;
@@ -149,6 +154,8 @@ export function buildBlogDocument(
   draft: BlogDraft,
   author: BlogAuthor,
   imageUrl: string,
+  /** R38 — omitted by callers that only need the visitor shape. */
+  imagePath = "",
 ): BlogDocument {
   const title = draft.title.trim();
 
@@ -160,6 +167,7 @@ export function buildBlogDocument(
     tags: parseTags(draft.tags),
     content: draft.content.trim(),
     imageUrl,
+    imagePath: imageUrl ? imagePath : "",
     readingTime: readingTimeFrom(draft.content),
     authorName: author.name,
     authorUid: author.uid,

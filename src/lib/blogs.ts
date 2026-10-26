@@ -7,6 +7,7 @@ import {
   type BlogDraft,
 } from "./blog-draft";
 import type { SavedBlogRecord } from "./blog-posts";
+import { storedImagePath } from "./blog-admin";
 
 /**
  * R33 / R35 / R37 — the single seam between the site and Firebase for blogs.
@@ -59,6 +60,22 @@ export type SaveOutcome =
 
 export type SavedBlogsOutcome =
   | { ok: true; records: SavedBlogRecord[] }
+  | { ok: false; message: string };
+
+/**
+ * R38 — what the editor does with the featured image on save.
+ *
+ * `keep` leaves the document's image URL and path untouched, `replace` uploads
+ * the chosen file first, and `remove` clears both fields and deletes the old
+ * object after the document write succeeds.
+ */
+export type ImageChange =
+  | { kind: "keep" }
+  | { kind: "replace"; file: File }
+  | { kind: "remove" };
+
+export type DeleteOutcome =
+  | { ok: true; id: string }
   | { ok: false; message: string };
 
 /**
@@ -254,6 +271,7 @@ export async function createBlogPost(
   draft: BlogDraft,
   author: BlogAuthor,
   imageUrl: string,
+  imagePath = "",
 ): Promise<SaveOutcome> {
   if (!isFirebaseConfigured()) {
     return {
@@ -269,7 +287,7 @@ export async function createBlogPost(
       import("firebase/firestore"),
     ]);
 
-    const document = buildBlogDocument(draft, author, imageUrl);
+    const document = buildBlogDocument(draft, author, imageUrl, imagePath);
     const created = await addDoc(collection(db, BLOGS_COLLECTION), {
       ...document,
       createdAt: serverTimestamp(),
@@ -306,9 +324,154 @@ export async function saveBlogPost(
 
   if (upload && !upload.ok) return { ok: false, message: upload.message };
 
-  const saved = await createBlogPost(draft, author, upload?.url ?? "");
+  const saved = await createBlogPost(
+    draft,
+    author,
+    upload?.url ?? "",
+    upload?.path ?? "",
+  );
 
   if (!saved.ok && upload?.ok) await removeBlogImage(upload.path);
 
   return saved;
+}
+
+/** The author block an edit preserves — a post keeps who first wrote it. */
+function authorOf(record: SavedBlogRecord): BlogAuthor {
+  const uid = typeof record.authorUid === "string" ? record.authorUid : "";
+  const name =
+    typeof record.authorName === "string" && record.authorName.trim()
+      ? record.authorName.trim()
+      : "AI Pulse";
+
+  return { uid, name };
+}
+
+/**
+ * R38.4–R38.6 — updates one existing `blogs/<id>` document.
+ *
+ * The document is re-derived from the same `buildBlogDocument` the composer
+ * uses, so slug, reading time and author stay consistent with a created post;
+ * only the changed values and an `updatedAt` server timestamp differ.
+ *
+ * The cover is handled first because the document carries its URL. A replace
+ * uploads the new file, then writes; a failed write removes the new file again.
+ * On success the old object is deleted best-effort, so a replaced or removed
+ * cover does not linger in the bucket. `record.id` is the document the caller
+ * selected — nothing is ever looked up by slug.
+ */
+export async function updateBlogPost(
+  record: SavedBlogRecord,
+  draft: BlogDraft,
+  change: ImageChange,
+): Promise<SaveOutcome> {
+  if (Object.keys(validateDraft(draft)).length > 0) {
+    return { ok: false, message: "The post is missing a required field." };
+  }
+
+  if (!record.id) {
+    return { ok: false, message: "That post has no document id." };
+  }
+
+  if (!isFirebaseConfigured()) {
+    return {
+      ok: false,
+      message:
+        "Firebase is not configured — copy .env.example to .env and add the project values.",
+    };
+  }
+
+  const oldPath = storedImagePath(record);
+  let imageUrl = typeof record.imageUrl === "string" ? record.imageUrl : "";
+  let imagePath = oldPath;
+  let upload: ImageUpload | null = null;
+
+  if (change.kind === "replace") {
+    upload = await uploadBlogImage(change.file);
+
+    if (!upload.ok) return { ok: false, message: upload.message };
+
+    imageUrl = upload.url;
+    imagePath = upload.path;
+  } else if (change.kind === "remove") {
+    imageUrl = "";
+    imagePath = "";
+  }
+
+  const document = buildBlogDocument(
+    draft,
+    authorOf(record),
+    imageUrl,
+    imagePath,
+  );
+
+  try {
+    const [{ db }, { doc, serverTimestamp, updateDoc }] = await Promise.all([
+      getFirebase(),
+      import("firebase/firestore"),
+    ]);
+
+    await updateDoc(doc(db, BLOGS_COLLECTION, record.id), {
+      ...document,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    // The new file has no document pointing at it, so it is removed again.
+    if (upload?.ok) await removeBlogImage(upload.path);
+
+    return {
+      ok: false,
+      message: friendly(error, "The changes could not be saved."),
+    };
+  }
+
+  // Only after Firestore confirms the write, and only when the old object is
+  // really no longer referenced. Best-effort: an orphaned file is a cost, not a
+  // reason to report a save that did happen as failed.
+  if (oldPath && oldPath !== imagePath) await removeBlogImage(oldPath);
+
+  return { ok: true, id: record.id, imageUrl };
+}
+
+/**
+ * R38.7 — deletes one post and its cover.
+ *
+ * The document goes first: if Firestore refuses, the post is still there, so
+ * deleting its image would leave a broken cover behind. Once the document is
+ * gone, the cover is removed best-effort by the admin-gated function.
+ */
+export async function deleteBlogPost(
+  record: SavedBlogRecord,
+): Promise<DeleteOutcome> {
+  if (!record.id) {
+    return { ok: false, message: "That post has no document id." };
+  }
+
+  if (!isFirebaseConfigured()) {
+    return {
+      ok: false,
+      message:
+        "Firebase is not configured — copy .env.example to .env and add the project values.",
+    };
+  }
+
+  const imagePath = storedImagePath(record);
+
+  try {
+    const [{ db }, { deleteDoc, doc }] = await Promise.all([
+      getFirebase(),
+      import("firebase/firestore"),
+    ]);
+
+    await deleteDoc(doc(db, BLOGS_COLLECTION, record.id));
+  } catch (error) {
+    return {
+      ok: false,
+      message: friendly(error, "The post could not be deleted."),
+    };
+  }
+
+  if (imagePath) await removeBlogImage(imagePath);
+
+  return { ok: true, id: record.id };
 }

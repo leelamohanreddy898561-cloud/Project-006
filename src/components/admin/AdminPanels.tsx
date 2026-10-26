@@ -11,7 +11,8 @@ import { useAuth } from "../../hooks/useAuth";
 import "./AdminPanels.css";
 
 /**
- * R32 — the four panels behind the admin dashboard sidebar.
+ * R32 — the dashboard panels other than All Blogs, which became the R38
+ * management view (`ManageBlogs.tsx`).
  *
  * Two of them are honest about what the browser can actually do, because the
  * alternative is a control that lies:
@@ -72,62 +73,6 @@ export function AdminOverview() {
           ))}
         </ul>
       </section>
-    </section>
-  );
-}
-
-/* All Blogs ---------------------------------------------------------------- */
-
-export function AdminBlogs() {
-  const posts = getLatestPosts();
-
-  return (
-    <section className="admin-panel">
-      <header className="admin-panel__head">
-        <h1 className="admin-panel__title">All blogs</h1>
-        <p className="admin-panel__count">
-          {posts.length} {posts.length === 1 ? "post" : "posts"}
-        </p>
-      </header>
-      <p className="admin-panel__lead">
-        Every post on the site, newest first. Open one to read it as a visitor
-        does.
-      </p>
-
-      <ul className="admin-blogs">
-        {posts.map((post) => (
-          <li className="admin-blogs__row" key={post.slug}>
-            <div className="admin-blogs__main">
-              <Link
-                to={`/blog/${post.slug}`}
-                className="admin-blogs__title"
-                aria-label={`Open ${post.title}`}
-              >
-                {post.title}
-              </Link>
-              <p className="admin-blogs__meta">
-                <span className="admin-badge">{post.category}</span>
-                <span>{formatDate(post.date)}</span>
-                <span>{post.readingTime} min read</span>
-                <span>{post.tags.map((tag) => `#${tag}`).join(" ")}</span>
-              </p>
-            </div>
-            <Link
-              to={`/blog/${post.slug}`}
-              className="btn btn--outline btn--sm"
-              aria-label={`View ${post.title}`}
-            >
-              View
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      <p className="admin-note">
-        Posts are markdown files in <code>content/posts/</code> with frontmatter,
-        so editing one is a repository change rather than a form in the browser.
-        Use <strong>Add New Blog</strong> to compose a new file.
-      </p>
     </section>
   );
 }

@@ -12,11 +12,11 @@ import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 import {
   AdminBlogEditor,
-  AdminBlogs,
   AdminOverview,
   AdminSectionMissing,
   AdminUsers,
 } from "./components/admin/AdminPanels";
+import { ManageBlogs } from "./components/admin/ManageBlogs";
 
 export default function App() {
   return (
@@ -80,7 +80,9 @@ export default function App() {
             }
           >
             <Route index element={<AdminOverview />} />
-            <Route path="blogs" element={<AdminBlogs />} />
+            {/* R38 — the management view. R32.1 keeps the sidebar at three
+                items, so this is the All Blogs section rather than a fourth. */}
+            <Route path="blogs" element={<ManageBlogs />} />
             <Route path="blogs/new" element={<AdminBlogEditor />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="*" element={<AdminSectionMissing />} />

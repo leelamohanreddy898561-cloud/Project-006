@@ -2236,7 +2236,7 @@ while a signed-out visitor and a standard account never see it - the link is a
 shortcut over the unchanged R31 guard. The change-log cycle follows in its own
 commit; `main` is fast-forwarded after it.
 
-### 2026-10-26 — R37 saved posts visible to visitors, built and verified
+### 2026-10-26 ï¿½ R37 saved posts visible to visitors, built and verified
 
 **Built:** `src/lib/blog-posts.ts` converts a `blogs` document to a `Post` and
 merges saved posts with the seed articles; `listSavedBlogs()` reads the
@@ -2247,9 +2247,9 @@ and the not-found state include saved posts. `firestore.rules` makes `blogs`
 public to read and keeps writes admin-only. The composer drops `authorEmail` and
 the `published` flag; remote Markdown is sanitised in `src/lib/markdown.ts`.
 
-**Proof:** `npm.cmd run build` — **125.85 kB JS / 7.35 kB CSS gzipped** (budgets
-150 / 25); `npm.cmd run lint` clean; `npx playwright test` — **117 passed**.
-TC-3701–TC-3703 green; R1/R2/R19/R23/R33 stay green with
+**Proof:** `npm.cmd run build` ï¿½ **125.85 kB JS / 7.35 kB CSS gzipped** (budgets
+150 / 25); `npm.cmd run lint` clean; `npx playwright test` ï¿½ **117 passed**.
+TC-3701ï¿½TC-3703 green; R1/R2/R19/R23/R33 stay green with
 `firestore.googleapis.com` blocked in the browser suite (TC-3702 uses the
 dev-only fixture). TC-3002 failed once because Section 9 did not yet name R37;
 fixed and re-run green.
@@ -2308,3 +2308,30 @@ visitor - admin, student or signed out. Writes remain admin-only in
 `firestore.rules`; the public read is the only change to access. The author email
 is gone from the document, so the public read exposes no private address. The
 change-log cycle follows in its own commit; `main` is fast-forwarded after it.
+
+---
+
+### 2026-10-26 - R38 implemented: manage blogs (edit, delete, covers)
+
+**Scope:** the dashboard's All Blogs section is now the management view. It
+lists repository articles and Firestore `blogs` documents in one card layout,
+newest first, and offers Edit / Delete only on the Firestore posts. The inline
+editor pre-fills title, category, excerpt, tags and content; the cover can be
+added, replaced or removed. Saves go through `updateBlogPost` -> `updateDoc` on
+the same `blogs/<id>`, deletes through `deleteBlogPost` -> `deleteDoc`, with the
+old cover removed best-effort by the admin-gated function. New documents carry
+`imagePath`; legacy documents derive it from `imageUrl`.
+
+**Commands:**
+
+    npm.cmd run build                        # 129.11 kB JS / 7.71 kB CSS gzipped
+    npm.cmd run lint                         # clean
+    npx.cmd playwright test --reporter=dot   # 120 passed in 1.7 m
+
+**Specs:** `tests/r38-manage-blogs.spec.ts` - TC-3801 (guard) and TC-3802/3803
+(merge, draft, image path, controls, seam, rules) pass; the admin session itself
+is TC-3804, the owner's walkthrough.
+
+**Evaluation:** every acceptance criterion has an executable check except the
+live admin walkthrough, which needs the console-promoted account. The page is
+not merged or deployed; it is on `feature/r38-manage-blogs` for visual review.
