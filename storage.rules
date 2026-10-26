@@ -22,16 +22,20 @@ service.firebase.storage {
   match /b/{bucket}/o {
 
     match /blog-images/{uid}/{fileName} {
-      allow read: if isOwnerAdmin();
-      allow create, update: if isOwnerAdmin()
+      allow read: if isOwnerAdmin(uid);
+      allow create, update: if isOwnerAdmin(uid)
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
-      allow delete: if isOwnerAdmin();
+      allow delete: if isOwnerAdmin(uid);
     }
 
-    function isOwnerAdmin() {
+    // R34 — `uid` is a wildcard of the match block above, so it is passed in as
+    // a parameter. A function only sees the scope it is declared in, so reading
+    // `uid` from here resolves to nothing and denies every account, admins
+    // included. `firestore.rules` has always used this shape (`owns(uid)`).
+    function isOwnerAdmin(ownerUid) {
       return request.auth != null
-        && request.auth.uid == uid
+        && request.auth.uid == ownerUid
         && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
   }

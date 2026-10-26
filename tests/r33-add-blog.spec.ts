@@ -162,15 +162,16 @@ test.describe("R33 — the composer is wired to the right places", () => {
       /documents\/users\/\$\(request\.auth\.uid\)\)\.data\.role == 'admin'/,
     );
 
+    // The Storage rule's shape — the parameter passed into the admin check, the
+    // image-only condition and the size cap — is proven by R34's TC-3402. This
+    // case only proves the file exists and names the folder: asserting the old
+    // call here is how the defect travelled unnoticed (R34).
     expect(storage, "the image folder must be namespaced by uid").toContain(
       "match /blog-images/{uid}/{fileName}",
     );
-    expect(storage, "only the owner's own folder").toContain(
-      "request.auth.uid == uid",
-    );
+    expect(storage, "admin only").toContain("isOwnerAdmin");
     expect(storage, "images only").toContain("contentType.matches('image/.*')");
     expect(storage, "5 MB cap").toContain("5 * 1024 * 1024");
-    expect(storage, "admin only").toContain("isOwnerAdmin()");
 
     expect(config, "the storage rules must be deployed").toMatch(
       /"storage":\s*\{\s*"rules":\s*"storage\.rules"/,

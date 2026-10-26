@@ -2035,3 +2035,36 @@ Both collections are admin-only in the deployed rules, read from the same
 `users/{uid}.role` the guard reads, so neither write can be granted from the page
 it protects. The change-log cycle follows in its own commit; `main` is
 fast-forwarded after it — no merge commit, no force-push.
+
+---
+
+### 2026-10-26 - R34 storage rule scope fix, awaiting the owner's live save
+
+**Requirement:** R34 — `storage.rules` declared `isOwnerAdmin()` one scope above
+the `{uid}` wildcard it read, so the condition could not resolve and denied every
+account; the upload failed before the Firestore write, which is why a save left
+neither a file nor a document. Branch `fix/r34-blog-image-upload`.
+
+**Commands:**
+
+    npx.cmd tsc --noEmit
+    npx.cmd playwright test tests/r34-storage-rules.spec.ts tests/r33-add-blog.spec.ts --reporter=line
+    npx.cmd playwright test tests/r34-storage-rules.spec.ts --reporter=line   # against the pre-fix file
+
+**Results:** **5 passed** with the fix. Against the pre-fix `storage.rules`
+checked out from `HEAD`, the same spec **fails** — the guard names the
+out-of-scope wildcard, so it is a check that can actually fail, not one that
+passes by construction. TC-3401 also feeds its own broken fixture and asserts
+exactly `[{ fn: "isOwnerAdmin", name: "uid" }]`, then the fixed shape yields
+nothing.
+
+**Artifacts:** `storage.rules` (`isOwnerAdmin(uid)` in all three operations,
+`ownerUid` as the parameter), `tests/r34-storage-rules.spec.ts`, and TC-3302 in
+`tests/r33-add-blog.spec.ts` trimmed so the rule's shape is asserted once, in
+TC-3402 — the duplicated assertion is how the defect travelled unnoticed.
+
+**Evaluation:** the fix is server-side only, so no client rebuild was needed and
+the bundle is unchanged (124.05 kB JS / 7.28 kB CSS). What remains is the one
+thing the suite cannot reach: a role exists only in the console, so the allow
+path is TC-3404 and needs the owner. Deploying the rules is required before that
+test; the deny path is re-proved with the probe at deploy time.

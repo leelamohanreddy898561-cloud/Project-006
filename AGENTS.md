@@ -283,6 +283,11 @@ deliberately, so a growing repository is expected rather than a leak.
   an admin can write).
   **R33 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
+- **Implemented and verified locally, awaiting the owner's live save:** R34 (the
+  Storage rule scope fix — `isOwnerAdmin(uid)` takes the wildcard as a parameter,
+  and a guard now fails when any rules function reads a wildcard it cannot see).
+  Deploying the rules is the step that makes the live save testable; hosting, the
+  change log and the merge into `main` follow the approval.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

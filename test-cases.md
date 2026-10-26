@@ -467,3 +467,18 @@ registered in `src/App.tsx` inside `RequireAdmin` is really guarded, and TC-3201
 proves the signed-out redirect for a route family; TC-3301 repeats the redirect
 only because it is the one browser-reachable proof for this route, and TC-3302
 covers the new route's own wiring.
+
+## R34 — The featured image upload is refused for every account
+
+TC-3302 keeps proving the route, the fields, the single seam and the rules
+files; only its Storage assertion is corrected here (`isOwnerAdmin(uid)` instead
+of `isOwnerAdmin()`), because the call it asserted was the defect. The cases
+below add the scope guard and the live proof; the deny path re-uses the probe
+R33's publish recorded.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-3401 | auto | Read `storage.rules` and `firestore.rules`; for every `function`, collect the wildcards used inside it that are not preceded by a `.` | Every such name is a parameter of that function or a wildcard of a `match` block enclosing it — the old `isOwnerAdmin()` (reading the child `{uid}` wildcard from the bucket scope) fails this, the fixed one passes (AC34.1, AC34.2) |
+| TC-3402 | auto | Read `storage.rules` | The admin check takes the uid as a parameter and all three operations pass it; the image-only and 5 MB conditions and the delete rule are intact (AC34.1) |
+| TC-3403 | cli | `npm run deploy:rules`, then run the deny-path probe with a throwaway account and delete it | Both rule files release; a non-admin is refused `blogs`, an upload into its own and another folder, and self-promotion; anonymous writes are refused; the probe account is gone (AC34.3) |
+| TC-3404 | manual | Sign in as the console-promoted admin, save one post with an image | The live region reports the document id; the file is in `blog-images/<uid>/`; the `blogs` document carries its `imageUrl` (AC34.4) |

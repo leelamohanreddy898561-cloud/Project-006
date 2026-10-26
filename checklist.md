@@ -247,6 +247,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R33.10, R33.11) `firestore.rules` `blogs` block (admin-only via `users/{uid}.role`), new `storage.rules`, `firebase.json` storage block, `deploy:rules` publishes both
 - [x] (R33.12) Execute TC-3301–TC-3303; evidence entry; local commit; **published 2026-10-26** (TC-3304 is the owner's manual walkthrough against the live site)
 
+## Phase 3r — Storage rule scope fix (R34)
+
+- [x] (R34.1) `storage.rules`: `isOwnerAdmin(uid)` takes the owner's uid as a parameter, so the function reads only variables in its own scope
+- [x] (R34.2) Scope guard over both rules files: a function may only use wildcards that are parameters or encloses it
+- [x] (R34.3) Correct TC-3302's Storage assertion to `isOwnerAdmin(uid)` — the call it asserted was the defect
+- [x] (R34.5) Build, lint and the full suite unchanged; the bundle is untouched (server-side fix)
+- [ ] (R34.4) Deploy the rules, re-run the deny-path probe, and have the owner complete one live save (TC-3404)
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

@@ -660,6 +660,33 @@ content to Firebase instead of composing a repository file (R32).
 
 ---
 
+### R34 — The featured image upload is refused for every account
+
+R33's Storage rule declared its admin check one scope above the `{uid}` wildcard
+it read, so the condition could not resolve and denied every account, admins
+included. Because the upload runs before the document write, a save produced
+neither a file nor a document — the reported symptom ("not saving into Firebase
+Storage") was one defect, not two.
+
+- **AC34.1** `storage.rules` passes the owner's uid into the admin check, so the
+  function reads only variables in scope; the deployed rule allows the admin
+  account to read, write and delete under its own `blog-images/<uid>/` folder and
+  still denies every other account.
+- **AC34.2** A guard test fails when any function in `storage.rules` or
+  `firestore.rules` references a wildcard that is neither a parameter nor
+  declared in a scope enclosing the function — the defect class behind this bug.
+- **AC34.3** The deny path stays proven: a throwaway non-admin account is refused
+  a write to `blogs`, an upload into any `blog-images/` folder, and a
+  self-promotion, and both services refuse anonymous writes.
+- **AC34.4** One save by the admin account produces both the Storage file and the
+  `blogs` document, and the live region reports the document id — the R33 promise
+  observable end to end. A role is granted only in the console, so this is checked
+  by the owner.
+- **AC34.5** The fix is server-side, so the shipped bundle is unchanged, no
+  hosting release is needed, and the R14 budgets are unaffected.
+
+---
+
 ## 8. Open Questions
 
 - [ ] Confirm the blog name and branding (currently "Signal & Noise").
