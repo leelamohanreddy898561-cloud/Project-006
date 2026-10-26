@@ -45,7 +45,6 @@ export interface BlogDraft {
 export interface BlogAuthor {
   uid: string;
   name: string;
-  email: string | null;
 }
 
 export type DraftErrors = Partial<Record<keyof BlogDraft, string>>;
@@ -63,10 +62,7 @@ export interface BlogDocument {
   /** Minutes, at `WORDS_PER_MINUTE`. */
   readingTime: number;
   authorName: string;
-  authorEmail: string | null;
   authorUid: string;
-  /** No page reads `blogs` yet (R13 is not built) — stored, not live. */
-  published: false;
 }
 
 /**
@@ -145,6 +141,9 @@ export function validateImage(file: ImageCandidate | null): string | null {
  * The document the form writes. Deliberately free of Firebase types so it can
  * be asserted directly: the timestamp is added by `blogs.ts`, which owns the
  * server value.
+ *
+ * R37 — no `published` flag and no author email: every document in `blogs` is
+ * public, so a flag could only lie and an email must not be published.
  */
 export function buildBlogDocument(
   draft: BlogDraft,
@@ -163,8 +162,6 @@ export function buildBlogDocument(
     imageUrl,
     readingTime: readingTimeFrom(draft.content),
     authorName: author.name,
-    authorEmail: author.email,
     authorUid: author.uid,
-    published: false,
   };
 }

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { contrastRatio } from "./helpers/contrast";
+import { blockFirestore } from "./helpers/firestore";
 
 /**
  * R23 — Blog detail page. Maps to TC-2301 … TC-2319.
@@ -8,6 +9,10 @@ import { contrastRatio } from "./helpers/contrast";
 
 const SLUG = "mixture-of-experts";
 const ARTICLE = `/blog/${SLUG}`;
+
+test.beforeEach(async ({ page }) => {
+  await blockFirestore(page);
+});
 
 test.describe("R23 — Blog detail page", () => {
   test("TC-2301: clicking a card opens its article @smoke", async ({ page }) => {
@@ -27,7 +32,7 @@ test.describe("R23 — Blog detail page", () => {
 
     await expect(
       page.getByRole("heading", { name: "Article not found" }),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 10_000 });
     await expect(page.locator(".post-page__title")).toHaveCount(0);
     await expect(page.getByRole("link", { name: /back home/i })).toBeVisible();
     await expect(

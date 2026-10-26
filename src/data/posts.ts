@@ -123,10 +123,22 @@ export function getPostBySlug(slug: string): Post | undefined {
  * newest. Never includes the current article (R23.18).
  */
 export function getRelatedPosts(slug: string, limit = 3): Post[] {
-  const current = getPostBySlug(slug);
+  return getRelatedPostsFrom(posts, slug, limit);
+}
+
+/**
+ * R37 — the same related-article rule over a caller's list, so a saved post's
+ * page relates it to the whole merged archive rather than the seed articles.
+ */
+export function getRelatedPostsFrom(
+  source: Post[],
+  slug: string,
+  limit = 3,
+): Post[] {
+  const current = source.find((post) => post.slug === slug);
   if (!current) return [];
 
-  return posts
+  return source
     .filter((post) => post.slug !== slug)
     .map((post) => ({
       post,
@@ -148,9 +160,12 @@ export interface TrendingTopic {
 }
 
 /** Topics ranked by how many posts carry the tag. */
-export function getTrendingTopics(limit = 5): TrendingTopic[] {
+export function getTrendingTopics(
+  limit = 5,
+  source: Post[] = posts,
+): TrendingTopic[] {
   const counts = new Map<string, number>();
-  for (const post of posts) {
+  for (const post of source) {
     for (const tag of post.tags) {
       counts.set(tag, (counts.get(tag) ?? 0) + 1);
     }
@@ -170,8 +185,8 @@ export interface Category {
 }
 
 /** Every tag in use, alphabetical — the source for the /blog tag filter (R2). */
-export function getTags(): string[] {
-  return [...new Set(posts.flatMap((post) => post.tags))].sort((a, b) =>
+export function getTags(source: Post[] = posts): string[] {
+  return [...new Set(source.flatMap((post) => post.tags))].sort((a, b) =>
     a.localeCompare(b),
   );
 }
@@ -226,9 +241,9 @@ export function filterPosts(source: Post[], filters: PostFilters): Post[] {
 }
 
 /** Post categories, most-used first — the single source for topic links. */
-export function getCategories(): Category[] {
+export function getCategories(source: Post[] = posts): Category[] {
   const counts = new Map<string, number>();
-  for (const post of posts) {
+  for (const post of source) {
     counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
   }
   return [...counts.entries()]
@@ -287,6 +302,9 @@ export function slugify(value: string): string {
 }
 
 export function formatDate(iso: string): string {
+  // R37 — a saved post whose timestamp is missing has no date to show.
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",

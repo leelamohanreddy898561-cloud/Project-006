@@ -1,9 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { contrastRatio } from "./helpers/contrast";
+import { blockFirestore } from "./helpers/firestore";
 
 /**
  * R19 — Home main content layout. Maps to TC-1901 … TC-1912 in test-cases.md.
  */
+
+test.beforeEach(async ({ page }) => {
+  await blockFirestore(page);
+});
 
 test.describe("R19 — Home main content layout", () => {
   test("TC-1901: two-column layout with a roughly 70/30 split", async ({

@@ -31,7 +31,6 @@ import {
 const AUTHOR: BlogAuthor = {
   uid: "uid-admin-1",
   name: "Maya Iyer",
-  email: "maya@example.com",
 };
 
 const DRAFT: BlogDraft = {
@@ -157,8 +156,11 @@ test.describe("R33 — the composer is wired to the right places", () => {
     const storage = read("storage.rules");
     const config = read("firebase.json");
 
-    expect(firestore, "blogs must be admin-only").toMatch(
-      /match \/blogs\/\{blogId\} \{[\s\S]*?allow read, write: if isAdmin\(\);/,
+    expect(firestore, "blogs must be publicly readable").toMatch(
+      /match \/blogs\/\{blogId\} \{[\s\S]*?allow read: if true;/,
+    );
+    expect(firestore, "blogs must stay admin-only to write").toMatch(
+      /match \/blogs\/\{blogId\} \{[\s\S]*?allow write: if isAdmin\(\);/,
     );
     expect(firestore, "admin comes from the user's own profile").toMatch(
       /documents\/users\/\$\(request\.auth\.uid\)\)\.data\.role == 'admin'/,
@@ -238,11 +240,12 @@ test.describe("R33 — the draft module decides what is written", () => {
     expect(document.imageUrl).toBe("https://example.test/x.png");
     expect(document.readingTime).toBe(readingTimeFrom(DRAFT.content));
     expect(document.authorName).toBe(AUTHOR.name);
-    expect(document.authorEmail).toBe(AUTHOR.email);
     expect(document.authorUid).toBe(AUTHOR.uid);
 
-    // AC33.9 — stored, not live.
-    expect(document.published).toBe(false);
+    // R37 revised AC33.8/AC33.9 — the collection is the published set, so the
+    // document carries no "not published" flag and no author email.
+    expect("published" in document).toBe(false);
+    expect("authorEmail" in document).toBe(false);
 
     // A missing image is stored as an empty URL, not omitted.
     expect(buildBlogDocument(DRAFT, AUTHOR, "").imageUrl).toBe("");

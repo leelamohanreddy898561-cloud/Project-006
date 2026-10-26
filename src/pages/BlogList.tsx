@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BlogCard } from "../components/BlogCard";
 import { CloseIcon, SearchIcon } from "../components/icons";
+import { useSavedBlogs } from "../hooks/useSavedBlogs";
+import { mergePosts } from "../lib/blog-posts";
 import {
   filterPosts,
   getCategories,
@@ -14,17 +16,24 @@ import "./BlogList.css";
  * R2 — the blog index: every post, newest first, searchable by text and
  * narrowable by topic and tag. All three filters live in the URL (`q`, `topic`,
  * `tag`) so a filtered view can be shared or bookmarked (AC2.4).
+ *
+ * R37 — saved posts are part of the same list, and a failed read leaves the
+ * repository articles in place with a short notice.
  */
 export function BlogList() {
   const [params, setParams] = useSearchParams();
+  const saved = useSavedBlogs();
 
   const query = params.get("q") ?? "";
   const topic = params.get("topic") ?? "";
   const tag = params.get("tag") ?? "";
 
-  const allPosts = useMemo(() => getLatestPosts(), []);
-  const topics = useMemo(() => getCategories(), []);
-  const tags = useMemo(() => getTags(), []);
+  const allPosts = useMemo(
+    () => mergePosts(getLatestPosts(), saved.posts),
+    [saved.posts],
+  );
+  const topics = useMemo(() => getCategories(allPosts), [allPosts]);
+  const tags = useMemo(() => getTags(allPosts), [allPosts]);
   const visible = useMemo(
     () => filterPosts(allPosts, { query, topic, tag }),
     [allPosts, query, topic, tag],
@@ -86,6 +95,12 @@ export function BlogList() {
           {visible.length} {visible.length === 1 ? "post" : "posts"}
         </p>
       </div>
+
+      {saved.status === "error" && (
+        <p className="blog-list__notice" role="status">
+          Saved posts could not be loaded right now — showing the site archive.
+        </p>
+      )}
 
       <div
         className="blog-list__filters"

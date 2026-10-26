@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { contrastRatio } from "./helpers/contrast";
+import { blockFirestore } from "./helpers/firestore";
 import { screenshotPath } from "./helpers/screenshots";
 
 /**
@@ -23,6 +24,10 @@ async function canvasFingerprint(
     return sum;
   });
 }
+
+test.beforeEach(async ({ page }) => {
+  await blockFirestore(page);
+});
 
 test.describe("R1 — Home hero", () => {
   test("TC-101: headline, description, and Start Reading button", async ({

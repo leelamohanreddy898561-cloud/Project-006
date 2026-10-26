@@ -6,9 +6,10 @@ import {
   type BlogAuthor,
   type BlogDraft,
 } from "./blog-draft";
+import type { SavedBlogRecord } from "./blog-posts";
 
 /**
- * R33 / R35 — the single seam between the composer and Firebase.
+ * R33 / R35 / R37 — the single seam between the site and Firebase for blogs.
  *
  * Two services are used, each where it actually works:
  *
@@ -17,16 +18,33 @@ import {
  *     SDK cannot write to it whatever `storage.rules` says (see R35). The Admin
  *     SDK is not subject to those rules, and the function checks the caller's
  *     `users/{uid}.role` itself, so admin-only is enforced server-side.
- *   - **Firestore is written directly** (`blogs`), because its rules do work —
- *     `blogs` is admin-only there, read from the same profile.
+ *   - **Firestore is read and written directly** (`blogs`), because its rules
+ *     do work: R37 makes the collection publicly readable, and writing it stays
+ *     admin-only there.
  *
- * `src/pages/AddBlog.tsx` imports nothing Firebase-related except this module.
- * Every function resolves to an outcome rather than throwing, and never reports
- * a save that Firebase did not confirm (R33 AC6).
+ * `src/pages/AddBlog.tsx`, `src/hooks/useSavedBlogs.ts` and the visitor pages
+ * import nothing Firebase-related except this module. Every function resolves
+ * to an outcome rather than throwing, and never reports a save that Firebase
+ * did not confirm (R33 AC6).
  */
 
-/** The Firestore collection a submission writes to. */
+/** The Firestore collection a submission writes to and the archive reads. */
 export const BLOGS_COLLECTION = "blogs";
+
+/** A read is bounded so a large collection cannot stall the home page. */
+const MAX_SAVED_BLOGS = 100;
+
+declare global {
+  interface Window {
+    /**
+     * R37 — a dev-only fixture so Playwright can prove the visitor UI without
+     * reaching the live project (and without live content changing a count).
+     * `import.meta.env.DEV` is false in a production build, so the branch and
+     * the global never ship.
+     */
+    __savedBlogsFixture?: SavedBlogRecord[];
+  }
+}
 
 /** Longest edge kept when an image is downscaled before upload. */
 const MAX_IMAGE_EDGE = 1600;
@@ -39,12 +57,62 @@ export type SaveOutcome =
   | { ok: true; id: string; imageUrl: string }
   | { ok: false; message: string };
 
+export type SavedBlogsOutcome =
+  | { ok: true; records: SavedBlogRecord[] }
+  | { ok: false; message: string };
+
+/**
+ * R37 — the archives' read.
+ *
+ * A plain collection read, capped, with no `where` or `orderBy`: a document
+ * saved before R37 carries no `published` flag and must not be filtered out,
+ * and ordering happens in `mergePosts` so an undated document still appears.
+ * A dev fixture short-circuits the network for Playwright (see `Window`).
+ */
+export async function listSavedBlogs(): Promise<SavedBlogsOutcome> {
+  if (import.meta.env.DEV && window.__savedBlogsFixture) {
+    return { ok: true, records: window.__savedBlogsFixture };
+  }
+
+  if (!isFirebaseConfigured()) {
+    return {
+      ok: false,
+      message:
+        "Firebase is not configured — copy .env.example to .env and add the project values.",
+    };
+  }
+
+  try {
+    const [{ db }, { collection, getDocsFromServer, limit, query }] =
+      await Promise.all([getFirebase(), import("firebase/firestore")]);
+
+    // Server-only: `getDocs` would resolve an empty offline cache as if the
+    // archive were empty. The archive must know a read failed (AC37.6).
+    const snapshot = await getDocsFromServer(
+      query(collection(db, BLOGS_COLLECTION), limit(MAX_SAVED_BLOGS)),
+    );
+
+    return {
+      ok: true,
+      records: snapshot.docs.map(
+        (document) =>
+          ({ id: document.id, ...document.data() }) as SavedBlogRecord,
+      ),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: friendly(error, "Saved posts could not be read."),
+    };
+  }
+}
+
 /** Firebase error codes in plain English. Anything unmapped keeps its text. */
 const MESSAGES: Record<string, string> = {
   "storage/unauthorized":
     "Storage refused the upload — the account needs the admin role.",
   "permission-denied":
-    "Firestore refused the write — the blogs rules must be deployed (npm run deploy:rules).",
+    "Firestore refused the request — the blogs rules must be deployed (npm run deploy:rules).",
   "functions/permission-denied": "Only an admin account can upload blog images.",
   "functions/unauthenticated": "Sign in before uploading an image.",
   "functions/unavailable":

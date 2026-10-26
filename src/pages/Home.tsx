@@ -4,6 +4,8 @@ import { NetworkBackground } from "../components/hero/NetworkBackground";
 import { TopicCard } from "../components/hero/TopicCard";
 import { BlogCard } from "../components/BlogCard";
 import { Sidebar } from "../components/Sidebar";
+import { useSavedBlogs } from "../hooks/useSavedBlogs";
+import { mergePosts } from "../lib/blog-posts";
 import {
   getLatestPosts,
   getTrendingTopics,
@@ -12,13 +14,19 @@ import {
 } from "../data/posts";
 import "./Home.css";
 
-/** R1 (hero) + R19 (main content layout). */
+/** R1 (hero) + R19 (main content layout) + R37 (saved posts in the grid). */
 export function Home() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<QuickFilter>("all");
+  const saved = useSavedBlogs();
 
-  const latest = useMemo(() => getLatestPosts(), []);
-  const topics = useMemo(() => getTrendingTopics(5), []);
+  // R37 — the repository articles render immediately; saved posts join them
+  // when Firestore answers, and a failed read simply leaves the seed grid.
+  const latest = useMemo(
+    () => mergePosts(getLatestPosts(), saved.posts),
+    [saved.posts],
+  );
+  const topics = useMemo(() => getTrendingTopics(5, latest), [latest]);
   const visible = useMemo(
     () => selectPosts(latest, query, filter),
     [latest, query, filter],

@@ -51,6 +51,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-23 | `/blog` keeps its filter state in the URL (`q`, `topic`, `tag`); typing replaces the history entry instead of pushing one per keystroke | A filtered view is shareable and reload-safe (R2.4) without the back button stepping through every character typed. |
 | 2026-10-23 | Requirements may be published out of numeric order; R26's truth guard checks the latest claim against the newest publish entry in `evidence.md`, not against the highest requirement number | R2 shipped after R30. The old "highest ID = latest" assumption was a property of past sequencing, not a requirement; tying the claim to the recorded publish event keeps the check honest when a lower-numbered requirement is backfilled. |
 | 2026-10-24 | Roles live in `users/{uid}.role`; the client guard is UX, `firestore.rules` is the enforcement; self-promotion is blocked by rules, not by hiding a button | A route guard can always be bypassed by editing the client. The rule that `role` cannot change on update is what makes "admin" meaningful, and it also keeps an admin's role safe from accidental overwrite on sign-in. |
+| 2026-10-26 | A document in `blogs` is published the moment it is saved; the collection is public to read and admin-only to write (R37) | There is no draft workflow, so a `published` flag could only lie. Making the collection the published set means the post saved before this change — which carries `published: false` — is visible too, without a migration. The public read also retired `authorEmail` from the document: an address that is fine in an admin-only collection must not be published with the post. |
 | 2026-10-26 | Uploads move from the browser Storage SDK to an admin-gated Cloud Function (R35) | This project's Storage bucket does not apply Storage Security Rules: `allow read, write: if true` at the root still returns 403 for anonymous and Firebase-authenticated callers, and the fault survived re-provisioning the bucket through Firebase's own `defaultBucket` API, a correct rules release, billing enabled, App Check off and IAM bindings. The Admin SDK is not subject to those rules, so the write moved server-side, where the same `users/{uid}.role` check is enforceable and cannot be bypassed by the client. Covers are made public per object because a cover is meant to be public; `storage.rules` stays in the repo as the rule the client path would need once the bucket behaves. |
 
 ## 5. Out of Scope (v1)
@@ -642,16 +643,20 @@ content to Firebase instead of composing a repository file (R32).
 - **AC33.8** One submission writes exactly one document to `blogs`, carrying the
   title, category, excerpt, tags, content, the image URL, a reading time, the
   signed-in account as author, and a creation timestamp. Nothing is written when
-  validation fails.
+  validation fails. *(Revised by R37: the author is recorded by name and uid
+  only — the email is no longer stored on a publicly readable post.)*
 - **AC33.9** The document records that it is not published: no page reads
   `blogs` yet (R13 is not built), so a document written here is stored, not live.
+  *(Revised by R37: every document in `blogs` is live — the home page, the
+  `/blog` archive and the article pages read the collection.)*
 
 **Rules**
 
 - **AC33.10** `firestore.rules` grants read and write on `blogs` to an account
   whose `users/{uid}.role` is `"admin"`, and denies every other account. The
   check reads the same profile the guard reads, so it cannot be granted from the
-  page it protects.
+  page it protects. *(Revised by R37: write stays admin-only; read is public,
+  because a saved post is visitor-visible.)*
 - **AC33.11** The upload is admin-only, image-only and capped at 5 MB.
   *(Revised by R35: enforced by the upload function, AC35.2–AC35.3, because this
   bucket does not apply Storage Security Rules. `storage.rules` keeps the same
@@ -757,6 +762,60 @@ shortcut, not a permission; `/admin/dashboard` still enforces R31.
   seam — no second source of truth — and the link grants nothing: every
   `/admin` route still goes through the R31 guard.
 - **AC36.6** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
+
+---
+
+### R37 — Saved blog posts are visible to visitors
+
+The composer saves posts to the Firestore `blogs` collection (R33), but no page
+reads it: a saved post exists only in the console. Every document in `blogs` is
+now the published archive — saving is publishing — and the home page, the
+`/blog` archive and `/blog/<slug>` merge saved posts with the repository seed
+articles, so a visitor sees them without an account.
+
+**This revises AC33.8** (the author's email is no longer stored: the document
+becomes publicly readable), **AC33.9** (the collection is live, not stored-only)
+and the read half of **AC33.10** (public read, admin-only write).
+
+**What a visitor sees**
+
+- **AC37.1** A saved post appears on `/blog` in the same card as a seed article:
+  title, excerpt (from the document, or the opening of its content when the
+  excerpt is empty), category, tags, date, reading time, author name and a cover
+  — the stored `imageUrl`, or a default cover when the post has no image.
+- **AC37.2** `/blog/<slug>` renders a saved post: title, excerpt, category,
+  author name, creation date, reading time, tags, cover image and its Markdown
+  content as real HTML (R23.5). An unknown slug still renders the not-found
+  state (AC23.2), after the saved posts have finished loading.
+- **AC37.3** Saved posts join the repository articles as one list: newest first,
+  the search and the topic and tag filters include them, the counts include them,
+  and a slug collision keeps the saved post rather than showing the article
+  twice.
+- **AC37.4** The home page's **Latest articles** grid and its trending-topic
+  counts include saved posts.
+
+**Access and failure**
+
+- **AC37.5** `firestore.rules` lets any visitor read `blogs` and still allows a
+  write only for an admin (`isAdmin()`, AC33.10). `npm run deploy:rules`
+  publishes the change; nothing else is needed for a visitor to read the posts.
+- **AC37.6** While the read is in flight the page keeps rendering the repository
+  articles. If the read fails — offline, or the rule is not deployed — the
+  archive still renders them and a `role="status"` notice says the saved posts
+  could not be loaded. The page never invents a saved post or claims one loaded
+  that did not.
+- **AC37.7** A saved post's document carries no author email, and the visitor UI
+  never renders one. A document saved under R33 that still has the field is
+  shown; the field is not read.
+
+**Safety and quality**
+
+- **AC37.8** Markdown that comes from Firestore is sanitised before it is
+  rendered: raw HTML is escaped and link/image URLs with an unsafe scheme
+  (`javascript:`, `data:` and the like) are refused, so stored HTML cannot
+  execute in a visitor's browser. Repository Markdown keeps rendering normally.
+- **AC37.9** Build and lint pass, all previously passing tests stay green, and
   the bundle stays within the R14 budgets.
 
 ---

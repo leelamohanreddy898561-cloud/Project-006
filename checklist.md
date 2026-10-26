@@ -270,6 +270,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R36.4) `AccountMenu.css`: link visible at 360px (not a `.btn--sm`, which the header hides below 900px) and ≥ 4.5:1 in both themes
 - [x] (R36.6) Execute TC-3601–TC-3603; build, lint, full suite; evidence entry; local commit
 
+## Phase 3u — Saved posts visible to visitors (R37)
+
+- [x] (R37.1–R37.3) `src/lib/blog-posts.ts` maps a `blogs` document to a `Post`; `listSavedBlogs()` in the seam reads the collection; `useSavedBlogs` feeds the archive and detail page, merged newest first
+- [x] (R37.4) `src/pages/BlogList.tsx`/`PostDetail.tsx`/`Home.tsx` use the merged list; filters, counts, related articles and the home grid/topics include saved posts
+- [x] (R37.5) `firestore.rules`: public read on `blogs`, write still `isAdmin()`; the rule ships in the publish step
+- [x] (R37.6–R37.8) Seed content still renders while the read is pending/failed, with a `role="status"` notice; the document drops `authorEmail`; remote Markdown is sanitised
+- [x] (R37.9) Execute TC-3701–TC-3703; build, lint, full suite (117 passed), bundle within budget; evidence entry; local commit
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

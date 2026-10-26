@@ -184,6 +184,7 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/*.spec.ts` | Playwright specs, one file per requirement area |
 | `playwright.config.ts` | Playwright configuration |
 | `tests/helpers/contrast.ts` | Shared WCAG contrast helper |
+| `tests/helpers/firestore.ts` | Blocks the live Firestore host so visitor-page tests stay hermetic (R37) |
 | `tests/helpers/screenshots.ts` | Single source of truth for where captures are written (R25) |
 | `tests/helpers/smoke.ts` | The production smoke subset and its coverage map (R27) |
 | `tests/workflow-guards.spec.ts` | The consolidated document and workflow guards (R30; absorbs the R25–R28 guards) |
@@ -194,10 +195,12 @@ necessary but never sufficient** — your visual approval is the gate.
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
 | `src/lib/users.ts` | User profile + role seam (`users/{uid}`, R31) |
-| `src/lib/blogs.ts` | The composer's Firebase seam: admin-gated image upload + one `blogs` document per submit (R33, R35) |
+| `src/lib/blogs.ts` | The blogs' Firebase seam: admin-gated image upload, one `blogs` document per submit, and the public read (R33, R35, R37) |
 | `src/lib/blog-draft.ts` | Draft validation and the `blogs` document shape (R33) |
+| `src/lib/blog-posts.ts` | Maps a `blogs` document to a `Post` and merges saved posts with the seed articles (R37) |
+| `src/hooks/useSavedBlogs.ts` | Loads saved posts once per visitor page, with a bounded wait and a failure state (R37) |
 | `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce (R35) |
-| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), admin-only `blogs` (R33) |
+| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), public-read/admin-write `blogs` (R33, R37) |
 | `storage.rules` | Storage rules: featured images under `blog-images/<uid>/`, admin-only (R33) |
 | `.env` / `.env.example` | Firebase credentials (local only) / documented template |
 
@@ -293,13 +296,16 @@ deliberately, so a growing repository is expected rather than a leak.
   granting nothing on its own).
   **R36 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
+- **Awaiting owner approval:** R37 (saved blog posts are visible to visitors —
+  the home grid, the `/blog` archive and `/blog/<slug>` read the Firestore
+  `blogs` collection, which is public to read and admin-only to write).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 124.32 kB JS / 7.33 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 125.85 kB JS / 7.35 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync

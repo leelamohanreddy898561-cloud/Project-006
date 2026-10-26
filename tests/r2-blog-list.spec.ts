@@ -1,9 +1,14 @@
-import { expect, test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+import { blockFirestore } from "./helpers/firestore";
 
 /**
  * R2 — blog index with search and filters. Maps to TC-201 … TC-210 in
  * test-cases.md. Search, topic and tag all live in the URL (AC2.4).
  */
+
+test.beforeEach(async ({ page }) => {
+  await blockFirestore(page);
+});
 
 const CARDS = ".blog-list .blog-card";
 

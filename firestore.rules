@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// R31 + R33 — Firestore rules.
+// R31 + R33 + R37 — Firestore rules.
 //
 // A user owns exactly one profile document. The role is fixed after creation,
 // so a browser cannot promote itself to admin: only the Firebase console (or a
@@ -8,9 +8,10 @@ rules_version = '2';
 // to the signed-in account's own uid.
 //
 // R33 adds the blogs collection: the composer at /admin/add-blog writes one
-// document per post, so the collection is admin-only. The check reads the same
-// users/{uid}.role the /admin guard reads, which means the page cannot grant
-// itself the access it is protecting.
+// document per post. R37 makes that collection publicly readable, because a
+// saved post is part of the visitor archive; the write stays admin-only. The
+// check reads the same users/{uid}.role the /admin guard reads, which means the
+// page cannot grant itself the access it is protecting.
 //
 // The changeLog block keeps R17's existing access: its sync and read-back
 // scripts run without a signed-in user. Locking it down is tracked in the known
@@ -31,10 +32,12 @@ service cloud.firestore {
       allow delete: if owns(uid);
     }
 
-    // R33 — written by the admin composer, read by nobody yet: no page reads
-    // blogs, so there is no public read to grant.
+    // R33 + R37 — written by the admin composer, read by every visitor. The
+    // collection is the published set: saving a post is publishing it, so the
+    // read is public and the write stays admin-only.
     match /blogs/{blogId} {
-      allow read, write: if isAdmin();
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     function owns(uid) {

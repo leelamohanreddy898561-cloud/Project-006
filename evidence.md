@@ -2235,3 +2235,30 @@ functions changed, so neither was redeployed.
 while a signed-out visitor and a standard account never see it - the link is a
 shortcut over the unchanged R31 guard. The change-log cycle follows in its own
 commit; `main` is fast-forwarded after it.
+
+### 2026-10-26 — R37 saved posts visible to visitors, built and verified
+
+**Built:** `src/lib/blog-posts.ts` converts a `blogs` document to a `Post` and
+merges saved posts with the seed articles; `listSavedBlogs()` reads the
+collection server-only through the one Firebase seam; `useSavedBlogs` bounds the
+wait at 4 s and falls back to the seed archive with a live-region notice. Home,
+`/blog` and `/blog/<slug>` use the merged list; filters, counts, related articles
+and the not-found state include saved posts. `firestore.rules` makes `blogs`
+public to read and keeps writes admin-only. The composer drops `authorEmail` and
+the `published` flag; remote Markdown is sanitised in `src/lib/markdown.ts`.
+
+**Proof:** `npm.cmd run build` — **125.85 kB JS / 7.35 kB CSS gzipped** (budgets
+150 / 25); `npm.cmd run lint` clean; `npx playwright test` — **117 passed**.
+TC-3701–TC-3703 green; R1/R2/R19/R23/R33 stay green with
+`firestore.googleapis.com` blocked in the browser suite (TC-3702 uses the
+dev-only fixture). TC-3002 failed once because Section 9 did not yet name R37;
+fixed and re-run green.
+
+**Evaluation:** the home grid, the archive and the article page now read the
+collection the composer writes, and a saved post is ordinary visitor content.
+The deployed rules still deny anonymous reads, so the owner's signed-in review is
+the live-read proof today; the public read is proven by the rule text and will be
+exercised by `verify:prod` after `deploy:rules`. **Owner action before the public
+rule ships:** the pre-R37 document still carries `authorEmail`; delete that field
+in the console so the address is not published. Awaiting visual approval; no
+merge or deploy.

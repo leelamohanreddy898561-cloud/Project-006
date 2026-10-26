@@ -51,10 +51,11 @@ function authorFrom(user: {
   displayName: string | null;
   email: string | null;
 }) {
+  // R37 — the post is public, so the email is not recorded; the name is all a
+  // visitor needs and all the document keeps.
   return {
     uid: user.uid,
     name: user.displayName ?? user.email ?? "AI Pulse",
-    email: user.email,
   };
 }
 
@@ -176,7 +177,7 @@ export function AddBlog() {
     }
 
     setStatus(
-      `Saved to ${BLOGS_COLLECTION} as ${outcome.id}. It is stored, not published — no page reads the collection yet.`,
+      `Saved to ${BLOGS_COLLECTION} as ${outcome.id}. It is live now — the home page and the blog archive read this collection.`,
     );
     setSaved({ id: outcome.id, imageUrl: outcome.imageUrl });
     setDraft(emptyDraft());
@@ -408,13 +409,13 @@ export function AddBlog() {
       )}
 
       <p className="admin-note">
-        <strong>Stored, not published.</strong> No page reads the{" "}
-        <code>{BLOGS_COLLECTION}</code> collection yet — the site still renders
-        the markdown posts in <code>content/posts/</code> (R13 is not built) — so
-        this document is kept in Firebase and nothing appears on the site until a
-        page reads it. Only an account with <code>role: "admin"</code> can write
-        here, enforced by <code>firestore.rules</code> and{" "}
-        <code>storage.rules</code> rather than by this page.
+        <strong>Live on save.</strong> Every document in the{" "}
+        <code>{BLOGS_COLLECTION}</code> collection is part of the published
+        archive — the home page, the <Link to="/blog">blog archive</Link> and the
+        article pages read it (R37). Only an account with{" "}
+        <code>role: "admin"</code> can write here, enforced by{" "}
+        <code>firestore.rules</code> and <code>storage.rules</code> rather than
+        by this page.
       </p>
     </section>
   );

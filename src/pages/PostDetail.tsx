@@ -3,17 +3,36 @@ import { Link, useParams } from "react-router-dom";
 import { BlogCard } from "../components/BlogCard";
 import { CommentSection } from "../components/CommentSection";
 import { ShareRail } from "../components/ShareRail";
-import { formatDate, getPostBySlug, getRelatedPosts } from "../data/posts";
+import { useSavedBlogs } from "../hooks/useSavedBlogs";
+import { mergePosts } from "../lib/blog-posts";
+import {
+  formatDate,
+  getLatestPosts,
+  getRelatedPostsFrom,
+} from "../data/posts";
 import { renderMarkdown } from "../lib/markdown";
 import "./PostDetail.css";
 
 /**
  * R23 — article detail page: header image, prose body with a floating action
  * rail, then comments and related articles.
+ *
+ * R37 — a saved post opens here too. An unknown slug waits for the saved posts
+ * to finish loading before it says "not found", so a deep link to a saved post
+ * never shows a false 404.
  */
 export function PostDetail() {
   const { slug = "" } = useParams();
-  const post = useMemo(() => getPostBySlug(slug), [slug]);
+  const saved = useSavedBlogs();
+
+  const posts = useMemo(
+    () => mergePosts(getLatestPosts(), saved.posts),
+    [saved.posts],
+  );
+  const post = useMemo(
+    () => posts.find((item) => item.slug === slug),
+    [posts, slug],
+  );
 
   useEffect(() => {
     if (!post) return undefined;
@@ -30,6 +49,14 @@ export function PostDetail() {
   );
 
   if (!post) {
+    if (saved.status === "loading") {
+      return (
+        <div className="container post-missing" aria-busy="true">
+          <p role="status">Loading article…</p>
+        </div>
+      );
+    }
+
     return (
       <div className="container post-missing">
         <p className="post-missing__code">404</p>
@@ -50,7 +77,8 @@ export function PostDetail() {
     );
   }
 
-  const related = getRelatedPosts(post.slug, 3);
+  const related = getRelatedPostsFrom(posts, post.slug, 3);
+  const published = formatDate(post.date);
   const shareUrl = typeof window === "undefined" ? "" : window.location.href;
 
   return (
@@ -82,7 +110,8 @@ export function PostDetail() {
           </span>
 
           <span className="post-page__stat">
-            {formatDate(post.date)} · {post.readingTime} min read
+            {published ? `${published} · ` : ""}
+            {post.readingTime} min read
           </span>
         </div>
       </header>
