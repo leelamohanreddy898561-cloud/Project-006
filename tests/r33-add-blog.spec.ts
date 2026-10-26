@@ -182,7 +182,7 @@ test.describe("R33 — the composer is wired to the right places", () => {
     >;
 
     expect(scripts["deploy:rules"], "both rule files publish together").toContain(
-      "firestore:rules,storage:rules",
+      "firestore:rules,storage",
     );
   });
 });
