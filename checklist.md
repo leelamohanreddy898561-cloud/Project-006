@@ -255,6 +255,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R34.5) Build, lint and the full suite unchanged; the bundle is untouched (server-side fix)
 - [ ] (R34.4) Deploy the rules, re-run the deny-path probe, and have the owner complete one live save (TC-3404)
 
+## Phase 3s — Uploads through an admin-gated function (R35)
+
+- [x] (R35.1–R35.4) `functions/index.js`: `uploadBlogImage` checks `users/{uid}.role`, writes under `blog-images/<uid>/`, image-only, 5 MB cap; `deleteBlogImage` accepts only the caller's own folder
+- [x] (R35.1, R35.7) `src/lib/blogs.ts` calls the function instead of the Storage SDK; images are downscaled to 1600 px / JPEG 0.85 with a raw fallback
+- [x] (R35.5) Per-object public ACL on each cover, so a published post serves it without an expiring signed URL
+- [x] (R35.8) `firebase.json` functions codebase + `npm run deploy:functions`; both functions deployed to `us-central1`
+- [x] (R35.9) TC-3501–TC-3503; evidence entry; local commit; awaiting the owner's own save (TC-3504)
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

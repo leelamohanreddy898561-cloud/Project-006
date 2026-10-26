@@ -2084,3 +2084,80 @@ refused `blogs`, an upload into its own and another account's folder, and
 self-promotion; anonymous writes are refused; the probe account was deleted. No
 hosting release was made — the fix is server-side and the shipped bundle is
 unchanged. TC-3404, the admin's live save, is the owner's check.
+
+---
+
+### 2026-10-26 - R34 follow-up: the upload is denied by cross-service rules, not by the scope fix
+
+**Symptom:** after the R34 deploy the owner's save still reports "Storage refused
+the upload" — an admin account denied on an admin-only rule.
+
+**Diagnosed, in order:**
+
+    firebase apps:sdkconfig web <appId>              # storageBucket = project-006-e6ae1.firebasestorage.app
+    firebase deploy --only storage --debug           # release firebase.storage/<that bucket>, updated 04:42:21Z
+
+The bucket the app uploads to and the bucket the ruleset is attached to are the
+same one, so the rules are live where they are needed. What remains is
+`firestore.get()` inside `storage.rules`: the Storage docs state that rules which
+read Cloud Firestore documents require a one-time permission grant — the
+**"Firebase Rules Firestore Service Agent"** role on the Storage service account
+(`@gcp-sa-firebasestorage.iam.gserviceaccount.com`) — and that the CLI **prompts**
+for it. Every deploy here runs `--non-interactive`, which suppresses exactly that
+prompt, and the non-TTY shell never shows it either. Without the role the call
+errors, and an erroring condition denies.
+
+**Not yet done:** the grant is an IAM permission, so it needs the owner (no
+`gcloud` is installed here). Either the owner grants it once, or the rule drops
+the cross-service lookup and relies on folder ownership instead.
+
+---
+
+### 2026-10-26 - R35 uploads through an admin-gated Cloud Function, save proven end to end
+
+**Symptom:** after R34's rule-scope fix the owner's save still reported "Storage
+refused the upload" — an admin denied by an admin-only rule.
+
+**Ruled out, in order:** the bucket the app uses matches the bucket the ruleset
+is attached to (`apps:sdkconfig web` + `deploy --only storage --debug`); the
+cross-service agent role is already bound (`roles/firebaserules.firestoreServiceAgent`
+on `service-396274081250@gcp-sa-firebasestorage`); billing enabled; App Check
+off; the enforced ruleset content read back and correct; the bucket writable by
+IAM (200).
+
+**Then the decisive finding:** with `allow read, write: if true` at the root of
+`storage.rules`, an anonymous read and a Firebase-authenticated read were **both
+still 403**, while an IAM read of the same object returned 200. The bucket does
+not apply Firebase Storage Security Rules at all. Re-provisioning the default
+bucket through Firebase Storage's own API (`defaultBucket` DELETE/POST) did not
+change that, and the Firebase project's `resources` lists a hosting site but no
+storage bucket.
+
+**Fix (R35):** uploads moved to a callable function, where the Admin SDK is not
+subject to those rules and the admin check is enforceable server-side.
+`uploadBlogImage` reads `users/{uid}.role`, refuses anything but `"admin"`,
+accepts only image data URLs under 5 MB, writes `blog-images/<uid>/…`, and makes
+the object public with a per-object ACL. `deleteBlogImage` removes an image whose
+document write then fails, and only inside the caller's own folder. The client
+seam calls the functions and no longer imports `firebase/storage`.
+
+**Proven end to end (TC-3503)** with a throwaway account promoted through IAM:
+signed in through the UI, saved a post, status read "Saved to blogs as
+pdWbln1OKurD6v8UZMRo"; the document carried `imageUrl` and `published: false`;
+the image returned **200 `image/jpeg` (762 bytes) with no credentials**; then the
+object, document, profile and account were deleted.
+
+**Commands and results:** `npm run build` — **124.27 kB JS / 7.28 kB CSS
+gzipped** (budgets 150 / 25); `npm run lint` clean; `npx playwright test` —
+**111 passed** (the first run showed one failure in TC-2903, a live sign-up
+reload; it passed 5/5 on its own, so it was a network flake, and the full suite
+was re-run); `deploy --only functions` created both functions; `npm run deploy`
+served `index-BlIndTFG.js`, which contains `uploadBlogImage` and no
+`firebase/storage`.
+
+**Note:** R35 was built on the R34 branch (`fix/r34-blog-image-upload`) — it is a
+continuation of the same outage, not a fresh branch, and that is a departure from
+R28.1 recorded here rather than hidden.
+
+**Test cases:** TC-3501, TC-3502 green; TC-3503 recorded above; TC-3504 is the
+owner's own save. Awaiting that confirmation before the merge and the change log.

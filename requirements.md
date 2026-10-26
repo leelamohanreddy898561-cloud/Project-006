@@ -51,6 +51,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-23 | `/blog` keeps its filter state in the URL (`q`, `topic`, `tag`); typing replaces the history entry instead of pushing one per keystroke | A filtered view is shareable and reload-safe (R2.4) without the back button stepping through every character typed. |
 | 2026-10-23 | Requirements may be published out of numeric order; R26's truth guard checks the latest claim against the newest publish entry in `evidence.md`, not against the highest requirement number | R2 shipped after R30. The old "highest ID = latest" assumption was a property of past sequencing, not a requirement; tying the claim to the recorded publish event keeps the check honest when a lower-numbered requirement is backfilled. |
 | 2026-10-24 | Roles live in `users/{uid}.role`; the client guard is UX, `firestore.rules` is the enforcement; self-promotion is blocked by rules, not by hiding a button | A route guard can always be bypassed by editing the client. The rule that `role` cannot change on update is what makes "admin" meaningful, and it also keeps an admin's role safe from accidental overwrite on sign-in. |
+| 2026-10-26 | Uploads move from the browser Storage SDK to an admin-gated Cloud Function (R35) | This project's Storage bucket does not apply Storage Security Rules: `allow read, write: if true` at the root still returns 403 for anonymous and Firebase-authenticated callers, and the fault survived re-provisioning the bucket through Firebase's own `defaultBucket` API, a correct rules release, billing enabled, App Check off and IAM bindings. The Admin SDK is not subject to those rules, so the write moved server-side, where the same `users/{uid}.role` check is enforceable and cannot be bypassed by the client. Covers are made public per object because a cover is meant to be public; `storage.rules` stays in the repo as the rule the client path would need once the bucket behaves. |
 
 ## 5. Out of Scope (v1)
 
@@ -635,7 +636,9 @@ content to Firebase instead of composing a repository file (R32).
 
 - **AC33.7** The chosen image is uploaded to Firebase Storage under
   `blog-images/<uid>/…`, and the download URL is stored on the document as
-  `imageUrl`.
+  `imageUrl`. *(Revised by R35: the upload goes through the admin-gated
+  function, because this bucket does not apply Storage Security Rules. The
+  folder and the stored URL are unchanged.)*
 - **AC33.8** One submission writes exactly one document to `blogs`, carrying the
   title, category, excerpt, tags, content, the image URL, a reading time, the
   signed-in account as author, and a creation timestamp. Nothing is written when
@@ -649,9 +652,11 @@ content to Firebase instead of composing a repository file (R32).
   whose `users/{uid}.role` is `"admin"`, and denies every other account. The
   check reads the same profile the guard reads, so it cannot be granted from the
   page it protects.
-- **AC33.11** A new `storage.rules` lets an admin read and write only under
-  `blog-images/<their own uid>/`, only image content types, and only up to 5 MB.
-  `npm run deploy:rules` publishes both rule files.
+- **AC33.11** The upload is admin-only, image-only and capped at 5 MB.
+  *(Revised by R35: enforced by the upload function, AC35.2–AC35.3, because this
+  bucket does not apply Storage Security Rules. `storage.rules` keeps the same
+  limits in the repository for the client path, the day the bucket enforces
+  them; `npm run deploy:rules` still publishes both rule files.)*
 
 **Quality**
 
@@ -669,9 +674,10 @@ neither a file nor a document — the reported symptom ("not saving into Firebas
 Storage") was one defect, not two.
 
 - **AC34.1** `storage.rules` passes the owner's uid into the admin check, so the
-  function reads only variables in scope; the deployed rule allows the admin
-  account to read, write and delete under its own `blog-images/<uid>/` folder and
-  still denies every other account.
+  function reads only variables in scope. *(Revised by R35: this project's bucket
+  does not apply Storage Security Rules at all, so the rule cannot grant or deny
+  anyone — the upload is enforced by the function instead. The rule stays
+  correct for the client path.)*
 - **AC34.2** A guard test fails when any function in `storage.rules` or
   `firestore.rules` references a wildcard that is neither a parameter nor
   declared in a scope enclosing the function — the defect class behind this bug.
@@ -684,6 +690,48 @@ Storage") was one defect, not two.
   by the owner.
 - **AC34.5** The fix is server-side, so the shipped bundle is unchanged, no
   hosting release is needed, and the R14 budgets are unaffected.
+
+---
+
+### R35 — Uploads work through an admin-gated Cloud Function
+
+R33 uploaded the featured image with the browser Storage SDK, gated by
+`storage.rules`. On this project that gate cannot work: the bucket does not apply
+Storage Security Rules at all — `allow read, write: if true` at the root still
+returns 403 for anonymous and Firebase-authenticated callers, and the fault
+survives a correct rules release, a re-provisioned bucket, billing enabled, App
+Check off and IAM bindings (see the decision log). The Admin SDK is not subject
+to those rules, so the write moves server-side, and the admin check moves with
+it. **This revises AC33.7 and AC33.11: the upload is still to
+`blog-images/<uid>/`, but the enforcement is AC35.2, not the rule.**
+
+- **AC35.1** The composer uploads the featured image through a callable Cloud
+  Function (`uploadBlogImage`). The browser no longer writes Cloud Storage
+  directly, and `src/lib/blogs.ts` remains the only module that talks to
+  Firebase.
+- **AC35.2** The function decides who may upload: no session returns
+  `unauthenticated`; a signed-in account whose `users/{uid}.role` is anything
+  other than `"admin"` returns `permission-denied`. Nothing is written in either
+  case, and the check is server-side, so the client cannot bypass it.
+- **AC35.3** The function accepts only image data URLs, refuses an empty payload,
+  and refuses more than 5 MB — the same limits the form shows.
+- **AC35.4** The object is written under `blog-images/<caller uid>/`, so one
+  account cannot write into another's folder, and the returned URL is stored on
+  the post as `imageUrl`.
+- **AC35.5** Each uploaded cover is publicly readable through a per-object ACL,
+  so a published post can serve it without a signed URL that expires, while the
+  rest of the bucket stays private.
+- **AC35.6** An image uploaded for a post that then fails to save is removed
+  again by `deleteBlogImage`, which accepts only a path inside the caller's own
+  folder.
+- **AC35.7** The featured image is downscaled to a 1600 px longest edge at JPEG
+  quality 0.85 before upload; formats the canvas cannot decode (SVG, animated
+  GIF) fall back to the original bytes rather than failing.
+- **AC35.8** `firebase.json` deploys the `functions` codebase, and
+  `npm run deploy:functions` publishes it.
+- **AC35.9** Build and lint pass, all previously passing tests stay green, and
+  the initial bundle stays within the R14 budgets — the functions SDK is loaded
+  on demand.
 
 ---
 

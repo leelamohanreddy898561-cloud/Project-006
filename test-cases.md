@@ -482,3 +482,17 @@ R33's publish recorded.
 | TC-3402 | auto | Read `storage.rules` | The admin check takes the uid as a parameter and all three operations pass it; the image-only and 5 MB conditions and the delete rule are intact (AC34.1) |
 | TC-3403 | cli | `npm run deploy:rules`, then run the deny-path probe with a throwaway account and delete it | Both rule files release; a non-admin is refused `blogs`, an upload into its own and another folder, and self-promotion; anonymous writes are refused; the probe account is gone (AC34.3) |
 | TC-3404 | manual | Sign in as the console-promoted admin, save one post with an image | The live region reports the document id; the file is in `blog-images/<uid>/`; the `blogs` document carries its `imageUrl` (AC34.4) |
+
+## R35 — Uploads through an admin-gated Cloud Function
+
+TC-3501 is the direction the suite can reach on its own: a real signed-in
+account that is not an admin. The allow path needs an account promoted in the
+console, which is TC-3504; the end-to-end version I ran with a throwaway
+promoted account is recorded per publish in `evidence.md` (TC-3503).
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-3501 | auto | Create a throwaway account, call `uploadBlogImage` with a valid image payload while it has no profile, then again after writing itself a `role: "student"` profile; delete the account | Both calls return HTTP 403 with `PERMISSION_DENIED`, and no object is written (AC35.2) |
+| TC-3502 | auto | Read `src/lib/blogs.ts`, `functions/index.js` and `firebase.json` | The client calls `uploadBlogImage`/`deleteBlogImage` and no longer imports `firebase/storage`; the function reads `users/{uid}.role`, requires `"admin"`, caps at 5 MB, accepts image data URLs, writes under `blog-images/<uid>/`, and `firebase.json` deploys the `functions` codebase (AC35.1, AC35.3–AC35.6, AC35.8) |
+| TC-3503 | cli | With a throwaway account promoted through IAM, sign in and save a post through the composer; read the document back and fetch its `imageUrl` without credentials; delete everything | The live region reports the document id; the document carries `imageUrl`, `published: false` and the author; the image returns 200 `image/jpeg`; the probe is fully cleaned up (AC35.4, AC35.5, AC35.7) |
+| TC-3504 | manual | Sign in as the console-promoted admin and save a post with an image | The image appears under `blog-images/<your uid>/`, is publicly reachable, and the document carries its URL (AC35.4, AC35.5) |

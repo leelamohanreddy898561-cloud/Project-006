@@ -8,22 +8,28 @@ import {
 } from "./blog-draft";
 
 /**
- * R33 — the single seam between the composer and Firebase.
+ * R33 / R35 — the single seam between the composer and Firebase.
  *
- * `src/pages/AddBlog.tsx` imports nothing else Firebase-related, exactly as
- * `AuthPage` reaches authentication only through `src/lib/auth.ts` (R24.15).
+ * Two services are used, each where it actually works:
+ *
+ *   - **Storage goes through a Cloud Function** (`uploadBlogImage`). The
+ *     project's bucket does not apply Storage Security Rules, so the browser
+ *     SDK cannot write to it whatever `storage.rules` says (see R35). The Admin
+ *     SDK is not subject to those rules, and the function checks the caller's
+ *     `users/{uid}.role` itself, so admin-only is enforced server-side.
+ *   - **Firestore is written directly** (`blogs`), because its rules do work —
+ *     `blogs` is admin-only there, read from the same profile.
+ *
+ * `src/pages/AddBlog.tsx` imports nothing Firebase-related except this module.
  * Every function resolves to an outcome rather than throwing, and never reports
- * a save that Firebase did not confirm (AC33.6).
- *
- * `firebase/firestore` and `firebase/storage` are imported on demand, so the
- * SDK stays out of the initial bundle (R14.1, AC29.6).
+ * a save that Firebase did not confirm (R33 AC6).
  */
-
-/** Storage folder for featured images: `blog-images/<uid>/<file>`. */
-const IMAGE_FOLDER = "blog-images";
 
 /** The Firestore collection a submission writes to. */
 export const BLOGS_COLLECTION = "blogs";
+
+/** Longest edge kept when an image is downscaled before upload. */
+const MAX_IMAGE_EDGE = 1600;
 
 export type ImageUpload =
   | { ok: true; url: string; path: string }
@@ -33,21 +39,20 @@ export type SaveOutcome =
   | { ok: true; id: string; imageUrl: string }
   | { ok: false; message: string };
 
-/** Firebase error codes in plain English. Anything unmapped keeps its code. */
+/** Firebase error codes in plain English. Anything unmapped keeps its text. */
 const MESSAGES: Record<string, string> = {
   "storage/unauthorized":
-    "Storage refused the upload — the account needs the admin role, and the storage rules must be deployed (npm run deploy:rules).",
-  "storage/canceled": "The upload was cancelled.",
-  "storage/retry-limit-exceeded":
-    "The upload timed out — check your connection and try again.",
-  "storage/quota-exceeded":
-    "The project's storage quota is full, so the image could not be stored.",
-  "storage/invalid-format":
-    "Storage refused that file. Choose a different image format.",
+    "Storage refused the upload — the account needs the admin role.",
   "permission-denied":
     "Firestore refused the write — the blogs rules must be deployed (npm run deploy:rules).",
+  "functions/permission-denied": "Only an admin account can upload blog images.",
+  "functions/unauthenticated": "Sign in before uploading an image.",
+  "functions/unavailable":
+    "The upload service is unreachable — check your connection and try again.",
+  "functions/deadline-exceeded":
+    "The upload timed out — check your connection and try again.",
+  "functions/internal": "The upload service failed. Try again.",
   unavailable: "Firestore is unreachable — check your connection and try again.",
-  "auth/argument-error": "The image could not be uploaded. Try another file.",
 };
 
 function friendly(error: unknown, fallback: string): string {
@@ -60,26 +65,54 @@ function friendly(error: unknown, fallback: string): string {
   return detail ? `${fallback} (${detail})` : fallback;
 }
 
-/** A file name that is safe to use as a Storage path segment. */
-function safeName(name: string): string {
-  const cleaned = name
-    .toLowerCase()
-    .replace(/[^a-z0-9.]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-  return cleaned || "image";
+/** Reads a file as a data URL, the transport the callable accepts. */
+function rawDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error ?? new Error("read failed"));
+    reader.readAsDataURL(file);
+  });
 }
 
 /**
- * Uploads the featured image and returns its download URL.
+ * Downscales and re-encodes the image before it leaves the browser.
  *
- * The path is namespaced by the uploader's uid so `storage.rules` can grant an
- * admin access to their own folder and nothing else (AC33.7, AC33.11).
+ * The function caps the decoded payload at 5 MB, and a cover has no business
+ * being that large: 1600px on the long edge at JPEG quality 0.85 keeps a
+ * photograph in the low hundreds of kB. Formats the canvas cannot decode (SVG,
+ * animated GIF) fall back to the original bytes.
  */
-export async function uploadBlogImage(
-  uid: string,
-  file: File,
-): Promise<ImageUpload> {
+async function imageDataUrl(file: File): Promise<string> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(
+      1,
+      MAX_IMAGE_EDGE / Math.max(bitmap.width, bitmap.height),
+    );
+    const canvas = document.createElement("canvas");
+
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("no 2d context");
+
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+
+    return canvas.toDataURL("image/jpeg", 0.85);
+  } catch {
+    return rawDataUrl(file);
+  }
+}
+
+/**
+ * Uploads the featured image through the admin-gated function and returns its
+ * public URL. The path is namespaced by the caller's uid, and the function
+ * refuses a caller whose role is not "admin" (R35).
+ */
+export async function uploadBlogImage(file: File): Promise<ImageUpload> {
   const problem = validateImage({
     name: file.name,
     type: file.type,
@@ -97,16 +130,21 @@ export async function uploadBlogImage(
   }
 
   try {
-    const [{ storage }, { ref, uploadBytes, getDownloadURL }] = await Promise.all(
-      [getFirebase(), import("firebase/storage")],
-    );
+    const [{ app }, { getFunctions, httpsCallable }] = await Promise.all([
+      getFirebase(),
+      import("firebase/functions"),
+    ]);
 
-    const path = `${IMAGE_FOLDER}/${uid}/${Date.now()}-${safeName(file.name)}`;
-    const target = ref(storage, path);
+    const dataUrl = await imageDataUrl(file);
+    const call = httpsCallable(getFunctions(app), "uploadBlogImage");
+    const result = await call({ dataUrl, fileName: file.name });
+    const data = result.data as { url?: string; path?: string };
 
-    await uploadBytes(target, file, { contentType: file.type });
+    if (!data?.url || !data.path) {
+      return { ok: false, message: "The upload returned no URL." };
+    }
 
-    return { ok: true, url: await getDownloadURL(target), path };
+    return { ok: true, url: data.url, path: data.path };
   } catch (error) {
     return {
       ok: false,
@@ -118,12 +156,12 @@ export async function uploadBlogImage(
 /** Removes an uploaded image — used when the document write then fails. */
 async function removeBlogImage(path: string): Promise<void> {
   try {
-    const [{ storage }, { ref, deleteObject }] = await Promise.all([
+    const [{ app }, { getFunctions, httpsCallable }] = await Promise.all([
       getFirebase(),
-      import("firebase/storage"),
+      import("firebase/functions"),
     ]);
 
-    await deleteObject(ref(storage, path));
+    await httpsCallable(getFunctions(app), "deleteBlogImage")({ path });
   } catch {
     // An orphaned image is a cost, not a failure; the write error is what the
     // admin needs to see.
@@ -134,7 +172,7 @@ async function removeBlogImage(path: string): Promise<void> {
  * Writes one document to `blogs`.
  *
  * Called only after `validateDraft` passes, so an empty form never reaches
- * Firestore (AC33.8). The document shape comes from `blog-draft.ts`; the
+ * Firestore (R33 AC8). The document shape comes from `blog-draft.ts`; the
  * creation timestamp is a server value, so it is added here.
  */
 export async function createBlogPost(
@@ -189,7 +227,7 @@ export async function saveBlogPost(
     return { ok: false, message: "The post is missing a required field." };
   }
 
-  const upload = file ? await uploadBlogImage(author.uid, file) : null;
+  const upload = file ? await uploadBlogImage(file) : null;
 
   if (upload && !upload.ok) return { ok: false, message: upload.message };
 

@@ -17,7 +17,8 @@
     "sync:changes": "node --env-file=.env scripts/sync-changes.mjs",
     "verify:changes": "node --env-file=.env scripts/verify-changelog.mjs",
     "deploy": "npx --yes firebase-tools@15.34.1 deploy --only hosting --project project-006-e6ae1 --non-interactive",
-    "deploy:rules": "npx --yes firebase-tools@15.34.1 deploy --only firestore:rules,storage --project project-006-e6ae1 --non-interactive"
+    "deploy:rules": "npx --yes firebase-tools@15.34.1 deploy --only firestore:rules,storage --project project-006-e6ae1 --non-interactive",
+    "deploy:functions": "npx --yes firebase-tools@15.34.1 deploy --only functions --project project-006-e6ae1 --non-interactive"
   },
   "dependencies": {
     "firebase": "^13.0.0",

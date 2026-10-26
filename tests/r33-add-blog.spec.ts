@@ -111,7 +111,9 @@ test.describe("R33 — the composer is wired to the right places", () => {
     expect(categoryOptions().length).toBeGreaterThan(0);
 
     // Storage and Firestore for blogs are reached through one seam.
-    expect(seam).toContain('import("firebase/storage")');
+    // Storage is reached through the admin-gated function now (R35), not the
+    // browser Storage SDK.
+    expect(seam, "the uploads go through the function").toContain("uploadBlogImage");
     expect(seam).toContain('import("firebase/firestore")');
     expect(seam).toContain('"blogs"');
 
@@ -138,7 +140,7 @@ test.describe("R33 — the composer is wired to the right places", () => {
 
           const source = readFileSync(full, "utf8");
 
-          if (/"firebase\/(storage|firestore)"/.test(source)) offenders.push(relative);
+          if (/"firebase\/(storage|firestore|functions)"/.test(source)) offenders.push(relative);
         }
       }
     };

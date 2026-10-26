@@ -91,7 +91,7 @@ repetition — re-running every test to re-prove a typo is waste, not proof.
        (smoke subset against the live site; it refuses to run without
        `PLAYWRIGHT_BASE_URL`). If `firestore.rules` or `storage.rules`
        changed, run `npm run deploy:rules` before verification — it publishes
-       both rule files.
+       both rule files. If `functions/` changed, run `npm run deploy:functions`.
     3. Write the publish entry in `evidence.md`, move the requirement into the
        published list in `AGENTS.md` Section 9, then commit and push both.
     4. **One** change-log cycle: `npm run changelog` → `npm run sync:changes` →
@@ -194,8 +194,9 @@ necessary but never sufficient** — your visual approval is the gate.
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
 | `src/lib/users.ts` | User profile + role seam (`users/{uid}`, R31) |
-| `src/lib/blogs.ts` | The composer's Firebase seam: Storage upload + one `blogs` document per submit (R33) |
+| `src/lib/blogs.ts` | The composer's Firebase seam: admin-gated image upload + one `blogs` document per submit (R33, R35) |
 | `src/lib/blog-draft.ts` | Draft validation and the `blogs` document shape (R33) |
+| `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce (R35) |
 | `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), admin-only `blogs` (R33) |
 | `storage.rules` | Storage rules: featured images under `blog-images/<uid>/`, admin-only (R33) |
 | `.env` / `.env.example` | Firebase credentials (local only) / documented template |
@@ -256,7 +257,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 124.05 kB JS / 7.28 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 124.27 kB JS / 7.28 kB CSS gzipped |
 
 ---
 
@@ -288,19 +289,31 @@ deliberately, so a growing repository is expected rather than a leak.
   and a guard now fails when any rules function reads a wildcard it cannot see).
   Deploying the rules is the step that makes the live save testable; hosting, the
   change log and the merge into `main` follow the approval.
+- **Deployed and proven with a throwaway admin, awaiting the owner's own save:**
+  R35 (uploads moved to an admin-gated Cloud Function, because this project's
+  Storage bucket does not apply Storage Security Rules at all — see the known
+  open items). The function checks `users/{uid}.role` server-side, writes under
+  `blog-images/<uid>/`, and the cover is made public per object. Hosting, the
+  change log and the merge into `main` follow the approval.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 124.05 kB JS / 7.28 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 124.27 kB JS / 7.28 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync
-    scripts authenticate. Storage is now protected by `storage.rules` (R33:
-    `blog-images/<uid>/`, admin-only, image-only, 5 MB cap), and its read access
-    stays admin-only until a page renders Firestore posts.
+    scripts authenticate. Storage is protected by `storage.rules` (R33) **but
+    this project's bucket does not apply those rules at all**: `allow read,
+    write: if true` at the root still returns 403 for anonymous and
+    Firebase-authenticated callers, and the fault survived a correct release, a
+    bucket re-provisioned through Firebase's own API, billing enabled, App Check
+    off and IAM bindings. Uploads therefore go through the R35 function, which
+    uses the Admin SDK. Worth re-checking in the Firebase console
+    (Storage → Rules) — if the bucket starts enforcing, the client path in
+    `storage.rules` becomes usable again.
   - Role changes are console-only: `/admin/dashboard` carries the user-management
     screen (R32), but the committed rules let an account read only its own
     `users/{uid}` document, so there is no user list to render and no role
