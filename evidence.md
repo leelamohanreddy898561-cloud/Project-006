@@ -2161,3 +2161,33 @@ R28.1 recorded here rather than hidden.
 
 **Test cases:** TC-3501, TC-3502 green; TC-3503 recorded above; TC-3504 is the
 owner's own save. Awaiting that confirmation before the merge and the change log.
+
+---
+
+### 2026-10-26 - R34 and R35 published
+
+**Approval:** the owner confirmed the post and image upload work through the
+Cloud Function and asked for the merge and the change log.
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run deploy                     # hosting, index-BlIndTFG.js
+    npm.cmd run deploy:functions           # uploadBlogImage + deleteBlogImage
+    npm.cmd run deploy:rules               # firestore + storage rules
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** production smoke **10 passed in 18.8 s** (`verify:prod` 20.5 s);
+hosting release complete; both functions created in `us-central1`; both rule
+files released. The live bundle contains `uploadBlogImage` and no
+`firebase/storage`.
+
+**Evaluation:** a post saves from `/admin/add-blog` on the published site: the
+cover is written to `blog-images/<uid>/`, made public per object, its URL stored
+on the document, and the document stays `published: false` until a page reads the
+collection. The admin check runs server-side in the function, read from the same
+`users/{uid}.role` the `/admin` guard uses, so the client cannot bypass it. The
+Storage-rules fault that forced this design is recorded in the known open items;
+if the bucket ever starts enforcing rules, the client path in `storage.rules` is
+already correct. The change-log cycle follows in its own commit; `main` is
+fast-forwarded after it.
