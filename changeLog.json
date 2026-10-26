@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T07:34:01.953Z",
+  "generatedAt": "2026-10-26T08:34:11.379Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 84,
+    "commits": 87,
     "fileChanges": {
-      "M": 349,
-      "A": 136,
+      "M": 364,
+      "A": 140,
       "D": 7
     },
     "latestVerification": null,
@@ -2946,6 +2946,115 @@
         {
           "status": "M",
           "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "e464c590d8e3c07191182b0e4ed720f64e85911e",
+      "short": "e464c59",
+      "date": "2026-10-26T13:06:29+05:30",
+      "subject": "chore(r37): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "dc8cd0cd17fc638d82ee8517df40fc6b3f30fa75",
+      "short": "dc8cd0c",
+      "date": "2026-10-26T13:45:33+05:30",
+      "subject": "feat(r38): manage saved blogs from the admin panel",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/admin/AdminPanels.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/admin/AdminPanels.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/components/admin/ManageBlogs.css"
+        },
+        {
+          "status": "A",
+          "path": "src/components/admin/ManageBlogs.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/hooks/useSavedBlogs.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/blog-admin.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blog-draft.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r38-manage-blogs.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "b0594576cb9338f43db32ae9bdd3c8f08a3d5e87",
+      "short": "b059457",
+      "date": "2026-10-26T14:03:05+05:30",
+      "subject": "docs(r38): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
         },
         {
           "status": "M",
