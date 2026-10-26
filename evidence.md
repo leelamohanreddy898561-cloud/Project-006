@@ -2191,3 +2191,25 @@ Storage-rules fault that forced this design is recorded in the known open items;
 if the bucket ever starts enforcing rules, the client path in `storage.rules` is
 already correct. The change-log cycle follows in its own commit; `main` is
 fast-forwarded after it.
+
+---
+
+### 2026-10-26 - R36 Admin link in the account menu, built and verified
+
+**Built:** `AccountMenu` reads the role through the existing `useUserRole` seam
+and renders an **Admin** link to `/admin/dashboard` only when `isAdminRole(role)`
+is true - absent while the role loads and when the read fails. A dedicated
+`account__admin` pill, because the header hides `.btn--sm` below 900px and the
+link must survive at 360px.
+
+**Proof:** `npm.cmd run build` - **124.32 kB JS / 7.33 kB CSS gzipped** (budgets
+150 / 25); `npm.cmd run lint` clean; `npx playwright test` - 114 passed. The
+first full run failed only TC-3002 because Section 9 did not yet name R36; the
+section was updated and the guard re-run green. TC-3601-TC-3603 pass. A
+throwaway-account visual probe (not committed) showed no horizontal overflow at
+1280 and 360 px and **6.29:1 light / 6.11:1 dark** for the link text. TC-3604 is
+the owner's admin check.
+
+**Evaluation:** the shortcut is visible only to an admin and grants nothing -
+`/admin/dashboard` still enforces the R31 guard. Awaiting visual approval before
+the merge, deploy and change-log sync.

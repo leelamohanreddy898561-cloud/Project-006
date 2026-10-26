@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { signOutUser, type AuthUser } from "../lib/auth";
+import { useUserRole } from "../hooks/useUserRole";
+import { isAdminRole } from "../lib/users";
 import "./AccountMenu.css";
 
 /**
@@ -7,13 +10,21 @@ import "./AccountMenu.css";
  *
  * Shown in the header instead of Sign In / Sign Up once a session exists.
  * The identity is a name, and the button label never changes between pages.
+ *
+ * R36 — and, for an admin, the way into the workspace. The role is read from
+ * the same `users/{uid}` profile the /admin guard reads. Until it resolves, or
+ * if the read fails, there is no link: the menu fails closed, exactly as the
+ * guard does. The link is a shortcut, not a permission — /admin/dashboard
+ * still enforces R31 on its own.
  */
 export function AccountMenu({ user }: { user: AuthUser }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  const { role } = useUserRole(user);
 
   const name = user.displayName?.trim() || user.email || "Your account";
   const initial = name.charAt(0).toUpperCase();
+  const showAdminLink = isAdminRole(role);
 
   async function handleSignOut() {
     setPending(true);
@@ -47,6 +58,12 @@ export function AccountMenu({ user }: { user: AuthUser }) {
         )}
         <span className="account__name">{name}</span>
       </span>
+
+      {showAdminLink && (
+        <Link to="/admin/dashboard" className="account__admin">
+          Admin
+        </Link>
+      )}
 
       <button
         type="button"

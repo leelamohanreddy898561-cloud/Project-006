@@ -735,6 +735,32 @@ it. **This revises AC33.7 and AC33.11: the upload is still to
 
 ---
 
+### R36 — Admin link in the account menu
+
+An admin had to know the `/admin` URL to reach the workspace. The header's
+account menu now offers the way in, but only to the accounts that can use it:
+the role is read from the same `users/{uid}` profile the guard reads, and while
+it is loading — or if it cannot be read — the link is absent. The link is a
+shortcut, not a permission; `/admin/dashboard` still enforces R31.
+
+- **AC36.1** A signed-in account whose role is `"admin"` sees an **Admin** link
+  in the header's account menu.
+- **AC36.2** The link is absent for a signed-out visitor and for a signed-in
+  account whose role is anything other than `"admin"`, including while the role
+  is still loading and when the read fails.
+- **AC36.3** The link is an in-app link to `/admin/dashboard`, carries the
+  accessible name **Admin**, and is operable by keyboard with a visible focus
+  indicator.
+- **AC36.4** The link stays visible at 360px without horizontal overflow, and
+  its text meets WCAG AA contrast (4.5:1) in both themes.
+- **AC36.5** The role is read through the existing `useUserRole` / `isAdminRole`
+  seam — no second source of truth — and the link grants nothing: every
+  `/admin` route still goes through the R31 guard.
+- **AC36.6** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
+
+---
+
 ## 8. Open Questions
 
 - [ ] Confirm the blog name and branding (currently "Signal & Noise").

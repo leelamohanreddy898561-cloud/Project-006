@@ -496,3 +496,18 @@ promoted account is recorded per publish in `evidence.md` (TC-3503).
 | TC-3502 | auto | Read `src/lib/blogs.ts`, `functions/index.js` and `firebase.json` | The client calls `uploadBlogImage`/`deleteBlogImage` and no longer imports `firebase/storage`; the function reads `users/{uid}.role`, requires `"admin"`, caps at 5 MB, accepts image data URLs, writes under `blog-images/<uid>/`, and `firebase.json` deploys the `functions` codebase (AC35.1, AC35.3–AC35.6, AC35.8) |
 | TC-3503 | cli | With a throwaway account promoted through IAM, sign in and save a post through the composer; read the document back and fetch its `imageUrl` without credentials; delete everything | The live region reports the document id; the document carries `imageUrl`, `published: false` and the author; the image returns 200 `image/jpeg`; the probe is fully cleaned up (AC35.4, AC35.5, AC35.7) |
 | TC-3504 | manual | Sign in as the console-promoted admin and save a post with an image | The image appears under `blog-images/<your uid>/`, is publicly reachable, and the document carries its URL (AC35.4, AC35.5) |
+
+## R36 — Admin link in the account menu
+
+The absent cases are proved in the browser: signed out, and signed in as a
+throwaway **student** (the suite creates and deletes it, as TC-3102 does). The
+allow case needs an account promoted in the console, so — like TC-3103 and
+TC-3504 — it stays `manual`; TC-3603 proves the rendered branch is wired to the
+same role seam without needing that account.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-3601 | auto | Load `/`, `/blog` and `/signin` as a signed-out visitor and inspect the header | No **Admin** link appears; an account link never replaces the signed-out controls (AC36.2) |
+| TC-3602 | auto | Sign up a throwaway account, wait for its role to resolve, then inspect the header and open `/admin/dashboard`; delete the account | The account menu shows the identity and Sign out, no **Admin** link; the dashboard still redirects home; the header stays signed in (AC36.2, AC36.5) |
+| TC-3603 | auto | Read `src/components/AccountMenu.tsx`, `src/hooks/useUserRole.ts` and `src/lib/users.ts` | The Admin link is a router `Link` to `/admin/dashboard` with the accessible name Admin, rendered only when `isAdminRole(role)` is true; the role comes from `useUserRole`, and the guard in `src/App.tsx` still wraps the dashboard with `RequireAdmin` (AC36.1–AC36.3, AC36.5) |
+| TC-3604 | manual | Sign in as the console-promoted admin on the dev server; inspect the header at desktop width and at 360px in both themes; click Admin, then reload | The **Admin** link sits in the account area, opens `/admin/dashboard`, survives the reload, is absent for a standard account, causes no horizontal overflow at 360px, and its text measures ≥ 4.5:1 in both themes (AC36.1, AC36.3, AC36.4) |

@@ -263,6 +263,13 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R35.8) `firebase.json` functions codebase + `npm run deploy:functions`; both functions deployed to `us-central1`
 - [x] (R35.9) TC-3501–TC-3503; **published 2026-10-26** (TC-3504: the owner's own save, confirmed)
 
+## Phase 3t — Admin link in the account menu (R36)
+
+- [x] (R36.1–R36.3) `src/components/AccountMenu.tsx`: an **Admin** link to `/admin/dashboard`, rendered only when `isAdminRole(role)` from the existing `useUserRole` seam
+- [x] (R36.2) Fail closed: the link is absent while the role loads, when it errors, and for every role except `"admin"`
+- [x] (R36.4) `AccountMenu.css`: link visible at 360px (not a `.btn--sm`, which the header hides below 900px) and ≥ 4.5:1 in both themes
+- [x] (R36.6) Execute TC-3601–TC-3603; build, lint, full suite; evidence entry; local commit
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

@@ -257,7 +257,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 124.27 kB JS / 7.28 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 124.32 kB JS / 7.33 kB CSS gzipped |
 
 ---
 
@@ -290,13 +290,15 @@ deliberately, so a growing repository is expected rather than a leak.
   where the admin check cannot be bypassed).
   **R35 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
+- **R36** (the **Admin** link in the header's account menu) is built and
+  verified, **awaiting owner approval** — it is not published yet.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 124.27 kB JS / 7.28 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 124.32 kB JS / 7.33 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync
