@@ -6,6 +6,7 @@ import { AuthPage } from "./pages/AuthPage";
 import { BlogList } from "./pages/BlogList";
 import { Admin } from "./pages/Admin";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { AddBlog } from "./pages/AddBlog";
 import { RequireAdmin } from "./components/RequireAdmin";
 import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
@@ -51,6 +52,18 @@ export default function App() {
             element={
               <RequireAdmin>
                 <Admin />
+              </RequireAdmin>
+            }
+          />
+          {/* R33 — the composer that writes to Firestore. It reuses the R31
+              guard rather than redefining it, and sits beside the R32 dashboard
+              because /admin/add-blog is a page of its own, not a dashboard
+              section. */}
+          <Route
+            path="/admin/add-blog"
+            element={
+              <RequireAdmin>
+                <AddBlog />
               </RequireAdmin>
             }
           />

@@ -1,11 +1,16 @@
 rules_version = '2';
 
-// R31 — Firestore rules.
+// R31 + R33 — Firestore rules.
 //
 // A user owns exactly one profile document. The role is fixed after creation,
 // so a browser cannot promote itself to admin: only the Firebase console (or a
 // future Admin SDK path) can change it. Reads, creates and deletes are limited
 // to the signed-in account's own uid.
+//
+// R33 adds the blogs collection: the composer at /admin/add-blog writes one
+// document per post, so the collection is admin-only. The check reads the same
+// users/{uid}.role the /admin guard reads, which means the page cannot grant
+// itself the access it is protecting.
 //
 // The changeLog block keeps R17's existing access: its sync and read-back
 // scripts run without a signed-in user. Locking it down is tracked in the known
@@ -26,8 +31,22 @@ service cloud.firestore {
       allow delete: if owns(uid);
     }
 
+    // R33 — written by the admin composer, read by nobody yet: no page reads
+    // blogs, so there is no public read to grant.
+    match /blogs/{blogId} {
+      allow read, write: if isAdmin();
+    }
+
     function owns(uid) {
       return request.auth != null && request.auth.uid == uid;
+    }
+
+    // The role lives in the owner's own profile document, which the rules above
+    // already let them read. A failed lookup (no document, no role, or an
+    // unknown value) is not "admin".
+    function isAdmin() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
   }
 }

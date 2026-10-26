@@ -1,0 +1,108 @@
+/* ==========================================================================
+   R33 — /admin/add-blog
+   The composer writes to Firestore, so it needs the controls the markdown
+   composer (R32) does not have: a file picker and an image preview. Everything
+   else reuses the admin field tokens so the two pages read as one tool.
+   ========================================================================== */
+
+.add-blog__file {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--field-fill);
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.add-blog__file:focus-within {
+  border-color: var(--color-accent);
+  border-style: solid;
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.add-blog__file[data-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.add-blog__file-input {
+  width: 100%;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: var(--text-sm);
+}
+
+.add-blog__file-input::file-selector-button {
+  margin-right: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.add-blog__file-input::file-selector-button:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.add-blog__preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.add-blog__preview img {
+  width: 7rem;
+  height: 4.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-2);
+  object-fit: cover;
+}
+
+.add-blog__preview-name {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.add-blog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* A disabled submit is the "still working" signal (AC33.6), so it must stay
+   readable rather than fading out. */
+.add-blog__actions .btn:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.admin-field__optional {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.admin-output .admin-output__file + .admin-output__file {
+  margin-top: var(--space-2);
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .add-blog__file {
+    transition: none;
+  }
+}

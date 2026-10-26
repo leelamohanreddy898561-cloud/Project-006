@@ -239,6 +239,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R32.8) Manage Users panel: the signed-in account, the role legend, and the console-only rule stated plainly
 - [x] (R32.9, R32.10) Contrast check in both themes; execute TC-3201–TC-3204; evidence entry; local commit
 
+## Phase 3q — Admin blog composer at `/admin/add-blog` (R33)
+
+- [x] (R33.7, R33.8) `src/lib/blogs.ts` — the single seam: image upload to Storage under `blog-images/<uid>/`, one `blogs` document per submit, plain-English failures
+- [x] (R33.4, R33.5, R33.8) `src/lib/blog-draft.ts` — validation, tag parsing, reading time, slug and the document the form writes
+- [x] (R33.1–R33.6) `src/pages/AddBlog.tsx` + `.css` behind the R31 guard: labelled title, category, image, content; inline errors; live-region outcome
+- [x] (R33.10, R33.11) `firestore.rules` `blogs` block (admin-only via `users/{uid}.role`), new `storage.rules`, `firebase.json` storage block, `deploy:rules` publishes both
+- [x] (R33.12) Execute TC-3301–TC-3303; evidence entry; local commit; await owner approval (TC-3304 manual)
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

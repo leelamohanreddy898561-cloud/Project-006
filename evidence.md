@@ -1920,3 +1920,68 @@ account the owner promoted to `role: "admin"`, with the three-section sidebar,
 the markdown composer that never claims a publish, and a Manage Users panel
 that states the console-only rule. The change-log cycle follows in its own
 commit; `main` is fast-forwarded after it — no merge commit, no force-push.
+
+---
+
+### 2026-10-26 - R33 admin blog composer at /admin/add-blog, awaiting approval
+
+**Requirement:** R33 — `/admin/add-blog`: a labelled blog title, a category
+dropdown, a featured image uploaded to Firebase Storage, and content, saved as
+one document in the Firestore `blogs` collection. Branch
+`feature/r33-admin-add-blog`; nothing merged, deployed or synced.
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run lint
+    npx.cmd playwright test tests/r33-add-blog.spec.ts tests/r32-admin-dashboard.spec.ts tests/workflow-guards.spec.ts --reporter=line
+    node contrast-check.mjs        # the two new colour pairs; deleted afterwards
+
+**Results:** build **124.05 kB JS / 7.28 kB CSS gzipped** (budgets 150 / 25);
+lint clean; **10 passed / 1 failed** — the failure is TC-3002, which compares the
+bundle figure in `AGENTS.md` Section 9 with the newest entry here, so it resolves
+with this entry. The two colour pairs the page introduces measure **7.58:1** and
+**7.15:1** at worst in light and dark, against AA's 4.5:1.
+
+**Artifacts:** `src/pages/AddBlog.tsx` + `.css`, `src/lib/blogs.ts`,
+`src/lib/blog-draft.ts`, `storage.rules`, the `blogs` block in `firestore.rules`,
+the `storage` block in `firebase.json`, `tests/r33-add-blog.spec.ts`.
+
+**Test cases:** TC-3301–TC-3303 green. TC-3304 (manual): the owner walks the
+composer as the console-promoted admin and confirms the Firestore document.
+
+**Evaluation:** the form reaches Firebase through one seam (`src/lib/blogs.ts`),
+which uploads the image to `blog-images/<uid>/` first and removes it again if the
+Firestore write that follows fails. The draft rules live in
+`src/lib/blog-draft.ts` so the suite executes them directly — the composer only
+renders for a promoted admin, which is why TC-3103 and TC-3203 are manual too.
+`blogs` and the image folder are admin-only in the committed rules, read from the
+same `users/{uid}.role` the guard reads, so neither write can be granted from the
+page it protects. One correction inside the loop: a formatting edit left an
+unquoted `permission-denied` key, which broke the module and with it every
+client-side redirect; `npm run build` (which runs `tsc --noEmit`) caught it
+before the gate, which is why the fast loop re-runs the build after any source
+edit and not only the spec. Awaiting the owner's visual review at
+http://localhost:5173/admin/add-blog before publishing.
+
+---
+
+### 2026-10-26 - R33 full gate, clean
+
+    npx.cmd playwright test --reporter=dot
+
+**Result:** **107 passed in 1.5 min** (104 at R32 plus the three new R33 cases),
+and `git status --short` afterwards lists only the twelve intended R33 changes —
+no `test-results/` or `evidence/screenshots/` mutation, so R25 still holds. The
+only failure inside the loop was TC-3002, resolved by the evidence entry above
+that quotes the current bundle.
+
+---
+
+### 2026-10-26 - R33 browser spot check
+
+    browser tools: open http://localhost:5173/admin/add-blog
+
+**Result:** the dev server served the route, the R31 guard replaced it with
+`/signin` ("Welcome back") within a second, and the console held only the React
+DevTools notice — no uncaught errors. The committed proof stays TC-3301.

@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// R33 — Storage rules.
+//
+// The featured image chosen in /admin/add-blog is uploaded here, under
+// blog-images/<uid>/<file>, and its download URL is stored on the blog document
+// (AC33.7). Until a page reads the blogs collection there is no public image to
+// serve, so access stays with the admin who uploaded it.
+//
+// Every operation requires the same two things: the folder belongs to the
+// signed-in account, and that account's users/{uid}.role is "admin" — the same
+// profile the /admin guard reads, so the page cannot grant itself the access it
+// is protecting.
+//
+// A create additionally has to be an image no larger than 5 MB, mirroring the
+// client-side check in src/lib/blog-draft.ts so a rejected upload never spends a
+// request. Delete is separate because request.resource is null on a delete, and
+// the composer removes an image again when the Firestore write that follows it
+// fails (src/lib/blogs.ts).
+
+service.firebase.storage {
+  match /b/{bucket}/o {
+
+    match /blog-images/{uid}/{fileName} {
+      allow read: if isOwnerAdmin();
+      allow create, update: if isOwnerAdmin()
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if isOwnerAdmin();
+    }
+
+    function isOwnerAdmin() {
+      return request.auth != null
+        && request.auth.uid == uid
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+}

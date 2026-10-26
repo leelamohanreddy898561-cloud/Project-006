@@ -456,6 +456,13 @@ export function AdminBlogEditor() {
         that file for you; committing it to the repository is the publish step,
         so nothing here is live until it is committed.
       </p>
+
+      <p className="admin-note">
+        Prefer to keep the post in Firebase?{" "}
+        <Link to="/admin/add-blog">Open the Firestore composer</Link> — it
+        uploads the featured image to Storage and saves a document to the{" "}
+        <code>blogs</code> collection instead (R33).
+      </p>
     </section>
   );
 }

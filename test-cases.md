@@ -445,3 +445,25 @@ owner can perform.
 TC-3102 (a standard account is redirected home and never sees admin content)
 already prove the guard for the `/admin` route; TC-3201 proves the same guard
 for the new route family, and the account-class behaviour is not re-proved here.
+
+## R33 — Admin blog composer at `/admin/add-blog`
+
+The signed-out and route-wiring cases run without an account. The composer
+itself renders only for an account promoted in the Firebase console, so the
+walkthrough stays `manual` for the reason TC-3103 and TC-3203 do. What can be
+proved without that account is proved here by executing the draft module — the
+validation and the document it builds are plain functions, so they are tested
+directly rather than through a screen the suite cannot reach.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-3301 | auto | Open `/admin/add-blog` as a signed-out visitor | Redirects to `/signin`; no composer heading, no form controls and no submit button render (AC33.1) |
+| TC-3302 | auto | Read `src/App.tsx`, `src/pages/AddBlog.tsx`, `src/lib/blogs.ts`, `firestore.rules`, `storage.rules` and `firebase.json`, and walk `src/**` for Storage/Firestore imports | The route is registered and wrapped in `RequireAdmin`; the form declares a labelled title input, a category select built from the shared categories, an `image/*` file input and a content textarea; only `src/lib/blogs.ts` imports `firebase/storage` and `firebase/firestore` for blogs; `blogs` is admin-only in `firestore.rules`; `blog-images/<uid>/` is admin-only, image-only and size-capped in `storage.rules`; `firebase.json` wires the storage rules (AC33.2, AC33.3, AC33.7, AC33.10, AC33.11) |
+| TC-3303 | auto | Import `src/lib/blog-draft.ts` and run it | An empty draft yields a title, a category and a content error; a non-image file and an oversized file are each rejected; a valid draft builds the `blogs` document with a slug, the category, a tags array, the image URL, a reading time, the author and `published: false` (AC33.4, AC33.5, AC33.8, AC33.9) |
+| TC-3304 | manual | Sign in as the console-promoted admin, open `/admin/add-blog`, fill the form, choose an image and submit; repeat once with an empty title and once with a non-image file | The chosen image is previewed, the submit control is disabled while the upload runs, and the live region reports the outcome; a document appears in the Firestore `blogs` collection with the title, category, content, `imageUrl` pointing at the uploaded file in Storage, a reading time and the signed-in account as author; the empty submit and the non-image file are blocked with inline errors and write nothing; the page states that the document is stored, not published (AC33.2, AC33.4–AC33.9) |
+
+**Cites rather than duplicates:** TC-3202 already proves that a `/admin` route
+registered in `src/App.tsx` inside `RequireAdmin` is really guarded, and TC-3201
+proves the signed-out redirect for a route family; TC-3301 repeats the redirect
+only because it is the one browser-reachable proof for this route, and TC-3302
+covers the new route's own wiring.

@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0–R2 and R14–R32 implemented, verified and published (R15 superseded by R18); R3–R13 not started**
+**Status:** In progress — **R0–R2 and R14–R32 implemented, verified and published (R15 superseded by R18); R3–R13 not started; R33 implemented and awaiting the owner's approval**
 
 ---
 
@@ -598,6 +598,64 @@ for each. It sits behind the R31 guard, so only an account whose role is
 
 - **AC32.9** Dashboard text meets WCAG AA contrast (4.5:1) in both themes.
 - **AC32.10** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
+
+---
+
+### R33 — Admin blog composer at `/admin/add-blog`
+
+`/admin/add-blog` is where an admin writes a new post: a title, a category, a
+featured image uploaded to Firebase Storage, and the content. Submitting writes
+one document to the Firestore `blogs` collection — the first time the site saves
+content to Firebase instead of composing a repository file (R32).
+
+**The page**
+
+- **AC33.1** `/admin/add-blog` renders the composer behind the R31 guard: a
+  signed-out visitor is sent to `/signin`, a signed-in standard account to `/`.
+  The guard is reused, not redefined.
+- **AC33.2** The form carries a **Blog title** text input, a **Category**
+  dropdown, a **Featured image** file input and a **Content** textarea. Every
+  control has a programmatic label.
+- **AC33.3** The Category options come from the site's single source of truth
+  for categories, so a new category appears in the dropdown without this page
+  being edited (R20.7).
+- **AC33.4** Blog title, Category and Content are required. Submitting with any
+  of them missing shows an inline error on that field (`aria-invalid` +
+  `aria-describedby`, announced with `role="alert"`) and writes nothing.
+- **AC33.5** The featured image is optional. When one is chosen it must be an
+  image (`image/*`) and no larger than 5 MB; anything else shows an inline error
+  on the image field and blocks submission.
+- **AC33.6** The chosen image is previewed before it is uploaded, and the stored
+  URL is shown afterwards. While the upload and the write are in flight the
+  submit control is disabled and the outcome is reported in a live region; the
+  form never claims a save that Firebase did not confirm.
+
+**The save**
+
+- **AC33.7** The chosen image is uploaded to Firebase Storage under
+  `blog-images/<uid>/…`, and the download URL is stored on the document as
+  `imageUrl`.
+- **AC33.8** One submission writes exactly one document to `blogs`, carrying the
+  title, category, excerpt, tags, content, the image URL, a reading time, the
+  signed-in account as author, and a creation timestamp. Nothing is written when
+  validation fails.
+- **AC33.9** The document records that it is not published: no page reads
+  `blogs` yet (R13 is not built), so a document written here is stored, not live.
+
+**Rules**
+
+- **AC33.10** `firestore.rules` grants read and write on `blogs` to an account
+  whose `users/{uid}.role` is `"admin"`, and denies every other account. The
+  check reads the same profile the guard reads, so it cannot be granted from the
+  page it protects.
+- **AC33.11** A new `storage.rules` lets an admin read and write only under
+  `blog-images/<their own uid>/`, only image content types, and only up to 5 MB.
+  `npm run deploy:rules` publishes both rule files.
+
+**Quality**
+
+- **AC33.12** Build and lint pass, all previously passing tests stay green, and
   the bundle stays within the R14 budgets.
 
 ---

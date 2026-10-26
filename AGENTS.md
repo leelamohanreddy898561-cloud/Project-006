@@ -89,8 +89,9 @@ repetition — re-running every test to re-prove a typo is waste, not proof.
     1. Secret-scan, then `git push` the branch.
     2. `npm run build`, then `npm run deploy`, then `npm run verify:prod`
        (smoke subset against the live site; it refuses to run without
-       `PLAYWRIGHT_BASE_URL`). If `firestore.rules` changed, run
-       `npm run deploy:rules` before verification.
+       `PLAYWRIGHT_BASE_URL`). If `firestore.rules` or `storage.rules`
+       changed, run `npm run deploy:rules` before verification — it publishes
+       both rule files.
     3. Write the publish entry in `evidence.md`, move the requirement into the
        published list in `AGENTS.md` Section 9, then commit and push both.
     4. **One** change-log cycle: `npm run changelog` → `npm run sync:changes` →
@@ -193,7 +194,10 @@ necessary but never sufficient** — your visual approval is the gate.
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
 | `src/lib/users.ts` | User profile + role seam (`users/{uid}`, R31) |
-| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31) |
+| `src/lib/blogs.ts` | The composer's Firebase seam: Storage upload + one `blogs` document per submit (R33) |
+| `src/lib/blog-draft.ts` | Draft validation and the `blogs` document shape (R33) |
+| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), admin-only `blogs` (R33) |
+| `storage.rules` | Storage rules: featured images under `blog-images/<uid>/`, admin-only (R33) |
 | `.env` / `.env.example` | Firebase credentials (local only) / documented template |
 
 **Committed on purpose, and they grow with each release:** `evidence/screenshots/*.png`
@@ -252,7 +256,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 117.38 kB JS / 6.28 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 124.05 kB JS / 7.28 kB CSS gzipped |
 
 ---
 
@@ -275,18 +279,25 @@ deliberately, so a growing repository is expected rather than a leak.
   and Manage Users, behind the R31 guard).
   **R32 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
+- **Implemented and verified, awaiting owner approval:** R33 (the
+  `/admin/add-blog` composer — a labelled title, category, featured image
+  uploaded to Firebase Storage, and content, saved as one document in the
+  Firestore `blogs` collection; `firestore.rules` and the new `storage.rules`
+  make both writes admin-only). Nothing is merged, deployed or synced until the
+  owner approves it locally.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 120.90 kB JS / 7.07 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 124.05 kB JS / 7.28 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync
-    scripts authenticate. Storage rules still need tightening before Storage is
-    used with real data.
+    scripts authenticate. Storage is now protected by `storage.rules` (R33:
+    `blog-images/<uid>/`, admin-only, image-only, 5 MB cap), and its read access
+    stays admin-only until a page renders Firestore posts.
   - Role changes are console-only: `/admin/dashboard` carries the user-management
     screen (R32), but the committed rules let an account read only its own
     `users/{uid}` document, so there is no user list to render and no role
