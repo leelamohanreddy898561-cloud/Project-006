@@ -2276,3 +2276,35 @@ run lint` clean; `npx playwright test` - **117 passed**.
 **Evaluation:** the signed-in owner can review the saved SEO post on localhost
 without a reload race; anonymous visitors keep the seed archive and the notice
 until `deploy:rules`. No merge or deploy.
+
+### 2026-10-26 - R37 published (public read, legacy email removed)
+
+**Approval:** the owner reviewed the admin view, reported that non-admins could
+not see the post, and authorised the fix: make saved posts public to everyone and
+remove the legacy author email directly.
+
+**Data cleanup:** read the single `blogs` document with the Firebase CLI's own
+admin login through the Firestore REST API; deleted `authorEmail` and the stale
+`published` flag. Field names were inspected, never values. A throwaway
+`_maintenance` document proved the delete-field semantics and was removed.
+
+**Commands:**
+
+    npm.cmd run deploy:rules                # firestore.rules + storage.rules
+    npm.cmd run build                       # 125.87 kB JS / 7.35 kB CSS gzipped
+    npm.cmd run deploy                      # hosting, index-Cs5cNKGQ.js
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** rules released. An **anonymous** Firestore REST read now returns
+**200** with one document whose fields are `authorName, authorUid, category,
+content, createdAt, excerpt, imageUrl, readingTime, slug, tags, title` - no
+`authorEmail`, no `published`. Production smoke **10 passed in 16.2 s**
+(`verify:prod` 17.7 s). A signed-out browser on the live site sees **7 posts** on
+`/blog` and the home grid, first **Mohan Reddy** at `/blog/mohan-reddy`; the
+article page renders 13 paragraphs with its Storage cover loaded and no email.
+
+**Evaluation:** saving a post from `/admin/add-blog` now publishes it to every
+visitor - admin, student or signed out. Writes remain admin-only in
+`firestore.rules`; the public read is the only change to access. The author email
+is gone from the document, so the public read exposes no private address. The
+change-log cycle follows in its own commit; `main` is fast-forwarded after it.

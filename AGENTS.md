@@ -260,7 +260,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 124.32 kB JS / 7.33 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 125.87 kB JS / 7.35 kB CSS gzipped |
 
 ---
 
@@ -293,12 +293,13 @@ deliberately, so a growing repository is expected rather than a leak.
   where the admin check cannot be bypassed),
   R36 (an **Admin** link in the header's account menu — a shortcut to the
   dashboard, shown only to an account the same role seam calls `"admin"`, and
-  granting nothing on its own).
-  **R36 is the most recent requirement published to production** — R2 was
+  granting nothing on its own),
+  R37 (saved posts are public visitor content — the home grid, the `/blog`
+  archive and `/blog/<slug>` merge the Firestore `blogs` collection with the
+  seed articles; reading is public, writing stays admin-only, and the composer
+  no longer records an author email or a draft flag).
+  **R37 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Awaiting owner approval:** R37 (saved blog posts are visible to visitors —
-  the home grid, the `/blog` archive and `/blog/<slug>` read the Firestore
-  `blogs` collection, which is public to read and admin-only to write).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
