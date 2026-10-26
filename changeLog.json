@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T02:52:59.044Z",
+  "generatedAt": "2026-10-26T03:40:13.723Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 68,
+    "commits": 72,
     "fileChanges": {
-      "M": 274,
-      "A": 119,
+      "M": 291,
+      "A": 125,
       "D": 7
     },
     "latestVerification": null,
@@ -2398,6 +2398,142 @@
         {
           "status": "M",
           "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        }
+      ]
+    },
+    {
+      "commit": "6a2619bf5ca277d34dfc49f9e0e724d216866e2e",
+      "short": "6a2619b",
+      "date": "2026-10-26T08:25:26+05:30",
+      "subject": "chore(r32): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "3fcc4c950dc35b1c3202ecb57f60419bbdba6d28",
+      "short": "3fcc4c9",
+      "date": "2026-10-26T08:42:46+05:30",
+      "subject": "feat(r33): add the /admin/add-blog composer that saves to Firestore",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "firebase.json"
+        },
+        {
+          "status": "M",
+          "path": "firestore.rules"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/admin/AdminPanels.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/blog-draft.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/blogs.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/AddBlog.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/AddBlog.tsx"
+        },
+        {
+          "status": "A",
+          "path": "storage.rules"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r33-add-blog.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "8a41351ad27daab937d7158e922b72f18af5e97c",
+      "short": "8a41351",
+      "date": "2026-10-26T09:09:45+05:30",
+      "subject": "fix(r33): deploy storage rules as 'storage', not 'storage:rules'",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "tests/r33-add-blog.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "d5f151f7f86f2fdf82324ca8d77845d12cc63f89",
+      "short": "d5f151f",
+      "date": "2026-10-26T09:09:45+05:30",
+      "subject": "docs(r33): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
         },
         {
           "status": "M",
