@@ -2068,3 +2068,19 @@ the bundle is unchanged (124.05 kB JS / 7.28 kB CSS). What remains is the one
 thing the suite cannot reach: a role exists only in the console, so the allow
 path is TC-3404 and needs the owner. Deploying the rules is required before that
 test; the deny path is re-proved with the probe at deploy time.
+
+---
+
+### 2026-10-26 - R34 rules deployed, deny path re-proved
+
+    npm.cmd run deploy:rules
+    node rules-probe.mjs
+
+**Result:** both rule files compiled and released — this time with **no lint
+warnings at all**, where the R33 deploy printed twelve that flagged even
+`service.firebase.storage`, so the earlier noise was the out-of-scope reference
+itself. The deny-path probe passed **7/7** again: a throwaway non-admin is still
+refused `blogs`, an upload into its own and another account's folder, and
+self-promotion; anonymous writes are refused; the probe account was deleted. No
+hosting release was made — the fix is server-side and the shipped bundle is
+unchanged. TC-3404, the admin's live save, is the owner's check.
