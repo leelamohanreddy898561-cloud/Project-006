@@ -297,14 +297,12 @@ deliberately, so a growing repository is expected rather than a leak.
   R37 (saved posts are public visitor content — the home grid, the `/blog`
   archive and `/blog/<slug>` merge the Firestore `blogs` collection with the
   seed articles; reading is public, writing stays admin-only, and the composer
-  no longer records an author email or a draft flag).
-  **R37 is the most recent requirement published to production** — R2 was
+  no longer records an author email or a draft flag),
+  R38 (the All Blogs dashboard section is the blog management view — every
+  written post in one card list, with Edit, Delete and add/replace/remove cover
+  for the Firestore posts, all written back to `blogs/<id>`).
+  **R38 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Implemented and verified, not published yet:** R38 (the All Blogs dashboard
-  section is the blog management view — every written post in one card list,
-  with Edit, Delete and add/replace/remove cover for the Firestore posts, all
-  written back to `blogs/<id>`). It sits on `feature/r38-manage-blogs` and is
-  waiting for the owner's visual review; nothing about it is live.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

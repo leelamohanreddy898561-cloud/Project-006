@@ -2335,3 +2335,29 @@ is TC-3804, the owner's walkthrough.
 **Evaluation:** every acceptance criterion has an executable check except the
 live admin walkthrough, which needs the console-promoted account. The page is
 not merged or deployed; it is on `feature/r38-manage-blogs` for visual review.
+
+---
+
+### 2026-10-26 - R38 published (manage blogs)
+
+**Approval:** the owner reviewed the manage page on localhost - list, edit,
+cover replace/remove and delete - and approved publishing.
+
+**Commands:**
+
+    git push -u origin feature/r38-manage-blogs   # branch only; main untouched
+    npm.cmd run build                             # 129.11 kB JS / 7.71 kB CSS gzipped
+    npm.cmd run deploy                            # hosting released
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** the branch was pushed after a secret scan (no key material, no
+`.env`). Hosting released `index-DnfIbMBE.js`. Production smoke **10 passed in
+20.5 s**. No `firestore.rules`, `storage.rules` or `functions/` change was part
+of R38, so `deploy:rules` and `deploy:functions` were correctly not run: the
+write path is the already-deployed admin-only `blogs` rule and the
+already-deployed `deleteBlogImage` function.
+
+**Evaluation:** the admin can now edit, re-cover and delete a saved post from
+`/admin/dashboard/blogs`, and each action writes the same `blogs/<id>` document
+the public site reads. The change-log cycle and the fast-forward of `main`
+follow in their own commits.

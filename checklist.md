@@ -285,7 +285,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R38.5) Add / replace / remove cover: upload through `uploadBlogImage`, store `imageUrl` + `imagePath`, remove the stale object best-effort, clean up a new upload if the write fails
 - [x] (R38.7) Delete with inline confirmation: `deleteBlogPost` → `deleteDoc`, then best-effort cover deletion; failures reported and the post kept
 - [x] (R38.8–R38.10) Rules unchanged (admin-only write), accessible labels/contrast/360px, build + lint + full suite + bundle; execute TC-3801–TC-3803
-- [ ] TC-3804: owner's live walkthrough (admin account) before approval
+- [x] TC-3804: owner's live walkthrough (admin account) — approved and **published 2026-10-26**
 
 ## Phase 5 — Routing & pages
 
