@@ -2497,3 +2497,36 @@ the bottom of `/blog` lands at scrollY 0 with the cover fully in view
 crop the owner saw on the phone is the deployed build and goes away with the
 publish; the scroll fix is in the code and tested. Still nothing merged,
 deployed or synced - `fix/r40-mobile-featured-image`, awaiting approval.
+
+---
+
+### 2026-10-26 - R40 published (mobile blog reading, the featured image is never cropped)
+
+**Approval:** the owner reviewed the branch on the network preview at
+http://192.168.1.27:5173 - the scroll fix and the full featured image - and
+approved publishing.
+
+**Commands:**
+
+    git push -u origin fix/r40-mobile-featured-image   # branch only; main untouched
+    npm.cmd run build                                   # 127.82 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run deploy                                  # hosting released
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** secret scan clean (only `.env.example` tracked; no key material in
+the diff). Hosting release complete. Production smoke **11 passed in 17.4 s**,
+including TC-4001, the new featured-image case. No `firestore.rules`,
+`storage.rules` or `functions/` change was part of R40, so `deploy:rules` and
+`deploy:functions` were correctly not run.
+
+Measured on the deployed site after the release: tapping the "20 skilss" card
+from the bottom of `/blog` opens the article at scrollY 0 with a 328x185 cover
+- 100% of the 1600x900 image's width visible, `object-fit: contain`. Before the
+release the same post measured 328x500 with `cover` and 37% of its width
+visible, and the page opened at scrollY ~495.
+
+**Evaluation:** the reported defect is gone from production - the article
+featured image and the mobile card thumbnails show in full, an article opens at
+the top of the page, and the mobile action rail, search target and dark-mode
+secondary text are all fixed. The change-log cycle and the fast-forward of
+`main` follow in their own commits.

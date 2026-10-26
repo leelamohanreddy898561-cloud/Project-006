@@ -260,7 +260,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 127.79 kB JS / 7.68 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 127.82 kB JS / 7.68 kB CSS gzipped |
 
 ---
 
@@ -305,23 +305,23 @@ deliberately, so a growing repository is expected rather than a leak.
   category, excerpt, featured image directly above Tags, Tags and content — so it
   saves a Firestore post with its cover instead of composing a markdown file for
   a `content/posts/` directory this repository does not have; the duplicate
-  markdown composer is retired).
-  **R39 is the most recent requirement published to production** — R2 was
-  backfilled after R30, so requirement numbers are not publication order.
-- **Implemented and verified, awaiting the owner's approval before publish:**
+  markdown composer is retired),
   R40 (mobile blog reading — a `height` attribute the CSS never overrode forced
   the article featured image into a 500px-tall box, so `object-fit: cover` cut
   ~63% of a 16:9 cover's width on a phone; the cover and the mobile card
-  thumbnails now show the whole image, the mobile action rail clears the
-  wrapped header, the search field is one tap target, and dark-mode
-  `--color-text-subtle` meets AA).
+  thumbnails now show the whole image, an article opens at the top of the page
+  instead of halfway down it, the mobile action rail clears the wrapped header,
+  the search field is one tap target, and dark-mode `--color-text-subtle`
+  meets AA).
+  **R40 is the most recent requirement published to production** — R2 was
+  backfilled after R30, so requirement numbers are not publication order.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 127.79 kB JS / 7.68 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 127.82 kB JS / 7.68 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync
@@ -339,10 +339,10 @@ deliberately, so a growing repository is expected rather than a leak.
     `users/{uid}` document, so there is no user list to render and no role
     change to offer from the browser. Listing accounts needs a privileged
     server-side path that does not exist yet.
-  - Dark-mode `--color-text-subtle` measured ≈3.98:1, below AA for normal
-    text. R40 raises it to `#8497b0` — 4.85:1 on the lightest dark surface it
-    is used on — and that fix goes live when R40 is published; R24 avoids the
-    token, and after R40 the rest of the site no longer needs to.
+  - Dark-mode `--color-text-subtle` measured ≈3.98:1, below AA for normal text.
+    Fixed in R40 (`#8497b0`, 4.85:1 on the lightest dark surface it is used on)
+    and published; R24 avoids the token, and the rest of the site no longer
+    needs to.
   - Firebase Auth is wired to real sign-in in code (R29), but the Email/Password
     and Google providers must be switched on in Firebase Console →
     Authentication → Sign-in method before either works live. That is a console
