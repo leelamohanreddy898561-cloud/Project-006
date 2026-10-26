@@ -287,6 +287,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R38.8–R38.10) Rules unchanged (admin-only write), accessible labels/contrast/360px, build + lint + full suite + bundle; execute TC-3801–TC-3803
 - [x] TC-3804: owner's live walkthrough (admin account) — approved and **published 2026-10-26**
 
+## Phase 3w — The dashboard's Add New Blog is the Firestore composer (R39)
+
+- [x] (R39.1, R39.4) `src/App.tsx`: `blogs/new` renders `<AddBlog />`; remove the markdown composer and its now-unused imports from `AdminPanels.tsx`
+- [x] (R39.2) `src/pages/AddBlog.tsx`: order is title, category, excerpt, featured image, tags, content — the image directly above tags
+- [x] (R39.3) The shared category taxonomy, the image rules and the admin-gated upload are unchanged, so both routes behave identically
+- [x] (R39.5, R39.6) Sidebar unchanged (three items, exact `aria-current`); build, lint, full suite and bundle budget; execute TC-3901/TC-3902; evidence entry; local commit
+- [ ] TC-3903: owner's walkthrough — add a demo post with an image from the dashboard sidebar
+
 ## Phase 5 — Routing & pages
 
 - [x] Configure React Router route table

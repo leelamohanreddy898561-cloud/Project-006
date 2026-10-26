@@ -11,7 +11,6 @@ import { RequireAdmin } from "./components/RequireAdmin";
 import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 import {
-  AdminBlogEditor,
   AdminOverview,
   AdminSectionMissing,
   AdminUsers,
@@ -58,7 +57,8 @@ export default function App() {
           {/* R33 — the composer that writes to Firestore. It reuses the R31
               guard rather than redefining it, and sits beside the R32 dashboard
               because /admin/add-blog is a page of its own, not a dashboard
-              section. */}
+              section. R39 — the dashboard's "Add New Blog" section renders this
+              same page element (below), so there is one composer and not two. */}
           <Route
             path="/admin/add-blog"
             element={
@@ -83,7 +83,7 @@ export default function App() {
             {/* R38 — the management view. R32.1 keeps the sidebar at three
                 items, so this is the All Blogs section rather than a fourth. */}
             <Route path="blogs" element={<ManageBlogs />} />
-            <Route path="blogs/new" element={<AdminBlogEditor />} />
+            <Route path="blogs/new" element={<AddBlog />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="*" element={<AdminSectionMissing />} />
           </Route>

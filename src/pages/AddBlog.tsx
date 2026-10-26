@@ -21,11 +21,12 @@ import "./AddBlog.css";
 /**
  * R33 — the composer at `/admin/add-blog`.
  *
- * R32's "Add New Blog" panel composes the markdown file a post really is,
- * because committing that file is the publish step (R13 is not built). This
- * page is the other half: it writes a document to the Firestore `blogs`
- * collection, with the featured image uploaded to Storage first, so the content
- * an admin types is kept in Firebase rather than typed twice.
+ * R32's "Add New Blog" panel used to compose a markdown file for a
+ * `content/posts/` directory this repository does not have. R39 retires that
+ * second form: the dashboard's **Add New Blog** section renders this page, so an
+ * admin reaches one composer with a title, a category, an excerpt, the featured
+ * image (directly above Tags) and the content, and a save writes a document to
+ * the Firestore `blogs` collection.
  *
  * The page is behind the R31 guard (see `src/App.tsx`), so it only renders for
  * an account whose role is `"admin"`. It reaches Firebase only through
@@ -261,6 +262,26 @@ export function AddBlog() {
         </div>
 
         <div className="admin-field">
+          <label className="admin-field__label" htmlFor={excerptId}>
+            Excerpt <span className="admin-field__optional">(optional)</span>
+          </label>
+          <div className="admin-field__control">
+            <textarea
+              id={excerptId}
+              className="admin-field__input admin-field__input--area"
+              rows={2}
+              value={draft.excerpt}
+              aria-describedby={`${excerptId}-hint`}
+              onChange={field("excerpt").onChange}
+            />
+          </div>
+          <p className="admin-field__hint" id={`${excerptId}-hint`}>
+            One line for listings. Leave it empty and the opening of the content
+            is used instead.
+          </p>
+        </div>
+
+        <div className="admin-field">
           <label className="admin-field__label" htmlFor={imageId}>
             Featured image
           </label>
@@ -301,26 +322,6 @@ export function AddBlog() {
               <span className="add-blog__preview-name">{preview.name}</span>
             </div>
           )}
-        </div>
-
-        <div className="admin-field">
-          <label className="admin-field__label" htmlFor={excerptId}>
-            Excerpt <span className="admin-field__optional">(optional)</span>
-          </label>
-          <div className="admin-field__control">
-            <textarea
-              id={excerptId}
-              className="admin-field__input admin-field__input--area"
-              rows={2}
-              value={draft.excerpt}
-              aria-describedby={`${excerptId}-hint`}
-              onChange={field("excerpt").onChange}
-            />
-          </div>
-          <p className="admin-field__hint" id={`${excerptId}-hint`}>
-            One line for listings. Leave it empty and the opening of the content
-            is used instead.
-          </p>
         </div>
 
         <div className="admin-field">

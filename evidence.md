@@ -2361,3 +2361,34 @@ already-deployed `deleteBlogImage` function.
 `/admin/dashboard/blogs`, and each action writes the same `blogs/<id>` document
 the public site reads. The change-log cycle and the fast-forward of `main`
 follow in their own commits.
+
+---
+
+### 2026-10-26 - R39 implemented: the dashboard's Add New Blog is the composer
+
+**Scope:** the sidebar's **Add New Blog** (`/admin/dashboard/blogs/new`) rendered
+the R32 markdown composer, which had no image field and composed a file for a
+`content/posts/` directory this repository does not have. It now renders the same
+`<AddBlog />` the R33 route serves, so a save writes a `blogs` document with its
+uploaded cover. Field order is title, category, excerpt, featured image, tags,
+content - the image sits directly above Tags, as requested. The markdown composer
+and its dead CSS were removed; `src/App.tsx` and
+`src/components/admin/AdminPanels.tsx` changed, plus one new spec.
+
+**Commands:**
+
+    npm.cmd run build                        # 127.78 kB JS / 7.71 kB CSS gzipped
+    npm.cmd run lint                         # clean
+    npx.cmd playwright test tests/r39-add-blog-composer.spec.ts tests/r32-admin-dashboard.spec.ts tests/r33-add-blog.spec.ts --reporter=line   # 7 passed
+    npx.cmd playwright test --reporter=dot   # 121 passed, 1 failed: TC-3002 (R39 absent from AGENTS Section 9)
+    npx.cmd playwright test tests/workflow-guards.spec.ts --reporter=line  # 6 passed after the Section 9 fix
+    npx.cmd playwright test --reporter=dot   # full suite green: 122 passed in 2.4 m
+
+**Specs:** `tests/r39-add-blog-composer.spec.ts` - TC-3901 (both routes render
+the one composer; no markdown composer remains) and TC-3902 (the six labelled
+fields in the requested order). TC-3903 is the owner's walkthrough.
+
+**Evaluation:** the two forms are now one, so the sidebar can create the same
+shape of post the Mohan Reddy article is, cover included; awaiting visual review
+on the branch - nothing merged, deployed or synced.
+

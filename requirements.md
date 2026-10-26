@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0–R2 and R14–R35 implemented, verified and published (R15 superseded by R18); R3–R13 not started**
+**Status:** In progress — **R0–R2 and R14–R38 implemented, verified and published (R15 superseded by R18); R39 awaiting owner review; R3–R13 not started**
 
 ---
 
@@ -589,6 +589,9 @@ for each. It sits behind the R31 guard, so only an account whose role is
   body, reports the outcome in a live region, and offers the text for copying.
   It never claims the post is published: posts are markdown files in the
   repository, so committing the file is the publish step (R13 is not built).
+  *(Superseded by R39: the panel now renders the R33 Firestore composer, because
+  the markdown file it composed pointed at a `content/posts/` directory this
+  repository does not have.)*
 
 **Manage Users**
 
@@ -881,6 +884,43 @@ every change written back to the same `blogs/<id>` document.
   themes, every control has an accessible name, and the layout has no horizontal
   overflow at 360px.
 - **AC38.10** Build and lint pass, all previously passing tests stay green, and
+  the bundle stays within the R14 budgets.
+
+---
+
+### R39 — The dashboard's Add New Blog is the Firestore composer
+
+The dashboard's **Add New Blog** section offered a second, different composer: it
+produced markdown for a `content/posts/` directory this repository does not have,
+and it carried no featured-image field, so the form the sidebar actually reaches
+could not create a post shaped like the ones already published. It now renders
+the same R33 composer, with the featured image directly above **Tags**.
+
+**The form**
+
+- **AC39.1** `/admin/dashboard/blogs/new` renders the R33 Firestore composer
+  behind the R31 guard (the guard is reused, not redefined), and a save writes a
+  document to the `blogs` collection — not a markdown file.
+- **AC39.2** The composer carries, in this order: **Blog title**, **Category**,
+  **Excerpt**, **Featured image**, **Tags**, **Content**. The image control sits
+  directly before Tags, and every control keeps its programmatic label.
+- **AC39.3** The Category dropdown is the shared taxonomy (`categoryOptions`,
+  R20.7) and the image control accepts `image/*` up to 5 MB, previews the chosen
+  file, and uploads through the admin-gated function — the same rules as
+  `/admin/add-blog` (AC33.2, AC33.3, AC33.5, AC35.1).
+
+**One composer**
+
+- **AC39.4** One implementation serves both routes: `/admin/add-blog` and
+  `/admin/dashboard/blogs/new` render the same component. The markdown composer
+  is removed from `AdminPanels.tsx`, so no second, divergent form remains.
+- **AC39.5** The sidebar still has exactly three items (AC32.1), and **Add New
+  Blog** is the only item marked `aria-current="page"` on
+  `/admin/dashboard/blogs/new`.
+
+**Quality**
+
+- **AC39.6** Build and lint pass, all previously passing tests stay green, and
   the bundle stays within the R14 budgets.
 
 ---
