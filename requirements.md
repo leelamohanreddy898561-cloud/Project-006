@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0–R2 and R14–R38 implemented, verified and published (R15 superseded by R18); R39 awaiting owner review; R3–R13 not started**
+**Status:** In progress — **R0–R2 and R14–R39 implemented, verified and published (R15 superseded by R18); R3–R13 not started**
 
 ---
 

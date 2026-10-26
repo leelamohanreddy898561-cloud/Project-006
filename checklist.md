@@ -293,7 +293,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R39.2) `src/pages/AddBlog.tsx`: order is title, category, excerpt, featured image, tags, content — the image directly above tags
 - [x] (R39.3) The shared category taxonomy, the image rules and the admin-gated upload are unchanged, so both routes behave identically
 - [x] (R39.5, R39.6) Sidebar unchanged (three items, exact `aria-current`); build, lint, full suite and bundle budget; execute TC-3901/TC-3902; evidence entry; local commit
-- [ ] TC-3903: owner's walkthrough — add a demo post with an image from the dashboard sidebar
+- [x] TC-3903: owner's walkthrough — add a demo post with an image from the dashboard sidebar; approved and **published 2026-10-26**
 
 ## Phase 5 — Routing & pages
 

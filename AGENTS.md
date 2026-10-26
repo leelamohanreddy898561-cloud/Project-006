@@ -260,7 +260,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 127.78 kB JS / 7.71 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 127.78 kB JS / 7.62 kB CSS gzipped |
 
 ---
 
@@ -300,21 +300,21 @@ deliberately, so a growing repository is expected rather than a leak.
   no longer records an author email or a draft flag),
   R38 (the All Blogs dashboard section is the blog management view — every
   written post in one card list, with Edit, Delete and add/replace/remove cover
-  for the Firestore posts, all written back to `blogs/<id>`).
-  **R38 is the most recent requirement published to production** — R2 was
+  for the Firestore posts, all written back to `blogs/<id>`),
+  R39 (the dashboard's **Add New Blog** section renders the R33 composer — title,
+  category, excerpt, featured image directly above Tags, Tags and content — so it
+  saves a Firestore post with its cover instead of composing a markdown file for
+  a `content/posts/` directory this repository does not have; the duplicate
+  markdown composer is retired).
+  **R39 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Awaiting owner approval:** R39 (the dashboard's **Add New Blog** section
-  renders the R33 composer — title, category, excerpt, featured image directly
-  above Tags, Tags and content — so it saves a Firestore post with its cover
-  instead of composing a markdown file for a `content/posts/` directory this
-  repository does not have; the duplicate markdown composer is retired).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 127.78 kB JS / 7.71 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 127.78 kB JS / 7.62 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync

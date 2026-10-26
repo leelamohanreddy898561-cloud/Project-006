@@ -2392,3 +2392,28 @@ fields in the requested order). TC-3903 is the owner's walkthrough.
 shape of post the Mohan Reddy article is, cover included; awaiting visual review
 on the branch - nothing merged, deployed or synced.
 
+
+---
+
+### 2026-10-26 - R39 published (dashboard Add New Blog is the composer)
+
+**Approval:** the owner reviewed the dashboard's **Add New Blog** on localhost -
+one form, featured image directly above Tags - and approved publishing.
+
+**Commands:**
+
+    git push -u origin feature/r39-dashboard-add-blog   # branch only; main untouched
+    npm.cmd run build                                   # 127.78 kB JS / 7.62 kB CSS gzipped
+    npm.cmd run deploy                                  # hosting released, index-DUfaL8Yy.js
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** secret scan clean (no `.env`, no key material). Hosting release
+complete. Production smoke **10 passed in 19.4 s** (`verify:prod` 21.6 s). No
+`firestore.rules`, `storage.rules` or `functions/` change, so `deploy:rules` and
+`deploy:functions` were correctly not run.
+
+**Evaluation:** the sidebar's Add New Blog and `/admin/add-blog` are now one
+composer, saving a `blogs` document with its uploaded cover; the duplicate
+markdown composer is gone. The change-log cycle and the fast-forward of `main`
+follow in their own commits.
+
