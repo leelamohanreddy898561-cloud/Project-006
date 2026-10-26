@@ -245,7 +245,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R33.4, R33.5, R33.8) `src/lib/blog-draft.ts` — validation, tag parsing, reading time, slug and the document the form writes
 - [x] (R33.1–R33.6) `src/pages/AddBlog.tsx` + `.css` behind the R31 guard: labelled title, category, image, content; inline errors; live-region outcome
 - [x] (R33.10, R33.11) `firestore.rules` `blogs` block (admin-only via `users/{uid}.role`), new `storage.rules`, `firebase.json` storage block, `deploy:rules` publishes both
-- [x] (R33.12) Execute TC-3301–TC-3303; evidence entry; local commit; await owner approval (TC-3304 manual)
+- [x] (R33.12) Execute TC-3301–TC-3303; evidence entry; local commit; **published 2026-10-26** (TC-3304 is the owner's manual walkthrough against the live site)
 
 ## Phase 5 — Routing & pages
 

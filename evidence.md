@@ -1985,3 +1985,53 @@ that quotes the current bundle.
 **Result:** the dev server served the route, the R31 guard replaced it with
 `/signin` ("Welcome back") within a second, and the console held only the React
 DevTools notice — no uncaught errors. The committed proof stays TC-3301.
+
+---
+
+### 2026-10-26 - R33 published
+
+**Approval:** the owner reviewed the composer at
+http://localhost:5173/admin/add-blog and replied to publish.
+
+**Commands:**
+
+    npm.cmd run build
+    npm.cmd run deploy
+    npm.cmd run deploy:rules
+    node rules-probe.mjs                                  # deny-path proof; deleted afterwards
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** secret scan clean (`.env` untracked; the `BEGIN PRIVATE KEY` hits
+are this file's own recorded commands); branch pushed as off-machine backup;
+build **124.05 kB JS / 7.28 kB CSS gzipped** (budgets 150 / 25); hosting
+`release complete`; both rule files released — `firestore.rules` to
+`cloud.firestore` and `storage.rules` to `firebase.storage`; the storage compile
+printed twelve `[W]` lint warnings that flag even `service.firebase.storage` and
+`request`, so they are linter noise, and the live behaviour was proved instead:
+**7/7 deny checks passed** (a throwaway account is refused on `blogs`, refused an
+upload into its own and another account's `blog-images/` folder, refused
+self-promotion, and both services refuse anonymous writes; the probe account was
+deleted). Production smoke **10 passed in 11.5 s** (`verify:prod` 12.3 s).
+
+**Two corrections found while publishing:**
+
+1. `--only storage:rules` is not a Firebase CLI target — it was read as a *named*
+   deploy target and failed with "Could not find rules for the following storage
+   targets: rules". `deploy:rules` now uses `--only firestore:rules,storage`.
+2. `.env` (git-ignored) carried `VITE_FIREBASE_STORAGE_BUCKET=project-006-e6ae1.firebaseappspot.com`,
+   which does not exist (`storage.googleapis.com` returns 404; the real default
+   bucket `project-006-e6ae1.firebasestorage.app` returns 403). Corrected, then
+   rebuilt and redeployed hosting so the shipped bundle carries the right value.
+
+**Test cases:** TC-3301–TC-3303 green locally; TC-3304 (manual) is the owner's
+admin walkthrough against the live site — the allow path is the one thing the
+suite cannot reach, because a role is granted in the console.
+
+**Evaluation:** `/admin/add-blog` is live at
+https://project-006-e6ae1.web.app/admin/add-blog behind the R31 guard, writing one
+`blogs` document per submission with the featured image uploaded to
+`blog-images/<uid>/` first and removed again if the write that follows fails.
+Both collections are admin-only in the deployed rules, read from the same
+`users/{uid}.role` the guard reads, so neither write can be granted from the page
+it protects. The change-log cycle follows in its own commit; `main` is
+fast-forwarded after it — no merge commit, no force-push.

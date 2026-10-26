@@ -276,15 +276,13 @@ deliberately, so a growing repository is expected rather than a leak.
   R30 (lean loop; the sixteen workflow guards consolidated into one spec),
   R31 (user roles and the protected admin route),
   R32 (the admin dashboard — sidebar navigation over All Blogs, Add New Blog
-  and Manage Users, behind the R31 guard).
-  **R32 is the most recent requirement published to production** — R2 was
+  and Manage Users, behind the R31 guard),
+  R33 (the `/admin/add-blog` composer — a labelled blog title, a category drawn
+  from the shared taxonomy, a featured image uploaded to Firebase Storage, and
+  content, saved as one document in the Firestore `blogs` collection that only
+  an admin can write).
+  **R33 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Implemented and verified, awaiting owner approval:** R33 (the
-  `/admin/add-blog` composer — a labelled title, category, featured image
-  uploaded to Firebase Storage, and content, saved as one document in the
-  Firestore `blogs` collection; `firestore.rules` and the new `storage.rules`
-  make both writes admin-only). Nothing is merged, deployed or synced until the
-  owner approves it locally.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
