@@ -305,7 +305,7 @@ deliberately, so a growing repository is expected rather than a leak.
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 125.85 kB JS / 7.35 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 125.87 kB JS / 7.35 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync

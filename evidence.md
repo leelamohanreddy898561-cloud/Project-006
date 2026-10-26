@@ -2262,3 +2262,17 @@ exercised by `verify:prod` after `deploy:rules`. **Owner action before the publi
 rule ships:** the pre-R37 document still carries `authorEmail`; delete that field
 in the console so the address is not published. Awaiting visual approval; no
 merge or deploy.
+
+### 2026-10-26 - R37 review-read race closed
+
+**Fix:** `listSavedBlogs` waits for the first Firebase Auth state before the
+server read, so a restored admin session is attached instead of the request
+racing it as anonymous. This matters before R37's public rule is released, when
+only an admin may read `blogs`.
+
+**Proof:** `npm.cmd run build` - **125.87 kB JS / 7.35 kB CSS gzipped**; `npm.cmd
+run lint` clean; `npx playwright test` - **117 passed**.
+
+**Evaluation:** the signed-in owner can review the saved SEO post on localhost
+without a reload race; anonymous visitors keep the seed archive and the notice
+until `deploy:rules`. No merge or deploy.

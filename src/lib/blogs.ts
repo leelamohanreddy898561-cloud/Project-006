@@ -1,4 +1,4 @@
-import { getFirebase, isFirebaseConfigured } from "./firebase";
+import { getFirebase, getFirebaseAuth, isFirebaseConfigured } from "./firebase";
 import {
   buildBlogDocument,
   validateDraft,
@@ -83,6 +83,13 @@ export async function listSavedBlogs(): Promise<SavedBlogsOutcome> {
   }
 
   try {
+    // A signed-in admin must read as that account: the deployed rules still
+    // allow the collection only to an admin until R37's public rule is
+    // released, and Auth restores the session asynchronously. Waiting for the
+    // first auth state means the request never races the restore.
+    const auth = await getFirebaseAuth();
+    await auth.authStateReady();
+
     const [{ db }, { collection, getDocsFromServer, limit, query }] =
       await Promise.all([getFirebase(), import("firebase/firestore")]);
 
