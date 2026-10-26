@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T08:34:11.379Z",
+  "generatedAt": "2026-10-26T08:59:26.293Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 87,
+    "commits": 90,
     "fileChanges": {
-      "M": 364,
-      "A": 140,
+      "M": 378,
+      "A": 141,
       "D": 7
     },
     "latestVerification": null,
@@ -3059,6 +3059,99 @@
         {
           "status": "M",
           "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "4870ddc332d73a500f8af0548f976ec36785bd61",
+      "short": "4870ddc",
+      "date": "2026-10-26T14:06:36+05:30",
+      "subject": "chore(r38): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "5457f8c25a4c7b93fa63f763ea7ca2a22aaa10df",
+      "short": "5457f8c",
+      "date": "2026-10-26T14:19:25+05:30",
+      "subject": "feat(r39): dashboard Add New Blog is the Firestore composer",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/admin/AdminPanels.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/admin/AdminPanels.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/AddBlog.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r39-add-blog-composer.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "40ab2c405b47ad99fde8c95d7921db6e1cb4ebc8",
+      "short": "40ab2c4",
+      "date": "2026-10-26T14:28:25+05:30",
+      "subject": "docs(r39): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
         }
       ]
     }
