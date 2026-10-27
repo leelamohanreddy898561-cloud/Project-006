@@ -362,4 +362,4 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R41) `scripts/run-rules-tests.mjs` + `tests/rules/r41-tenancy.test.mjs`: the real rules executed in the Firestore emulator (portable JDK 21 in `.tools/`, git-ignored)
 - [x] (R41) TC-4104 static guard in `tests/r41-tenancy.spec.ts`; `playwright.config.ts` ignores `tests/rules/**` so node:test never runs inside the browser runner
 - [x] (R41.6) Build, lint, `npm run test:rules` (3 passed) and the full suite (127 passed); bundle unchanged at 127.82 kB / 7.68 kB gzipped
-- [ ] Execute TC-4101-TC-4104; evidence entry; local commit; **await owner approval**
+- [x] Execute TC-4101-TC-4104; evidence entry; local commit; **published 2026-10-27**

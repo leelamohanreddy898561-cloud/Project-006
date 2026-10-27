@@ -320,16 +320,15 @@ deliberately, so a growing repository is expected rather than a leak.
   thumbnails now show the whole image, an article opens at the top of the page
   instead of halfway down it, the mobile action rail clears the wrapped header,
   the search field is one tap target, and dark-mode `--color-text-subtle`
-  meets AA).
-  **R40 is the most recent requirement published to production** — R2 was
+  meets AA),
+  R41 (the tenancy foundation — a workspace is one customer's blog: the
+  membership-gated `workspaces` model in `firestore.rules` covering its
+  `members`, `private` plan state and nested `blogs` posts; the browser seam in
+  `src/lib/workspaces.ts`; and the isolation boundary proved by executed rules
+  in the Firestore emulator via `npm run test:rules`. Additive — the live site
+  still reads the flat `blogs` collection and renders exactly as before).
+  **R41 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Implemented locally, awaiting owner approval:** R41 (the tenancy foundation —
-  a workspace is one customer's blog; membership-based `firestore.rules` for
-  `workspaces/{id}`, its `members`, `private` state and nested `blogs` posts; a
-  browser seam in `src/lib/workspaces.ts`; and the isolation boundary proven by
-  executed rules in the Firestore emulator via `npm run test:rules`). Additive:
-  the live site still reads the flat `blogs` collection, so nothing visible has
-  changed yet.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

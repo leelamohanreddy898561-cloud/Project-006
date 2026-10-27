@@ -2572,3 +2572,42 @@ importing `tests/rules/*.test.mjs` and executing node:test inside the browser
 run - the rules tests are now excluded there. The bundle is unchanged because no
 page imports the seam yet, which is exactly the "additive" criterion. Nothing is
 merged, deployed or synced: awaiting owner approval.
+
+---
+
+### 2026-10-27 - R41 published (tenancy foundation: workspace model, membership rules, emulator-proven isolation)
+
+**Approval:** the owner reviewed the branch and the green runs and approved
+publishing.
+**Branch merged:** `feature/r41-tenant-model` (fast-forward into `main`).
+
+**Commands:**
+
+    git push -u origin feature/r41-tenant-model        # branch only
+    npm.cmd run build                                   # 127.82 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run deploy:rules                            # firestore.rules + storage.rules released
+    npm.cmd run deploy:functions                        # uploadBlogImage, deleteBlogImage updated
+    npm.cmd run deploy                                  # hosting released
+    `="https://project-006-e6ae1.web.app"`; npm.cmd run verify:prod
+
+**Results:** secret scan clean (no key material staged). Firestore rules
+compiled and released; the two CLI warnings on `storage.rules` are the known
+false positives recorded for R34 (`firestore.get` / `request` in the Storage
+scope). Both functions updated in `us-central1`. Hosting release complete.
+Production smoke **11 passed in 17.2 s**.
+
+Two deploy notes: the first `deploy:functions` attempt aborted with
+`User code failed to load … Timeout after 10000` — a cold-loader timeout, not
+a code fault (`node --check functions/index.js` passed); the retry uploaded and
+updated both functions. The CLI then exited non-zero on an unrelated
+artifact-cleanup policy (`No cleanup policy detected for repositories in
+us-central1`) **after** reporting both functions deployed; that policy is still
+unset and is recorded as an open item, not a failed deploy.
+
+**Evaluation:** R41 is live and provably harmless to the current site: the rules
+addition is a new `workspaces` subtree, the functions keep their exact R35
+behaviour when no workspace is named, and the bundle did not move. The isolation
+proof remains `npm run test:rules` (3 executed cases) plus TC-4104 in the
+suite - it is not re-proven against production, because running those fixtures
+would need a second project and real writes. Nothing was migrated: the live site
+still reads the flat `blogs` collection, which is R42's job.
