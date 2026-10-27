@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-27T14:46:15.744Z",
+  "generatedAt": "2026-10-27T15:48:04.950Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 97,
+    "commits": 100,
     "fileChanges": {
-      "M": 418,
-      "A": 147,
+      "M": 433,
+      "A": 150,
       "D": 7
     },
     "latestVerification": null,
@@ -3398,6 +3398,111 @@
       "short": "54d96d3",
       "date": "2026-10-27T20:15:36+05:30",
       "subject": "docs(r41): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "a20af4a87549bc11b576ce19c45046218c5cf721",
+      "short": "a20af4a",
+      "date": "2026-10-27T20:18:30+05:30",
+      "subject": "chore(r41): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "b78aa26383fb46962b89fd55ad87e61ae505d02f",
+      "short": "b78aa26",
+      "date": "2026-10-27T20:28:14+05:30",
+      "subject": "feat(r42): move the site's posts into the default workspace",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "package-lock.json"
+        },
+        {
+          "status": "M",
+          "path": "package.json"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "scripts/migrate-workspace.mjs"
+        },
+        {
+          "status": "M",
+          "path": "scripts/run-rules-tests.mjs"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blog-admin.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r38-manage-blogs.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r42-workspace-data.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/rules/r42-workspace-migration.test.mjs"
+        }
+      ]
+    },
+    {
+      "commit": "797cdc5ab2db81de0ddd1f6a99e0c758a985b62f",
+      "short": "797cdc5",
+      "date": "2026-10-27T21:17:17+05:30",
+      "subject": "docs(r42): record the migration, publish and current state",
       "requirements": [],
       "verification": null,
       "notes": "",
