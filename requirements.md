@@ -980,6 +980,63 @@ shown in full. This requirement adds that criterion.
 
 ---
 
+### R41 — Tenancy foundation: a workspace is one customer's blog
+
+The app is single-tenant: one `blogs` collection that any visitor can read and
+only a global admin can write, and one `users/{uid}.role` that means "admin of
+everything". The product direction is a multi-tenant SaaS where a customer signs
+up and gets **one blog of their own** — its posts, its team, its plan.
+
+This requirement lands the foundation only. It is **additive**: it defines the
+tenant model in `firestore.rules` and in a new seam (`src/lib/workspaces.ts`),
+and it makes the R35 upload function able to serve a workspace. The live site
+still reads the flat `blogs` collection and no page calls the new seam, so
+nothing a visitor sees changes. R42 migrates the existing posts into a
+workspace and wires onboarding; R43 renders a workspace's public site; R44
+enforces plans.
+
+**The model**
+
+- **AC41.1** A workspace is `workspaces/{workspaceId}` with `name`, `slug`,
+  `ownerUid`, `branding` and `createdAt`. It owns three subcollections:
+  `members/{uid}` (role `"editor"` or `"viewer"`), `private/{document}` (plan and
+  billing state), and `blogs/{blogId}` (the existing `BlogDocument`).
+  Ownership is `ownerUid` on the workspace document — there is no "owner"
+  member document, and a member document may never carry the role `"owner"`.
+- **AC41.2** `src/lib/workspaces.ts` is the one browser seam for the model: the
+  role helpers (`normalizeMemberRole`, `canEditWorkspace`,
+  `canManageWorkspace`), the slug helpers, the path helpers, the document
+  builder that cannot emit a billing field, and the two reads
+  (`fetchWorkspace`, `fetchWorkspaceRole`). A failed read reports a failure, not
+  "no role".
+
+**The boundary (the part that must be executed, not asserted by reading)**
+
+- **AC41.3** One customer's account is refused another customer's data by
+  `firestore.rules`: a member of workspace A can create, update and delete A's
+  posts and is denied the same operations on B's; an account with no membership
+  is denied writes everywhere; a `"viewer"` reads but never writes. This is
+  proven by running the rules in the Firestore emulator.
+- **AC41.4** The public surface is exactly `workspaces/{workspaceId}` (name,
+  slug, branding) and its `blogs` posts. `members` and `private` are never
+  readable to a non-member, a `plan`/billing field is refused on the workspace
+  document, and `ownerUid` cannot be reassigned from the browser.
+- **AC41.5** The upload function honours the tenant: given a `workspaceId` it
+  requires that workspace's owner or an editor and stores the object under
+  `workspaces/{workspaceId}/blog-images/{uid}/`; the delete path accepts only
+  the caller's own folder in a workspace it can edit. Without a `workspaceId`
+  it keeps today's R35 behaviour, because the live composer does not send one
+  yet — that branch is removed in R42.
+
+**No visible change**
+
+- **AC41.6** The flat `blogs` rules block, every page, every current test and
+  the bundle are unchanged. `npm run test:rules` is the new gate for this
+  requirement; `npm run build`, `npm run lint` and the full Playwright suite
+  stay green, and the bundle stays within the R14 budgets.
+
+---
+
 ## 8. Open Questions
 
 - [ ] Confirm the blog name and branding (currently "Signal & Noise").

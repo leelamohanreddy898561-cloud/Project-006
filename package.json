@@ -10,6 +10,7 @@
     "lint": "oxlint",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "test:rules": "node scripts/run-rules-tests.mjs",
     "verify:prod": "node scripts/verify-prod.mjs",
     "evidence:screenshots": "node scripts/capture-evidence.mjs",
     "report": "playwright show-report",
@@ -28,6 +29,7 @@
     "react-router-dom": "^7.9.0"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^6.0.0",
     "@playwright/test": "^1.56.0",
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.0",

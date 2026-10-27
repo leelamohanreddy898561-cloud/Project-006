@@ -117,13 +117,18 @@ test.describe("R35 — the upload wiring is pinned", () => {
     );
     expect(seam).toContain('httpsCallable(getFunctions(app), "deleteBlogImage")');
 
-    // The function is the only place that decides who may upload.
+    // The function is the only place that decides who may upload. R41 added a
+    // workspace-aware path; the legacy (no workspace) path is still the R35
+    // global-admin check, and both run server-side.
     expect(fn).toContain("admin.firestore().doc(`users/${uid}`)");
-    expect(fn).toContain('role !== "admin"');
+    expect(fn).toContain('profile.data().role === "admin"');
+    expect(fn, "a workspace upload needs that workspace's owner or an editor").toContain(
+      'CAN_EDIT.has(role)',
+    );
     expect(fn, "the cap must match the form").toContain("5 * 1024 * 1024");
     expect(fn).toContain("image\\/");
     expect(fn, "the folder must be namespaced by the caller").toContain(
-      "`blog-images/${uid}/",
+      "`blog-images/${uid}`",
     );
     expect(fn, "an image a post does not reference is removable").toContain(
       "deleteBlogImage",

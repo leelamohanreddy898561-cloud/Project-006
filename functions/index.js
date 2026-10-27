@@ -8,14 +8,22 @@
  * `storage.rules` says. The Admin SDK is not subject to those rules, so the
  * upload moves here.
  *
- * The admin check is therefore enforced server-side, by reading the same
- * `users/{uid}.role` the /admin guard reads. That is a stronger guarantee than
- * the rule it replaces: the client cannot bypass it, and Firestore's own rules
- * still stop anyone from granting themselves the role.
+ * The check is enforced server-side, by reading the same role the /admin guard
+ * reads. That is a stronger guarantee than the rule it replaces: the client
+ * cannot bypass it, and Firestore's own rules still stop anyone from granting
+ * themselves the role.
  *
- * Images are stored under `blog-images/<uid>/` and made publicly readable with
- * a per-object ACL (the bucket uses fine-grained ACLs, not uniform access), so
- * a published post can serve its cover without a signed URL that would expire.
+ * R41 adds the tenant path. A caller that names a workspace is checked against
+ * that workspace's owner and members, and its image is stored under
+ * `workspaces/<id>/blog-images/<uid>/`, so one customer's upload can never land
+ * in another customer's folder. A caller that names no workspace keeps the
+ * R35 behaviour for exactly as long as the live composer does not send one
+ * (R42 switches the composer and removes this branch).
+ *
+ * Images are stored under the caller's own folder and made publicly readable
+ * with a per-object ACL (the bucket uses fine-grained ACLs, not uniform
+ * access), so a published post can serve its cover without a signed URL that
+ * would expire.
  */
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
@@ -24,6 +32,12 @@ admin.initializeApp();
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const IMAGE_DATA_URL = /^data:(image\/[a-z0-9.+-]+);base64,([A-Za-z0-9+/=\s]+)$/i;
+
+/** A Firestore document id is a path segment, so it may not contain a slash. */
+const WORKSPACE_ID = /^[A-Za-z0-9_-]{1,80}$/;
+
+/** Roles that may write this blog's content. */
+const CAN_EDIT = new Set(["owner", "editor"]);
 
 /** The project's Storage bucket, as Cloud Functions reports it. */
 function bucketName() {
@@ -43,6 +57,40 @@ function safeName(name) {
   return cleaned || "image";
 }
 
+/**
+ * R35 — the global admin role, used only by the legacy (no-workspace) path.
+ */
+async function isGlobalAdmin(uid) {
+  const profile = await admin.firestore().doc(`users/${uid}`).get();
+
+  return profile.exists && profile.data().role === "admin";
+}
+
+/**
+ * R41 — the caller's role in one workspace: "owner", "editor", "viewer" or null.
+ *
+ * Owner is `ownerUid` on the workspace document, not a member document, so the
+ * same source of truth backs both this check and `firestore.rules`.
+ */
+async function workspaceRole(uid, workspaceId) {
+  const [workspace, member] = await Promise.all([
+    admin.firestore().doc(`workspaces/${workspaceId}`).get(),
+    admin.firestore().doc(`workspaces/${workspaceId}/members/${uid}`).get(),
+  ]);
+
+  if (!workspace.exists) return null;
+  if (workspace.data().ownerUid === uid) return "owner";
+
+  return member.exists ? member.data().role : null;
+}
+
+/** The folder this caller may write to, for the workspace or the legacy path. */
+function imageFolder(uid, workspaceId) {
+  return workspaceId
+    ? `workspaces/${workspaceId}/blog-images/${uid}`
+    : `blog-images/${uid}`;
+}
+
 exports.uploadBlogImage = onCall(async (request) => {
   const uid = request.auth?.uid;
 
@@ -50,17 +98,32 @@ exports.uploadBlogImage = onCall(async (request) => {
     throw new HttpsError("unauthenticated", "Sign in before uploading an image.");
   }
 
-  const profile = await admin.firestore().doc(`users/${uid}`).get();
-  const role = profile.exists ? profile.data().role : null;
+  const payload = request.data ?? {};
+  const workspaceId =
+    typeof payload.workspaceId === "string" && payload.workspaceId
+      ? payload.workspaceId
+      : "";
 
-  if (role !== "admin") {
+  if (workspaceId) {
+    if (!WORKSPACE_ID.test(workspaceId)) {
+      throw new HttpsError("invalid-argument", "That workspace id is not valid.");
+    }
+
+    const role = await workspaceRole(uid, workspaceId);
+
+    if (!CAN_EDIT.has(role)) {
+      throw new HttpsError(
+        "permission-denied",
+        "Only this blog's owner or an editor can upload blog images.",
+      );
+    }
+  } else if (!(await isGlobalAdmin(uid))) {
     throw new HttpsError(
       "permission-denied",
       "Only an admin account can upload blog images.",
     );
   }
 
-  const payload = request.data ?? {};
   const match =
     typeof payload.dataUrl === "string"
       ? payload.dataUrl.match(IMAGE_DATA_URL)
@@ -85,7 +148,7 @@ exports.uploadBlogImage = onCall(async (request) => {
   }
 
   const bucket = admin.storage().bucket(bucketName());
-  const path = `blog-images/${uid}/${Date.now()}-${safeName(payload.fileName)}`;
+  const path = `${imageFolder(uid, workspaceId)}/${Date.now()}-${safeName(payload.fileName)}`;
   const file = bucket.file(path);
 
   await file.save(buffer, {
@@ -104,7 +167,13 @@ exports.uploadBlogImage = onCall(async (request) => {
   };
 });
 
-/** Removes an image the composer uploaded but could not attach to a post. */
+/**
+ * Removes an image the composer uploaded but could not attach to a post.
+ *
+ * The path decides which check applies: a workspace path needs edit rights in
+ * that workspace, and the legacy path needs the global admin role. Either way
+ * the object has to sit in the caller's own folder.
+ */
 exports.deleteBlogImage = onCall(async (request) => {
   const uid = request.auth?.uid;
 
@@ -112,17 +181,24 @@ exports.deleteBlogImage = onCall(async (request) => {
     throw new HttpsError("unauthenticated", "Sign in first.");
   }
 
-  const profile = await admin.firestore().doc(`users/${uid}`).get();
-  const role = profile.exists ? profile.data().role : null;
+  const path = String(request.data?.path ?? "");
+  const workspacePath = path.match(
+    /^workspaces\/([A-Za-z0-9_-]{1,80})\/blog-images\/([^/]+)\//,
+  );
 
-  if (role !== "admin") {
-    throw new HttpsError("permission-denied", "Only an admin account can do that.");
+  let allowed = false;
+
+  if (workspacePath && workspacePath[2] === uid) {
+    allowed = CAN_EDIT.has(await workspaceRole(uid, workspacePath[1]));
+  } else if (path.startsWith(`blog-images/${uid}/`)) {
+    allowed = await isGlobalAdmin(uid);
   }
 
-  const path = String(request.data?.path ?? "");
-
-  if (!path.startsWith(`blog-images/${uid}/`)) {
-    throw new HttpsError("invalid-argument", "That path is not yours to delete.");
+  if (!allowed) {
+    throw new HttpsError(
+      "permission-denied",
+      "That image is not yours to delete.",
+    );
   }
 
   await admin.storage().bucket(bucketName()).file(path).delete({ ignoreNotFound: true });

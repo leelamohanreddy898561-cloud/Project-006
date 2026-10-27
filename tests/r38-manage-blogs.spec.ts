@@ -256,9 +256,13 @@ test.describe("R38 — the panel, the seam and the rules agree", () => {
       /documents\/users\/\$\(request\.auth\.uid\)\)\.data\.role == 'admin'/,
     );
 
-    // Cover deletion stays behind the admin-gated function.
+    // Cover deletion stays behind the admin-gated function. R41 added a
+    // workspace path, so the gate is asserted rather than its old wording: the
+    // legacy folder still needs the global admin role, the workspace folder
+    // needs edit rights there, and either way it must be the caller's own.
     expect(functions).toContain("exports.deleteBlogImage");
-    expect(functions).toContain("Only an admin account can do that.");
+    expect(functions).toContain("isGlobalAdmin(uid)");
+    expect(functions).toContain("workspaceRole(uid, workspacePath[1])");
     expect(functions).toContain("blog-images/${uid}/");
   });
 });

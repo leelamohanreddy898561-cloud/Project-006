@@ -1,21 +1,35 @@
 rules_version = '2';
 
-// R31 + R33 + R37 — Firestore rules.
+// R31 + R33 + R37 + R41 — Firestore rules.
 //
 // A user owns exactly one profile document. The role is fixed after creation,
 // so a browser cannot promote itself to admin: only the Firebase console (or a
 // future Admin SDK path) can change it. Reads, creates and deletes are limited
 // to the signed-in account's own uid.
 //
-// R33 adds the blogs collection: the composer at /admin/add-blog writes one
-// document per post. R37 makes that collection publicly readable, because a
-// saved post is part of the visitor archive; the write stays admin-only. The
-// check reads the same users/{uid}.role the /admin guard reads, which means the
-// page cannot grant itself the access it is protecting.
+// R33 adds blogs: the composer at /admin/add-blog writes one document per post.
+// R37 makes that collection publicly readable, because a saved post is part of
+// the visitor archive; the write stays admin-only.
 //
-// The changeLog block keeps R17's existing access: its sync and read-back
-// scripts run without a signed-in user. Locking it down is tracked in the known
-// open items and needs those scripts to authenticate first.
+// R41 adds the tenant model. A workspace is one customer's blog:
+//
+//     workspaces/{workspaceId}                 public identity (name, slug, branding)
+//       members/{uid}                          the team: editor or viewer
+//       private/{document}                     plan and billing state — owner only
+//       blogs/{blogId}                         published posts — public read, member write
+//
+// The owner is `workspaces/{workspaceId}.ownerUid`, not a member document, so
+// there is exactly one source of truth for ownership and no role to forge. An
+// editor or viewer exists only as a member document, which the owner alone can
+// create, and whose role can only be "editor" or "viewer" — a member can never
+// be handed ownership through the members collection.
+//
+// Every function takes the workspace id as a parameter. A rules function sees
+// only the scope it is declared in, so reading `workspaceId` from here would
+// resolve to nothing and deny everybody (the R34 defect, in Firestore form).
+//
+// The flat `blogs` collection stays for now: the live site reads it. R42 moves
+// those documents into workspaces/signal-and-noise/blogs and retires the block.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -32,12 +46,61 @@ service cloud.firestore {
       allow delete: if owns(uid);
     }
 
-    // R33 + R37 — written by the admin composer, read by every visitor. The
-    // collection is the published set: saving a post is publishing it, so the
+    // R37 (legacy, single tenant) — read by the live site until R42 migrates
+    // these documents into a workspace. Saving a post is publishing it, so the
     // read is public and the write stays admin-only.
     match /blogs/{blogId} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // R41 — one workspace per customer blog.
+    match /workspaces/{workspaceId} {
+
+      // The public site needs the blog's name, slug and branding before anyone
+      // signs in. Plan and billing state live in `private/`, not here.
+      allow read: if true;
+
+      // Self-serve onboarding (R42) creates this document from the browser: the
+      // caller must be its owner, the slug must be a real slug, and no billing
+      // field may be written into the public document.
+      allow create: if isSignedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && isSlug(request.resource.data.slug)
+        && hasNoBillingFields();
+
+      // Ownership cannot be transferred from the browser in R41, and a plan
+      // field cannot be smuggled into the public document.
+      allow update: if isWorkspaceOwner(workspaceId)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && hasNoBillingFields();
+
+      allow delete: if isWorkspaceOwner(workspaceId);
+
+      // The team list is visible to the team and to nobody else.
+      match /members/{uid} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create, update: if isWorkspaceOwner(workspaceId)
+          && request.resource.data.role in ['editor', 'viewer'];
+        allow delete: if isWorkspaceOwner(workspaceId);
+      }
+
+      // Plan, subscription and usage state. Owner-only, never public.
+      match /private/{document} {
+        allow read, write: if isWorkspaceOwner(workspaceId);
+      }
+
+      // Published posts of this blog: public to read, written by the owner and
+      // the workspace's editors. Nothing here consults the global admin role,
+      // so one customer's account cannot touch another customer's posts.
+      match /blogs/{blogId} {
+        allow read: if true;
+        allow write: if canEditWorkspace(workspaceId);
+      }
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
     }
 
     function owns(uid) {
@@ -50,6 +113,52 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // A workspace slug is what the public route uses, so it has one shape:
+    // lower-case words joined by single hyphens.
+    function isSlug(value) {
+      return value is string
+        && value.size() >= 3
+        && value.size() <= 60
+        && value.matches('^[a-z0-9]+(-[a-z0-9]+)*$');
+    }
+
+    // Plan and billing state belong in private/, so the public document refuses
+    // them outright rather than relying on the client to keep them out.
+    function hasNoBillingFields() {
+      return !request.resource.data.keys().hasAny([
+        'plan',
+        'planStatus',
+        'stripeCustomerId',
+        'stripeSubscriptionId'
+      ]);
+    }
+
+    function workspaceDoc(id) {
+      return /databases/$(database)/documents/workspaces/$(id);
+    }
+
+    function memberDoc(id, uid) {
+      return /databases/$(database)/documents/workspaces/$(id)/members/$(uid);
+    }
+
+    function isWorkspaceOwner(id) {
+      return request.auth != null
+        && get(workspaceDoc(id)).data.ownerUid == request.auth.uid;
+    }
+
+    function isWorkspaceMember(id) {
+      return isWorkspaceOwner(id)
+        || (request.auth != null && exists(memberDoc(id, request.auth.uid)));
+    }
+
+    // Writing a blog post needs edit rights: the owner, or an editor.
+    function canEditWorkspace(id) {
+      return isWorkspaceOwner(id)
+        || (request.auth != null
+          && exists(memberDoc(id, request.auth.uid))
+          && get(memberDoc(id, request.auth.uid)).data.role in ['owner', 'editor']);
     }
   }
 }

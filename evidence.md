@@ -2530,3 +2530,45 @@ featured image and the mobile card thumbnails show in full, an article opens at
 the top of the page, and the mobile action rail, search target and dark-mode
 secondary text are all fixed. The change-log cycle and the fast-forward of
 `main` follow in their own commits.
+
+---
+
+### 2026-10-27 - R41 tenancy foundation (workspace model, membership rules, executed isolation proof)
+
+**Branch:** `feature/r41-tenant-model` - additive: no page, bundle or live
+data changed.
+**Test cases:** TC-4101, TC-4102, TC-4103 (rules, emulator), TC-4104 (suite)
+
+**Commands run:**
+
+    node scripts/run-rules-tests.mjs          # boots the Firestore emulator, runs node --test
+    npm.cmd run build                          # 127.82 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run lint                           # exit 0, no output
+    npx playwright test --reporter=dot         # 127 passed (1.3m)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4101 | R41.3 | pass | editor of A creates/updates/deletes A's posts; every write against B refused; a stranger refused; a viewer reads but cannot write |
+| TC-4102 | R41.3, R41.4 | pass | anonymous reads both workspaces' posts and is refused the write and the member list; editor reads A's team, not B's; owner adds a viewer but cannot add an `"owner"` member |
+| TC-4103 | R41.4 | pass | billing doc owner-only; `plan` and a new `ownerUid` refused on the public document; self-serve create needs own uid, valid slug, no billing field |
+| TC-4104 | R41.1, R41.4, R41.5 | pass | static guard over `firestore.rules` and the seam: tenant paths present, writes gated on `canEditWorkspace`/`isWorkspaceOwner`, no unconditional write, billing fields refused |
+
+**Environment:** this machine has no system Java, and firebase-tools 15 refuses
+anything below JDK 21 (the first attempt with Temurin 17 failed with
+`no longer supports Java version before 21`). A portable Temurin 21 was
+unpacked into `.tools/` (git-ignored); `npm run test:rules` finds it, starts
+the emulator, waits for port 8080, and stops the process tree afterwards.
+
+**Artifacts:** `playwright-report/index.html`, `test-results/results.json`
+**Evaluation:** the boundary is proved by execution, not by reading the rules.
+Three cases ran the real `firestore.rules` against the emulator with the
+fixtures written under disabled rules, and all three passed; TC-4104 keeps the
+same shape under guard in the normal suite. Two defects were found and fixed
+while proving it: the fixture had accidentally made the A editor an editor of B
+(so the "isolation" case was passing for the wrong reason), and Playwright was
+importing `tests/rules/*.test.mjs` and executing node:test inside the browser
+run - the rules tests are now excluded there. The bundle is unchanged because no
+page imports the seam yet, which is exactly the "additive" criterion. Nothing is
+merged, deployed or synced: awaiting owner approval.

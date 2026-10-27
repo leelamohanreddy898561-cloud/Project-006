@@ -352,3 +352,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] Update `requirements.md` open questions
 - [ ] Document how to add a post (frontmatter format)
 - [ ] Configure SPA fallback and deploy to a static host
+
+## Phase 3y - Tenancy foundation: a workspace is one customer's blog (R41)
+
+- [x] (R41.1) `firestore.rules`: `workspaces/{workspaceId}` with `members` (editor/viewer only), `private` (owner-only) and nested `blogs`; ownership is `ownerUid`, never a member role
+- [x] (R41.2) `src/lib/workspaces.ts`: member-role normalisation, edit/manage helpers, slug and path helpers, the billing-free document builder, and the two reads
+- [x] (R41.3, R41.4) Membership-gated writes, public posts, private team and billing, no `plan` on the public document and no browser ownership transfer
+- [x] (R41.5) `functions/index.js`: a workspace upload needs that workspace's owner/editor and lands in `workspaces/<id>/blog-images/<uid>/`; the no-workspace path keeps R35 behaviour until R42
+- [x] (R41) `scripts/run-rules-tests.mjs` + `tests/rules/r41-tenancy.test.mjs`: the real rules executed in the Firestore emulator (portable JDK 21 in `.tools/`, git-ignored)
+- [x] (R41) TC-4104 static guard in `tests/r41-tenancy.spec.ts`; `playwright.config.ts` ignores `tests/rules/**` so node:test never runs inside the browser runner
+- [x] (R41.6) Build, lint, `npm run test:rules` (3 passed) and the full suite (127 passed); bundle unchanged at 127.82 kB / 7.68 kB gzipped
+- [ ] Execute TC-4101-TC-4104; evidence entry; local commit; **await owner approval**

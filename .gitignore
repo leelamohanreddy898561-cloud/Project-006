@@ -12,6 +12,9 @@ blob-report/
 # Firebase CLI local state (deploy cache; machine-specific, regenerated locally)
 .firebase/
 
+# Local toolchain (portable JDK for the Firestore emulator, R41)
+.tools/
+
 # Local environment / secrets
 .env
 .env.*.local

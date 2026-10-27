@@ -121,6 +121,9 @@ test.describe("R33 — the composer is wired to the right places", () => {
       "src/lib/blogs.ts",
       "src/lib/firebase.ts",
       "src/lib/users.ts",
+      // R41 — the tenancy seam. It owns workspaces, members and roles; the
+      // blogs seam still owns posts. Both are documented in AGENTS.md Section 5.
+      "src/lib/workspaces.ts",
     ]);
     const offenders: string[] = [];
 

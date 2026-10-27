@@ -16,6 +16,11 @@ const useLocalServer = !process.env.PLAYWRIGHT_BASE_URL;
 
 export default defineConfig({
   testDir: "./tests",
+  // R41 — `tests/rules/*.test.mjs` runs under `node --test` against the
+  // Firestore emulator (`npm run test:rules`), not the browser runner. The
+  // default match would import it here, which executes node:test suites inside
+  // a Playwright run.
+  testIgnore: ["**/rules/**"],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

@@ -572,3 +572,20 @@ TC-2416, TC-3204, TC-3604, TC-3804).
 | TC-4002 | auto | Route a 1600 × 900 cover into every card image; measure the first card's media box on `/` at 360 px, then at 900 px | Below 640 px the media box matches the image's natural ratio, so the whole featured image is visible; at 900 px the media box is 8 / 5 and the image is cropped to it, and the hover zoom still applies (AC40.3) |
 | TC-4003 | auto | Open an article at 360 px, scroll down, and compare the rail's box with the header's box | The rail is `position: sticky`, its offset from the top is at least the header's height, and no part of the rail sits behind the header (AC40.4) |
 | TC-4004 | auto | At 360 px: tap the search field's padding area on `/` and `/blog`; then read dark-mode `--color-text-subtle` against the real backgrounds of the card meta, the article meta line and the sidebar | Each tap focuses the input, so the target is the field's height (≥ 32 px); every measured pair is ≥ 4.5:1 (AC40.5, AC40.6) |
+
+## R41 — Tenancy foundation
+
+The boundary this requirement adds lives in `firestore.rules`, and a browser
+cannot exercise it. The three cases below run the real rules in the Firestore
+emulator (`npm run test:rules`, launcher `scripts/run-rules-tests.mjs`), with
+fixtures written under disabled rules and every assertion made through the rule
+under test. TC-4104 is the cheap regression guard in the Playwright suite, so a
+future edit that relaxes a tenant path fails the normal run too. The emulator
+needs a JDK; the launcher finds `.tools/`, `JAVA_HOME` or `java` on `PATH`.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-4101 | cli | Seed workspaces A and B with an editor of A and a viewer of A; as the editor, create, update and delete A's posts, then repeat against B's; as a stranger, write A's post; as the viewer, read and write A's post | Every write inside A succeeds; every write against B is refused (update, create and delete); the stranger is refused; the viewer reads but cannot write (AC41.2, AC41.3) |
+| TC-4102 | cli | As an anonymous visitor read a post in A and in B, write to A, and read A's member list; as the editor of A read A's and B's member lists; as the owner of A add a viewer and try to add an `"owner"` member; as the editor try to add a viewer | Anonymous reads both posts and is refused the write and the member list; the editor reads A's team and is refused B's; the owner adds a viewer and is refused an `"owner"` member; the editor is refused a member write (AC41.3, AC41.4) |
+| TC-4103 | cli | As the owner, the editor and an anonymous visitor read `workspaces/a/private/billing`; as the owner write `plan` and a new `ownerUid` into the workspace document; as a fresh account create a workspace owned by itself, one owned by somebody else, one with an invalid slug, and one carrying `plan`; then read the workspace document anonymously | Only the owner reads the billing document; the plan field and the `ownerUid` change are refused; only the self-owned, valid, billing-free workspace is created; the anonymous read returns the slug and no plan (AC41.4) |
+| TC-4104 | auto | Read `firestore.rules` and `src/lib/workspaces.ts`; check the tenant paths, the predicates they use, and that no path allows an unconditional write | `workspaces/{workspaceId}` exists with nested `members`, `private` and `blogs`; nested post writes are gated on `canEditWorkspace(...)`, member writes on `isWorkspaceOwner(...)`, `private` on `isWorkspaceOwner(...)`; the workspace document refuses billing fields and an `ownerUid` change; no `allow write: if true` exists; the seam exposes the role, slug and path helpers (AC41.1, AC41.4, AC41.5) |
