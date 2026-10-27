@@ -363,3 +363,13 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R41) TC-4104 static guard in `tests/r41-tenancy.spec.ts`; `playwright.config.ts` ignores `tests/rules/**` so node:test never runs inside the browser runner
 - [x] (R41.6) Build, lint, `npm run test:rules` (3 passed) and the full suite (127 passed); bundle unchanged at 127.82 kB / 7.68 kB gzipped
 - [x] Execute TC-4101-TC-4104; evidence entry; local commit; **published 2026-10-27**
+
+## Phase 3z - The site's posts live in a workspace (R42)
+
+- [x] (R42.1) `scripts/migrate-workspace.mjs`: copies `blogs` to `workspaces/<id>/blogs` with the same ids and values, creates the workspace with its owner, never deletes the source
+- [x] (R42.2) Idempotent (a second run writes nothing, an existing destination is not overwritten) and inspectable (`--dry-run`); refuses to invent a workspace without an owner
+- [x] (R42.3) `src/lib/blogs.ts` reads, writes, uploads and deletes through `workspaces/signal-and-noise/blogs`; the flat collection is no longer touched by the app
+- [x] (R42.4) `imagePathFromUrl` / `storedImagePath` recognise `workspaces/<id>/blog-images/<uid>/<file>` as well as the legacy path
+- [x] (R42) `tests/rules/r42-workspace-migration.test.mjs`: the real migration module executed against the emulator (copy, ids, timestamps, idempotency, dry run, owner refusal)
+- [x] (R42.5) Build 127.91 kB / 7.68 kB gzipped, lint clean, `npm run test:rules` 5 passed, full suite 128 passed
+- [ ] Execute TC-4201-TC-4204; evidence entry; local commit; **await owner approval** (TC-4204 runs at publish: it needs credentials for the project)

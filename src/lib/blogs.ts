@@ -8,6 +8,7 @@ import {
 } from "./blog-draft";
 import type { SavedBlogRecord } from "./blog-posts";
 import { storedImagePath } from "./blog-admin";
+import { DEFAULT_WORKSPACE_ID, workspaceBlogsPath } from "./workspaces";
 
 /**
  * R33 / R35 / R37 — the single seam between the site and Firebase for blogs.
@@ -29,8 +30,18 @@ import { storedImagePath } from "./blog-admin";
  * did not confirm (R33 AC6).
  */
 
-/** The Firestore collection a submission writes to and the archive reads. */
+/** The collection name inside a workspace — the documents R42 migrated. */
 export const BLOGS_COLLECTION = "blogs";
+
+/**
+ * R42 — the workspace this site's posts belong to.
+ *
+ * There is one workspace for now; R43 makes the public site address a workspace
+ * by slug and passes its id here. Until then every read, write and upload names
+ * this id, which is what makes the app a tenant of R41's model rather than a
+ * reader of the old flat collection.
+ */
+export const SITE_WORKSPACE_ID = DEFAULT_WORKSPACE_ID;
 
 /** A read is bounded so a large collection cannot stall the home page. */
 const MAX_SAVED_BLOGS = 100;
@@ -113,7 +124,10 @@ export async function listSavedBlogs(): Promise<SavedBlogsOutcome> {
     // Server-only: `getDocs` would resolve an empty offline cache as if the
     // archive were empty. The archive must know a read failed (AC37.6).
     const snapshot = await getDocsFromServer(
-      query(collection(db, BLOGS_COLLECTION), limit(MAX_SAVED_BLOGS)),
+      query(
+        collection(db, workspaceBlogsPath(SITE_WORKSPACE_ID)),
+        limit(MAX_SAVED_BLOGS),
+      ),
     );
 
     return {
@@ -229,7 +243,11 @@ export async function uploadBlogImage(file: File): Promise<ImageUpload> {
 
     const dataUrl = await imageDataUrl(file);
     const call = httpsCallable(getFunctions(app), "uploadBlogImage");
-    const result = await call({ dataUrl, fileName: file.name });
+    const result = await call({
+      dataUrl,
+      fileName: file.name,
+      workspaceId: SITE_WORKSPACE_ID,
+    });
     const data = result.data as { url?: string; path?: string };
 
     if (!data?.url || !data.path) {
@@ -253,7 +271,10 @@ async function removeBlogImage(path: string): Promise<void> {
       import("firebase/functions"),
     ]);
 
-    await httpsCallable(getFunctions(app), "deleteBlogImage")({ path });
+    await httpsCallable(getFunctions(app), "deleteBlogImage")({
+      path,
+      workspaceId: SITE_WORKSPACE_ID,
+    });
   } catch {
     // An orphaned image is a cost, not a failure; the write error is what the
     // admin needs to see.
@@ -288,10 +309,13 @@ export async function createBlogPost(
     ]);
 
     const document = buildBlogDocument(draft, author, imageUrl, imagePath);
-    const created = await addDoc(collection(db, BLOGS_COLLECTION), {
-      ...document,
-      createdAt: serverTimestamp(),
-    });
+    const created = await addDoc(
+      collection(db, workspaceBlogsPath(SITE_WORKSPACE_ID)),
+      {
+        ...document,
+        createdAt: serverTimestamp(),
+      },
+    );
 
     return { ok: true, id: created.id, imageUrl };
   } catch (error) {
@@ -411,7 +435,7 @@ export async function updateBlogPost(
       import("firebase/firestore"),
     ]);
 
-    await updateDoc(doc(db, BLOGS_COLLECTION, record.id), {
+    await updateDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id), {
       ...document,
       updatedAt: serverTimestamp(),
     });
@@ -463,7 +487,7 @@ export async function deleteBlogPost(
       import("firebase/firestore"),
     ]);
 
-    await deleteDoc(doc(db, BLOGS_COLLECTION, record.id));
+    await deleteDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id));
   } catch (error) {
     return {
       ok: false,

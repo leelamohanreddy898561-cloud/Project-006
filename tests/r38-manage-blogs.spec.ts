@@ -237,12 +237,17 @@ test.describe("R38 — the panel, the seam and the rules agree", () => {
     expect(panel).toContain("updateBlogPost");
     expect(panel).toContain("deleteBlogPost");
 
-    // The seam writes to the same document the composer created.
+    // The seam writes to the same document the composer created — now inside
+    // the workspace (R42).
     expect(seam).toContain("export async function updateBlogPost");
-    expect(seam).toContain("updateDoc(doc(db, BLOGS_COLLECTION, record.id)");
+    expect(seam).toContain(
+      "updateDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id)",
+    );
     expect(seam).toContain("serverTimestamp()");
     expect(seam).toContain("export async function deleteBlogPost");
-    expect(seam).toContain("deleteDoc(doc(db, BLOGS_COLLECTION, record.id))");
+    expect(seam).toContain(
+      "deleteDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id))",
+    );
     expect(seam).toContain("uploadBlogImage(change.file)");
     expect(seam).toContain("storedImagePath(record)");
     expect(seam).toContain("removeBlogImage(oldPath)");

@@ -189,7 +189,9 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/helpers/smoke.ts` | The production smoke subset and its coverage map (R27) |
 | `tests/workflow-guards.spec.ts` | The consolidated document and workflow guards (R30; absorbs the R25–R28 guards) |
 | `tests/rules/r41-tenancy.test.mjs` | The tenancy boundary executed against the Firestore emulator (R41); run by `npm run test:rules` |
+| `tests/rules/r42-workspace-migration.test.mjs` | The migration executed against the emulator: copy, ids, timestamps, idempotency, dry run (R42) |
 | `scripts/run-rules-tests.mjs` | Launcher for the rules tests: finds a JDK, starts/stops the emulator, runs `node --test` (R41) |
+| `scripts/migrate-workspace.mjs` | Copies the flat `blogs` collection into a workspace, idempotently (R42) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
 | `scripts/capture-evidence.mjs` | Runs the suite with `EVIDENCE_SCREENSHOTS=1` to refresh `evidence/screenshots/` (R25) |
 | `scripts/verify-prod.mjs` | Runs the `@smoke` subset against the deployed site — the production check (R27) |
@@ -329,6 +331,11 @@ deliberately, so a growing repository is expected rather than a leak.
   still reads the flat `blogs` collection and renders exactly as before).
   **R41 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
+- **Implemented locally, awaiting owner approval:** R42 (the data-plane switch —
+  `scripts/migrate-workspace.mjs` copies the flat `blogs` collection into
+  `workspaces/signal-and-noise/blogs` idempotently, and the seam reads, writes
+  and uploads through that workspace; the live-site switch happens at publish,
+  after the migration runs, so nothing visible changes before then).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

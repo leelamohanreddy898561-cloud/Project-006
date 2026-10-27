@@ -22,7 +22,7 @@ import { delimiter, join, resolve } from "node:path";
 const ROOT = resolve(import.meta.dirname, "..");
 const PORT = 8080;
 const READY_TIMEOUT_MS = 180_000;
-const TEST_FILE = "tests/rules/r41-tenancy.test.mjs";
+const TEST_DIR = "tests/rules";
 const JAVA_BIN = process.platform === "win32" ? "java.exe" : "java";
 
 function isJavaHome(candidate) {
@@ -149,9 +149,19 @@ async function main() {
     }
   }
 
+  const testFiles = readdirSync(TEST_DIR, { recursive: true })
+    .map((entry) => String(entry))
+    .filter((entry) => entry.endsWith(".test.mjs"))
+    .map((entry) => join(TEST_DIR, entry));
+
+  if (testFiles.length === 0) {
+    console.error(`[test:rules] No test files found under ${TEST_DIR}.`);
+    process.exit(1);
+  }
+
   const result = spawnSync(
     process.execPath,
-    ["--test", TEST_FILE],
+    ["--test", ...testFiles],
     {
       cwd: ROOT,
       stdio: "inherit",

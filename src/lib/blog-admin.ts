@@ -89,15 +89,24 @@ export function draftFromRecord(record: SavedBlogRecord): BlogDraft {
 }
 
 /**
+ * A cover object's path, in either shape it can have.
+ *
+ * R35 uploads to `blog-images/<uid>/<file>`; R42 names the workspace, so the
+ * function stores under `workspaces/<id>/blog-images/<uid>/<file>`. Both are
+ * ours to delete; anything else is not.
+ */
+const COVER_PATH = /^(?:workspaces\/[^/]+\/)?blog-images\/[^/]+\/[^/]+/;
+
+/**
  * R38.6 — the Storage object a cover URL points at, or "" when it is not one
  * of ours.
  *
  * The upload function returns
- * `https://storage.googleapis.com/<bucket>/blog-images/<uid>/<file>`; the
- * browser Storage SDK's own download URL has the object under `/o/`. Both are
- * decoded, because an uploaded file name may contain an escaped character, and
- * only a path inside `blog-images/` is returned — so a cover that points at a
- * seed asset, or at anything else, is never sent to the delete function.
+ * `https://storage.googleapis.com/<bucket>/<path>`; the browser Storage SDK's
+ * own download URL has the object under `/o/`. Both are decoded, because an
+ * uploaded file name may contain an escaped character, and only a cover path is
+ * returned — so a cover that points at a seed asset, or at anything else, is
+ * never sent to the delete function.
  */
 export function imagePathFromUrl(value: unknown): string {
   const url = text(value);
@@ -126,7 +135,7 @@ export function imagePathFromUrl(value: unknown): string {
     return "";
   }
 
-  return /^blog-images\/[^/]+\/[^/]+/.test(decoded) ? decoded : "";
+  return COVER_PATH.test(decoded) ? decoded : "";
 }
 
 /**
@@ -140,7 +149,7 @@ export function imagePathFromUrl(value: unknown): string {
 export function storedImagePath(record: SavedBlogRecord): string {
   const stored = text(record.imagePath);
 
-  if (/^blog-images\/[^/]+\/[^/]+/.test(stored)) return stored;
+  if (COVER_PATH.test(stored)) return stored;
 
   return imagePathFromUrl(record.imageUrl);
 }

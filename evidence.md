@@ -2597,7 +2597,7 @@ scope). Both functions updated in `us-central1`. Hosting release complete.
 Production smoke **11 passed in 17.2 s**.
 
 Two deploy notes: the first `deploy:functions` attempt aborted with
-`User code failed to load … Timeout after 10000` — a cold-loader timeout, not
+`User code failed to load ï¿½ Timeout after 10000` ï¿½ a cold-loader timeout, not
 a code fault (`node --check functions/index.js` passed); the retry uploaded and
 updated both functions. The CLI then exited non-zero on an unrelated
 artifact-cleanup policy (`No cleanup policy detected for repositories in
@@ -2611,3 +2611,51 @@ proof remains `npm run test:rules` (3 executed cases) plus TC-4104 in the
 suite - it is not re-proven against production, because running those fixtures
 would need a second project and real writes. Nothing was migrated: the live site
 still reads the flat `blogs` collection, which is R42's job.
+
+---
+
+### 2026-10-27 - R42 data-plane switch (posts moved into the workspace)
+
+**Branch:** `feature/r42-workspace-data`
+**Test cases:** TC-4201 (migration, emulator), TC-4202 (switch and cover
+paths), TC-4203 (quality gate). TC-4204 runs at publish.
+
+**Commands run:**
+
+    node scripts/run-rules-tests.mjs        # 5 passed (3 tenancy + 2 migration)
+    npm.cmd run build                        # 127.91 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npx playwright test --reporter=dot       # 128 passed (1.4m)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4201 | R42.1, R42.2 | pass | the real migration module copies 3 documents with their ids and timestamp values, leaves the source untouched, writes nothing on a second run, does not overwrite a live edit, and a dry run over a fourth document writes nothing; a workspace with no determinable owner is refused, an existing admin profile is used when present |
+| TC-4202 | R42.3, R42.4 | pass | the seam reads/writes/uploads through `workspaces/signal-and-noise/blogs`, both callables name the workspace, the flat collection is no longer named by the seam; workspace and legacy cover URLs both resolve, an unrelated URL resolves to "" |
+| TC-4203 | R42.5 | pass | build, lint, rules cases and the full suite green; +0.09 kB JS from importing the tenancy seam, inside the budget |
+
+**Artifacts:** `playwright-report/index.html`, `test-results/results.json`
+**Evaluation:** the move is proved end-to-end in the emulator, not just by
+reading the script: ids, timestamps, idempotency and the dry run are asserted
+against real Firestore. Two existing assertions needed widening rather than
+weakening - TC-3803 pinned the old `doc(db, BLOGS_COLLECTION, ...)` write path,
+which R42 deliberately replaced; the requirement's own acceptance criteria
+(public read, editor write, cover behind the function) are unchanged and still
+asserted. One flake was observed and checked: TC-2304 (header image above body)
+failed once in the parallel run and passed alone and in the next full run, so it
+is timing, not the switch.
+
+Nothing is merged, deployed or migrated: the live site still reads the flat
+collection until the publish step runs `scripts/migrate-workspace.mjs`.
+
+The CLI itself was also smoked against the emulator, because the publish step
+runs the command rather than the module: a dry run reported one document and
+left the workspace absent, the real run created `workspaces/signal-and-noise`
+with owner `owner-uid` and copied `cli-smoke`, and a second run reported
+`copied: 0, skipped: 1`. The dry-run label was corrected to "would be created"
+after that check, because "created" read as if it had written.
+
+**Pending:** owner approval; the production migration needs credentials
+(`GOOGLE_APPLICATION_CREDENTIALS` or an equivalent), which is why TC-4204 is
+the publish-time case.

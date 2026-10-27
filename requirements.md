@@ -1037,6 +1037,55 @@ enforces plans.
 
 ---
 
+### R42 — The site's posts live in a workspace
+
+R41 added the tenant model but nothing used it: the site, the composer and the
+archives still read and write the flat `blogs` collection, which belongs to no
+workspace. This requirement moves that data into the default workspace
+(`signal-and-noise`) and points every read and write at it, so the tenancy model
+becomes the one the product actually runs on.
+
+It is a **data-plane** change and stays invisible: one workspace exists, the
+same posts render, and the same admin can edit them. Onboarding (a visitor
+creating a *new* workspace) and per-tenant public routes are the next
+requirements; this one only makes the existing blog a tenant.
+
+**The migration**
+
+- **AC42.1** `scripts/migrate-workspace.mjs` copies every document in `blogs`
+  to `workspaces/<workspaceId>/blogs`, keeping each document id (so a saved
+  link or an existing `imagePath` still points at the same record) and each
+  value unchanged, including `createdAt`/`updatedAt` timestamps. It creates the
+  workspace document (`name`, `slug`, `ownerUid`, `branding`) when it is
+  missing, and never deletes the source collection: retiring the flat `blogs`
+  is a separate, later action once the switched site is verified.
+- **AC42.2** The migration is idempotent and inspectable: a second run writes no
+  document and reports the same totals, an existing destination document is
+  never overwritten, and `--dry-run` reports what would be copied while writing
+  nothing. The command exits non-zero when it cannot determine the owner, so a
+  half-migrated workspace is impossible.
+
+**The switch**
+
+- **AC42.3** Every blog read and write goes through the workspace path:
+  `listSavedBlogs`, `createBlogPost`, `updateBlogPost` and `deleteBlogPost`
+  operate on `workspaces/<workspaceId>/blogs`, and the upload/delete calls name
+  the same `workspaceId`, so R41's workspace branch of the function is the one
+  that runs. The flat collection is no longer read or written by the app.
+- **AC42.4** A cover's Storage path is recognised in its workspace form
+  (`workspaces/<id>/blog-images/<uid>/<file>`) as well as the legacy form, so
+  editing or removing an image after the migration still deletes the right
+  object and never hands an unrelated path to the delete function.
+
+**No visible change**
+
+- **AC42.5** The home page, `/blog`, `/blog/<slug>` and the admin panels render
+  the same posts as before the switch, and the suite proves it with the same
+  fixtures and counts. Build, lint, `npm run test:rules` and the full suite stay
+  green, and the bundle stays within the R14 budgets.
+
+---
+
 ## 8. Open Questions
 
 - [ ] Confirm the blog name and branding (currently "Signal & Noise").
