@@ -2659,3 +2659,53 @@ after that check, because "created" read as if it had written.
 **Pending:** owner approval; the production migration needs credentials
 (`GOOGLE_APPLICATION_CREDENTIALS` or an equivalent), which is why TC-4204 is
 the publish-time case.
+
+---
+
+### 2026-10-27 - R42 published (the site's posts live in a workspace)
+
+**Approval:** the owner approved publishing and the migration, and delegated the
+remaining steps.
+**Branch merged:** `feature/r42-workspace-data` (fast-forward into `main`).
+
+**Commands:**
+
+    node scripts/migrate-workspace.mjs --dry-run        # 3 pending, wrote nothing
+    node scripts/migrate-workspace.mjs                  # 3 copied, 0 skipped
+    npm.cmd run build                                    # 127.91 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run deploy                                   # hosting only (no rules/functions change in R42)
+    `="https://project-006-e6ae1.web.app"`; npm.cmd run verify:prod
+
+**Results:** dry run reported `total: 3, copied: 3, skipped: 0` and made no
+write (the workspace was still absent afterwards). The real run created
+`workspaces/signal-and-noise` with `ownerUid XdPDuEfJLkbyn6c9VHkyG7eORjQ2`
+and copied `N2FBSORThMYQOhxoJedq`, `UK0aOMHwd4MXE0BxqBDu` and
+`j6LYkSlyUvR7uy1uwhvi`; the flat `blogs` collection still holds its 3
+documents. Read back over the public API: the workspace document carries the
+name, slug and owner, and the 3 posts keep their ids and titles. Production
+smoke **11 passed in 19.6 s**. Verified in a real browser on the deployed site:
+`/blog` renders **9 posts** (6 seed + 3 migrated) with the migrated three
+first and no "saved posts could not be loaded" notice.
+
+**Credentials:** out of the owner's hands was only the service-account key, so
+the migration reused the firebase-tools CLI session already authorised on this
+machine: its OAuth refresh token was written to a temporary `authorized_user`
+ADC file in the OS temp directory (the same format `gcloud auth
+application-default login` writes), used through `GOOGLE_APPLICATION_CREDENTIALS`
+for the two runs, and deleted in a `finally` block. No service-account key was
+created, no token or client secret was printed or committed, and the runner was
+a temporary untracked file, now removed.
+
+**Owner-account note:** the workspace owner is the account the CLI is signed in
+as (`leelamohanreddy898561@gmail.com`), not "the first admin" - the project has
+**5 profiles with role `admin`**, three of them `@example.com` throwaway
+accounts from earlier probes. The owner's own profile is `role: "student"`, so
+the global-admin gate still keeps it out of `/admin`; that mismatch is exactly
+what R43 replaces with workspace roles. Demoting the stale admin profiles is a
+console action and is recorded as an open item.
+
+**Evaluation:** the switch is live and proven from both ends - the data by id
+and title read-back, the UI by the 9 rendered posts. Publish order mattered: the
+migration ran before the hosting release, so the site never served an empty
+workspace. The flat collection is still intact by design; retiring it is a
+separate decision after a period of confidence.

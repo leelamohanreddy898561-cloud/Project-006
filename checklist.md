@@ -372,4 +372,4 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R42.4) `imagePathFromUrl` / `storedImagePath` recognise `workspaces/<id>/blog-images/<uid>/<file>` as well as the legacy path
 - [x] (R42) `tests/rules/r42-workspace-migration.test.mjs`: the real migration module executed against the emulator (copy, ids, timestamps, idempotency, dry run, owner refusal)
 - [x] (R42.5) Build 127.91 kB / 7.68 kB gzipped, lint clean, `npm run test:rules` 5 passed, full suite 128 passed
-- [ ] Execute TC-4201-TC-4204; evidence entry; local commit; **await owner approval** (TC-4204 runs at publish: it needs credentials for the project)
+- [x] Execute TC-4201-TC-4204; evidence entry; local commit; **published 2026-10-27**

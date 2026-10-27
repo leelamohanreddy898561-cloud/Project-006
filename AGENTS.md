@@ -270,7 +270,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 127.82 kB JS / 7.68 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 127.91 kB JS / 7.68 kB CSS gzipped |
 
 ---
 
@@ -328,22 +328,25 @@ deliberately, so a growing repository is expected rather than a leak.
   `members`, `private` plan state and nested `blogs` posts; the browser seam in
   `src/lib/workspaces.ts`; and the isolation boundary proved by executed rules
   in the Firestore emulator via `npm run test:rules`. Additive — the live site
-  still reads the flat `blogs` collection and renders exactly as before).
-  **R41 is the most recent requirement published to production** — R2 was
+  still reads the flat `blogs` collection and renders exactly as before),
+  R42 (the data-plane switch — `scripts/migrate-workspace.mjs` copied the three
+  live posts into `workspaces/signal-and-noise/blogs` keeping their document
+  ids, and every read, write and upload now goes through that workspace; the
+  deployed site renders all 9 posts with no read failure).
+  **R42 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Implemented locally, awaiting owner approval:** R42 (the data-plane switch —
-  `scripts/migrate-workspace.mjs` copies the flat `blogs` collection into
-  `workspaces/signal-and-noise/blogs` idempotently, and the seam reads, writes
-  and uploads through that workspace; the live-site switch happens at publish,
-  after the migration runs, so nothing visible changes before then).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 127.82 kB JS / 7.68 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 127.91 kB JS / 7.68 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
+  - **Five profiles carry `role: "admin"`** — three of them `@example.com`
+    throwaway accounts from earlier upload probes. Only the console can change a
+    role (R31), so demoting them is an owner action; R43's workspace roles make
+    the stale global role harmless but do not remove it.
   - Firestore `users` is protected by `firestore.rules` (R31: own document only,
     no self-promotion). `changeLog` remains client-writable until R17's sync
     scripts authenticate. Storage is protected by `storage.rules` (R33) **but
