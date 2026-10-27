@@ -606,3 +606,19 @@ the owner can supply.
 | TC-4202 | auto | Import `src/lib/blog-draft.ts` and `src/lib/blog-admin.ts`; feed `imagePathFromUrl` and `storedImagePath` a workspace URL, a legacy URL, a workspace `imagePath` and an unrelated URL; read `src/lib/blogs.ts` and `functions/index.js` | A workspace URL yields its full `workspaces/<id>/blog-images/<uid>/<file>` path, a legacy URL keeps working, an unrelated URL yields `""`; the seam reads and writes `workspaces/<workspaceId>/blogs` and passes `workspaceId` on the upload and delete calls; the function accepts that shape (AC42.3, AC42.4) |
 | TC-4203 | cli | Run `npm run build`, `npm run lint`, `npm run test:rules` and the full suite; compare the bundle with the R41 figure | Build and lint pass, the rules cases pass, the suite is green at the same count as before the switch, and the bundle stays within the R14 budgets (AC42.5) |
 | TC-4204 | manual | At publish: run `node scripts/migrate-workspace.mjs --dry-run`, then the real run against the project, read the destination back, then open `/`, `/blog` and a saved post | Dry run reports the expected count and writes nothing; the real run copies that count; the destination holds the same documents; the site shows the same posts (including the saved ones) and the admin panel still edits them (AC42.1, AC42.3, AC42.5) |
+
+## R43 - A workspace is a public site at `/w/<slug>`
+
+The browser cases inject dev-only workspace fixtures (`__workspaceDocs` and
+`__workspaceFixtures`, compiled out of a production build), the same pattern
+R37 uses for saved posts. That lets one run show two tenants side by side and
+prove that neither leaks into the other, without reaching the live project. The
+quality gate is TC-4304; the rules themselves are unchanged and already executed
+by R41's TC-4101-TC-4103, so they are cited, not repeated.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-4301 | auto | With fixtures for two workspaces and one post each, open `/w/alpha` and then `/w/beta/blog` | The hero shows that workspace's own name; each page lists exactly its own post and never the other tenant's; no repository seed article appears on a tenant site (AC43.1, AC43.2) |
+| TC-4302 | auto | Open `/w/alpha`, inspect the header, card cover/title/category/tag links, then open the card and inspect the breadcrumb | Brand, Home, Blogs and the search control point under `/w/alpha`; the card links to `/w/alpha/blog/<slug>` and its badge to `/w/alpha/blog?topic=`; the article opens at `/w/alpha/blog/<slug>` with Home and Blogs breadcrumbs inside the tenant (AC43.3) |
+| TC-4303 | auto | Open an unknown slug, an empty workspace, and the default workspace | Unknown slug renders **Site not found** with no cards; the empty workspace shows **No posts yet**; the default workspace shows the six seed articles, so it matches `/` (AC43.1, AC43.2, AC43.5) |
+| TC-4304 | cli | Run `npm run build`, `npm run lint`, `npm run test:rules` and the full suite; compare the bundle with the R42 figure | Build and lint pass, the rules cases pass, the suite is green, and the bundle stays within the R14 budgets (AC43.4, AC43.5) |

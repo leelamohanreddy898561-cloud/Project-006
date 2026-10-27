@@ -190,6 +190,7 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/workflow-guards.spec.ts` | The consolidated document and workflow guards (R30; absorbs the R25–R28 guards) |
 | `tests/rules/r41-tenancy.test.mjs` | The tenancy boundary executed against the Firestore emulator (R41); run by `npm run test:rules` |
 | `tests/rules/r42-workspace-migration.test.mjs` | The migration executed against the emulator: copy, ids, timestamps, idempotency, dry run (R42) |
+| `tests/r43-workspace-site.spec.ts` | A tenant site at `/w/<slug>`: own posts only, links stay inside, unknown/empty/default states (R43) |
 | `scripts/run-rules-tests.mjs` | Launcher for the rules tests: finds a JDK, starts/stops the emulator, runs `node --test` (R41) |
 | `scripts/migrate-workspace.mjs` | Copies the flat `blogs` collection into a workspace, idempotently (R42) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
@@ -200,10 +201,12 @@ necessary but never sufficient** — your visual approval is the gate.
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
 | `src/lib/users.ts` | User profile + role seam (`users/{uid}`, R31) |
 | `src/lib/blogs.ts` | The blogs' Firebase seam: admin-gated image upload, one `blogs` document per submit, and the public read (R33, R35, R37) |
-| `src/lib/workspaces.ts` | The tenancy seam: workspace, member and role model, slug and path helpers, and the two reads (R41) |
+| `src/lib/workspaces.ts` | The tenancy seam: workspace, member and role model, slug and path helpers, the reads and the `slug → workspace` lookup (R41, R43) |
 | `src/lib/blog-draft.ts` | Draft validation and the `blogs` document shape (R33) |
 | `src/lib/blog-posts.ts` | Maps a `blogs` document to a `Post` and merges saved posts with the seed articles (R37) |
 | `src/hooks/useSavedBlogs.ts` | Loads saved posts once per visitor page, with a bounded wait and a failure state (R37) |
+| `src/pages/WorkspaceLayout.tsx` | Resolves `/w/<slug>`: loading, **Site not found**, unavailable, then the tenant provider (R43) |
+| `src/components/WorkspaceContext.tsx` | The tenant every link-building component reads `basePath` from; deliberately Firebase-free (R43) |
 | `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce (R35) |
 | `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), public-read/admin-write `blogs` (R33, R37), and the membership-gated tenant model (R41) |
 | `storage.rules` | Storage rules: featured images under `blog-images/<uid>/`, admin-only (R33) |
@@ -335,6 +338,10 @@ deliberately, so a growing repository is expected rather than a leak.
   deployed site renders all 9 posts with no read failure).
   **R42 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
+- **Implemented locally, awaiting owner approval:** R43 (a workspace is a public
+  site at `/w/<slug>` — resolves the workspace by slug, renders its own name and
+  posts only, keeps every link inside it, and gives an unknown slug a **Site not
+  found** page; the default workspace still carries the seed archive).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

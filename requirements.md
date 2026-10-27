@@ -1086,6 +1086,57 @@ requirements; this one only makes the existing blog a tenant.
 
 ---
 
+### R43 — A workspace is a public site at `/w/<slug>`
+
+R41 built the tenancy model and R42 moved the default blog onto it, but every
+route still served one site. This requirement makes a workspace addressable: a
+company's site lives at `/w/<slug>`, shows that workspace's name and posts, and
+keeps its visitors inside it.
+
+The workspace is public content by decision: reads are public (a company's blog
+is meant to be read), writes stay membership-gated exactly as R41 proved. Ads,
+private workspaces or members-only posts would be a different requirement.
+
+**Resolving the site**
+
+- **AC43.1** `/w/<slug>` resolves a workspace by its slug — the document id
+  first (a slug used as an id is unique by construction), then the `slug` field,
+  which is how the console-created workspaces in this project are stored. A
+  malformed or unknown slug renders a **Site not found** page with no workspace
+  content; an unreadable workspace renders an unavailable notice rather than an
+  empty site.
+
+**What a tenant site shows**
+
+- **AC43.2** The page identifies the workspace from its own document: the hero
+  title is `branding.title` (or `name`) and the tagline is `branding.tagline`. It
+  lists that workspace's posts and no others. The repository seed articles are
+  part of the default workspace only — a new workspace starts empty and says
+  **No posts yet** rather than borrowing another company's catalogue.
+
+**Staying inside the site**
+
+- **AC43.3** Every link a visitor can follow from a tenant page stays under
+  `/w/<slug>`: card cover and title, category badge, tag links, the article
+  breadcrumb, and the header's brand, Home and Blogs. The header offers only
+  Home and Blogs inside a tenant (Topics and About are global pages), and the
+  search control opens that site's archive. The archive search and topic/tag
+  filters operate on the tenant's posts.
+
+**Public, and unchanged elsewhere**
+
+- **AC43.4** Reading a workspace site needs no account, and no rule is relaxed
+  to allow it: `firestore.rules` still exposes only the workspace document and
+  its posts, keeps `members` and `private` closed, and keeps writes
+  membership-gated. The tenant site never renders a post from another workspace,
+  even when both are public.
+- **AC43.5** `/`, `/blog` and `/blog/<slug>` behave exactly as before (the
+  default site, seed articles plus saved posts). Build and lint pass, the rules
+  tests and the full suite stay green, and the bundle stays within the R14
+  budgets.
+
+---
+
 ## 8. Open Questions
 
 - [ ] Confirm the blog name and branding (currently "Signal & Noise").

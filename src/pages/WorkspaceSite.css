@@ -1,0 +1,88 @@
+/* R43 — the tenant site shell: hero, empty state and the not-found states. */
+
+.site-home {
+  padding-block: 2.5rem 4rem;
+}
+
+.site-hero {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+  max-width: 52rem;
+}
+
+.site-hero__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.site-hero__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+  color: var(--color-text);
+}
+
+.site-hero__tagline {
+  margin: 0 0 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.site-hero__meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-subtle);
+}
+
+.site-hero__link {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.site-hero__link:hover {
+  text-decoration: underline;
+}
+
+.site-home__notice {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 0.5rem);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+}
+
+.site-home__empty {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md, 0.5rem);
+  color: var(--color-text-muted);
+}
+
+.site-home__empty-title {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+}
+
+.site-state {
+  padding-block: 4rem 5rem;
+  max-width: 44rem;
+}
+
+.site-state__title {
+  margin: 0.5rem 0 0.75rem;
+  color: var(--color-text);
+}
+
+.site-state__text {
+  margin: 0 0 1.5rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}

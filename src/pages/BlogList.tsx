@@ -2,8 +2,10 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BlogCard } from "../components/BlogCard";
 import { CloseIcon, SearchIcon } from "../components/icons";
+import { useWorkspaceSite } from "../components/WorkspaceContext";
 import { useSavedBlogs } from "../hooks/useSavedBlogs";
 import { mergePosts } from "../lib/blog-posts";
+import { DEFAULT_WORKSPACE_ID } from "../lib/workspaces";
 import {
   filterPosts,
   getCategories,
@@ -19,19 +21,28 @@ import "./BlogList.css";
  *
  * R37 — saved posts are part of the same list, and a failed read leaves the
  * repository articles in place with a short notice.
+ *
+ * R43 — on a tenant site (`/w/<slug>/blog`) the same page shows that
+ * workspace's posts only: the repository articles belong to the default site,
+ * and a new workspace starts empty.
  */
 export function BlogList() {
   const [params, setParams] = useSearchParams();
-  const saved = useSavedBlogs();
+  const site = useWorkspaceSite();
+  const saved = useSavedBlogs(site?.workspace.id);
 
   const query = params.get("q") ?? "";
   const topic = params.get("topic") ?? "";
   const tag = params.get("tag") ?? "";
 
-  const allPosts = useMemo(
-    () => mergePosts(getLatestPosts(), saved.posts),
-    [saved.posts],
-  );
+  const allPosts = useMemo(() => {
+    const seed =
+      !site || site.workspace.id === DEFAULT_WORKSPACE_ID
+        ? getLatestPosts()
+        : [];
+
+    return mergePosts(seed, saved.posts);
+  }, [site, saved.posts]);
   const topics = useMemo(() => getCategories(allPosts), [allPosts]);
   const tags = useMemo(() => getTags(allPosts), [allPosts]);
   const visible = useMemo(
@@ -42,6 +53,9 @@ export function BlogList() {
   const activeTopic = topics.find((item) => item.slug === topic);
   const activeTag = tags.find((item) => item === tag);
   const hasFilters = query !== "" || topic !== "" || tag !== "";
+  const siteName = site
+    ? site.workspace.branding.title || site.workspace.name
+    : "AI Pulse";
 
   function setFilter(key: "q" | "topic" | "tag", value: string) {
     const next = new URLSearchParams(params);
@@ -62,9 +76,9 @@ export function BlogList() {
     <div className="container blog-list">
       <header className="blog-list__intro">
         <p className="blog-list__eyebrow">The archive</p>
-        <h1 className="blog-list__title">Blogs</h1>
+        <h1 className="blog-list__title">{site ? siteName : "Blogs"}</h1>
         <p className="blog-list__lead">
-          Every article on AI Pulse — sort by topic or tag, or search the full
+          Every article on {siteName} — sort by topic or tag, or search the full
           text to find exactly what you need.
         </p>
       </header>

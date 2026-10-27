@@ -55,6 +55,12 @@ declare global {
      * the global never ship.
      */
     __savedBlogsFixture?: SavedBlogRecord[];
+
+    /**
+     * R43 — per-workspace fixtures for the tenant sites, so one run can prove
+     * two workspaces side by side without touching Firestore. Dev-only.
+     */
+    __workspaceFixtures?: Record<string, SavedBlogRecord[]>;
   }
 }
 
@@ -97,9 +103,15 @@ export type DeleteOutcome =
  * and ordering happens in `mergePosts` so an undated document still appears.
  * A dev fixture short-circuits the network for Playwright (see `Window`).
  */
-export async function listSavedBlogs(): Promise<SavedBlogsOutcome> {
-  if (import.meta.env.DEV && window.__savedBlogsFixture) {
-    return { ok: true, records: window.__savedBlogsFixture };
+export async function listSavedBlogs(
+  workspaceId: string = SITE_WORKSPACE_ID,
+): Promise<SavedBlogsOutcome> {
+  if (import.meta.env.DEV) {
+    const fixture =
+      window.__workspaceFixtures?.[workspaceId] ??
+      (workspaceId === SITE_WORKSPACE_ID ? window.__savedBlogsFixture : undefined);
+
+    if (fixture) return { ok: true, records: fixture };
   }
 
   if (!isFirebaseConfigured()) {
@@ -125,7 +137,7 @@ export async function listSavedBlogs(): Promise<SavedBlogsOutcome> {
     // archive were empty. The archive must know a read failed (AC37.6).
     const snapshot = await getDocsFromServer(
       query(
-        collection(db, workspaceBlogsPath(SITE_WORKSPACE_ID)),
+        collection(db, workspaceBlogsPath(workspaceId)),
         limit(MAX_SAVED_BLOGS),
       ),
     );

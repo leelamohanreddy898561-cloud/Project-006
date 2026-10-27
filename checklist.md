@@ -373,3 +373,13 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R42) `tests/rules/r42-workspace-migration.test.mjs`: the real migration module executed against the emulator (copy, ids, timestamps, idempotency, dry run, owner refusal)
 - [x] (R42.5) Build 127.91 kB / 7.68 kB gzipped, lint clean, `npm run test:rules` 5 passed, full suite 128 passed
 - [x] Execute TC-4201-TC-4204; evidence entry; local commit; **published 2026-10-27**
+
+## Phase 3aa - Workspace-scoped public site (R43)
+
+- [x] (R43.1) `/w/:siteSlug` resolves by document id then by `slug`; an unknown or malformed slug renders **Site not found**, a failed read renders an unavailable notice
+- [x] (R43.2) Tenant hero comes from `branding.title` / `tagline`; the page lists that workspace's posts only; repository seed articles stay on the default workspace; an empty workspace says **No posts yet**
+- [x] (R43.3) Every link stays inside the tenant: card cover/title, category badge, tags, article breadcrumb, header brand/Home/Blogs and the search control; archive search and filters run on the tenant's posts
+- [x] (R43.4) Public read needs no account and no rule was relaxed; `members`/`private` remain closed and writes remain membership-gated
+- [x] (R43) `WorkspaceContext` keeps the Firebase seam out of the article card; `WorkspaceLayout` owns the resolve/not-found states
+- [x] (R43.5) TC-4301-TC-4303 executed; build 129.15 kB JS / 7.68 kB CSS gzipped; lint clean; full suite 131 passed
+- [ ] Execute TC-4304; evidence entry; local commit; **await owner approval**

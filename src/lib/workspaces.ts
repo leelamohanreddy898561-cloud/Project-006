@@ -214,24 +214,7 @@ export async function fetchWorkspace(
       doc(db, WORKSPACES_COLLECTION, workspaceId),
     );
 
-    if (!snapshot.exists()) return { ok: true, workspace: null };
-
-    const data = snapshot.data();
-
-    return {
-      ok: true,
-      workspace: {
-        id: snapshot.id,
-        name: String(data.name ?? ""),
-        slug: String(data.slug ?? ""),
-        ownerUid: String(data.ownerUid ?? ""),
-        branding: {
-          title: String(data.branding?.title ?? data.name ?? ""),
-          tagline: String(data.branding?.tagline ?? ""),
-        },
-        createdAt: data.createdAt,
-      },
-    };
+    return { ok: true, workspace: snapshot.exists() ? toWorkspace(snapshot) : null };
   } catch (error) {
     const detail = (error as { message?: string })?.message;
 
@@ -241,5 +224,108 @@ export async function fetchWorkspace(
         ? `The workspace could not be read (${detail}).`
         : "The workspace could not be read.",
     };
+  }
+}
+
+/** One Firestore document as a `Workspace`, tolerant of missing fields. */
+function toWorkspace(snapshot: {
+  id: string;
+  data: () => Record<string, unknown>;
+}): Workspace {
+  const data = snapshot.data();
+
+  return {
+    id: snapshot.id,
+    name: String(data.name ?? ""),
+    slug: String(data.slug ?? ""),
+    ownerUid: String(data.ownerUid ?? ""),
+    branding: {
+      title: String(
+        (data.branding as { title?: unknown } | undefined)?.title ??
+          data.name ??
+          "",
+      ),
+      tagline: String(
+        (data.branding as { tagline?: unknown } | undefined)?.tagline ?? "",
+      ),
+    },
+    createdAt: data.createdAt,
+  };
+}
+
+/**
+ * R43 — the public site's lookup: a workspace by the slug in its address.
+ *
+ * The document id is tried first, because a workspace created with its slug as
+ * the id is the common case (and a slug used as an id is unique by
+ * construction). Otherwise the `slug` field is queried, which is what the
+ * console-created workspaces in this project use. An unknown or malformed slug
+ * is "no workspace", not an error, so a mistyped address renders a not-found
+ * page rather than a failure notice.
+ */
+export async function fetchWorkspaceBySlug(
+  slug: string,
+): Promise<WorkspaceOutcome> {
+  if (import.meta.env.DEV && window.__workspaceDocs) {
+    return {
+      ok: true,
+      workspace:
+        window.__workspaceDocs.find((workspace) => workspace.slug === slug) ??
+        null,
+    };
+  }
+
+  if (!isWorkspaceSlug(slug)) return { ok: true, workspace: null };
+
+  if (!isFirebaseConfigured()) {
+    return {
+      ok: false,
+      message:
+        "Firebase is not configured — copy .env.example to .env and add the project values.",
+    };
+  }
+
+  try {
+    const [{ db }, { collection, doc, getDoc, getDocs, limit, query, where }] =
+      await Promise.all([getFirebase(), import("firebase/firestore")]);
+
+    const direct = await getDoc(doc(db, WORKSPACES_COLLECTION, slug));
+
+    if (direct.exists()) {
+      return { ok: true, workspace: toWorkspace(direct) };
+    }
+
+    const bySlug = await getDocs(
+      query(
+        collection(db, WORKSPACES_COLLECTION),
+        where("slug", "==", slug),
+        limit(1),
+      ),
+    );
+
+    return {
+      ok: true,
+      workspace: bySlug.empty ? null : toWorkspace(bySlug.docs[0]),
+    };
+  } catch (error) {
+    const detail = (error as { message?: string })?.message;
+
+    return {
+      ok: false,
+      message: detail
+        ? `The site could not be read (${detail}).`
+        : "The site could not be read.",
+    };
+  }
+}
+
+declare global {
+  interface Window {
+    /**
+     * R43 — dev-only workspace fixtures, so the suite can prove a tenant site
+     * without reaching the live project. `import.meta.env.DEV` is false in a
+     * production build, so neither global ships.
+     */
+    __workspaceDocs?: Workspace[];
   }
 }

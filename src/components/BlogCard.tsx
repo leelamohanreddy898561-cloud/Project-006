@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { Post } from "../types/post";
 import { formatDate, slugify } from "../data/posts";
 import { BookmarkIcon, ClockIcon } from "./icons";
+import { useWorkspaceSite } from "./WorkspaceContext";
 import "./BlogCard.css";
 
 type BlogCardProps = {
@@ -23,10 +24,17 @@ type BlogCardProps = {
 export function BlogCard({ post, showDate = false, showTags = false }: BlogCardProps) {
   const [bookmarked, setBookmarked] = useState(false);
 
+  // R43 — inside a tenant site every link stays on that site.
+  const basePath = useWorkspaceSite()?.basePath ?? "";
+  const postHref = `${basePath}/blog/${post.slug}`;
+  const categoryHref = basePath
+    ? `${basePath}/blog?topic=${slugify(post.category)}`
+    : `/topics/${slugify(post.category)}`;
+
   return (
     <article className="blog-card">
       <Link
-        to={`/blog/${post.slug}`}
+        to={postHref}
         className="blog-card__media"
         tabIndex={-1}
         aria-hidden="true"
@@ -43,7 +51,7 @@ export function BlogCard({ post, showDate = false, showTags = false }: BlogCardP
       <div className="blog-card__body">
         <div className="blog-card__top">
           <Link
-            to={`/topics/${slugify(post.category)}`}
+            to={categoryHref}
             className="badge"
           >
             {post.category}
@@ -67,7 +75,7 @@ export function BlogCard({ post, showDate = false, showTags = false }: BlogCardP
         </div>
 
         <h3 className="blog-card__title">
-          <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+          <Link to={postHref}>{post.title}</Link>
         </h3>
 
         <p className="blog-card__excerpt">{post.excerpt}</p>
@@ -77,7 +85,7 @@ export function BlogCard({ post, showDate = false, showTags = false }: BlogCardP
             {post.tags.map((tag) => (
               <li key={tag}>
                 <Link
-                  to={`/blog?tag=${encodeURIComponent(tag)}`}
+                  to={`${basePath}/blog?tag=${encodeURIComponent(tag)}`}
                   className="blog-card__tag"
                 >
                   #{tag}

@@ -11,6 +11,8 @@ import { AddBlog } from "./pages/AddBlog";
 import { RequireAdmin } from "./components/RequireAdmin";
 import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
+import { WorkspaceHome } from "./pages/WorkspaceHome";
+import { WorkspaceLayout } from "./pages/WorkspaceLayout";
 import {
   AdminOverview,
   AdminSectionMissing,
@@ -29,6 +31,14 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/blog/:slug" element={<PostDetail />} />
           <Route path="/blog" element={<BlogList />} />
+          {/* R43 — a tenant site: /w/<slug> resolves the workspace, and its
+              children show that site's posts only. The layout renders the
+              not-found and unavailable states for an unknown slug. */}
+          <Route path="/w/:siteSlug" element={<WorkspaceLayout />}>
+            <Route index element={<WorkspaceHome />} />
+            <Route path="blog" element={<BlogList />} />
+            <Route path="blog/:slug" element={<PostDetail />} />
+          </Route>
           <Route
             path="/topics"
             element={

@@ -2709,3 +2709,34 @@ and title read-back, the UI by the 9 rendered posts. Publish order mattered: the
 migration ran before the hosting release, so the site never served an empty
 workspace. The flat collection is still intact by design; retiring it is a
 separate decision after a period of confidence.
+
+---
+
+### 2026-10-27 - R43 workspace-scoped public site (`/w/<slug>`)
+
+**Branch:** `feature/r43-workspace-site`
+**Test cases:** TC-4301, TC-4302, TC-4303 (browser), TC-4304 (quality gate)
+
+**Commands run:**
+
+    npm.cmd run build                        # 129.15 kB JS / 7.68 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npx playwright test --reporter=dot       # 131 passed (2.2m)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4301 | R43.1, R43.2 | pass | `/w/alpha` renders Alpha Co and exactly its one post; Beta's post and the seed articles never appear; `/w/beta/blog` renders only Beta's |
+| TC-4302 | R43.3 | pass | brand/Home/Blogs/search point under `/w/alpha`; card and badge link inside the tenant; the article opens at `/w/alpha/blog/alpha-only` with tenant breadcrumbs |
+| TC-4303 | R43.1, R43.2, R43.5 | pass | unknown slug renders **Site not found** with no cards; an empty workspace says **No posts yet**; the default workspace still shows the six seed articles |
+| TC-4304 | R43.4, R43.5 | pass | build, lint and the full suite green; the bundle grew 1.24 kB from routing, well inside 150 kB |
+
+**Artifacts:** `playwright-report/index.html`, `test-results/results.json`
+**Evaluation:** the multi-site routing works and the isolation is visible in the
+UI as well as enforced by the rules. The implementation keeps the Firebase seam
+out of `BlogCard` (it reads a React context instead), so the article card that
+every page renders did not pull the tenancy code into the entry chunk beyond the
+1.24 kB the routes themselves cost. Two states that were previously impossible
+are now reachable and tested: a site that exists with no posts, and an address
+that names no site. Nothing is merged or deployed: awaiting owner approval.

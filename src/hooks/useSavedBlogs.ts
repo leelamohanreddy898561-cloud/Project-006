@@ -37,7 +37,7 @@ export interface SavedBlogsState {
  */
 const READ_TIMEOUT_MS = 4000;
 
-export function useSavedBlogs(): SavedBlogsState {
+export function useSavedBlogs(workspaceId?: string): SavedBlogsState {
   const [records, setRecords] = useState<SavedBlogRecord[]>([]);
   const [status, setStatus] = useState<SavedBlogsStatus>("loading");
   const [reloadToken, setReloadToken] = useState(0);
@@ -54,7 +54,7 @@ export function useSavedBlogs(): SavedBlogsState {
       if (active && !settled) setStatus("error");
     }, READ_TIMEOUT_MS);
 
-    listSavedBlogs().then((outcome) => {
+    listSavedBlogs(workspaceId).then((outcome) => {
       if (!active) return;
 
       settled = true;
@@ -76,7 +76,7 @@ export function useSavedBlogs(): SavedBlogsState {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [reloadToken]);
+  }, [reloadToken, workspaceId]);
 
   const posts = useMemo(() => records.map(savedBlogToPost), [records]);
 

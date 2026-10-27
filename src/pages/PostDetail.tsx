@@ -3,8 +3,10 @@ import { Link, useParams } from "react-router-dom";
 import { BlogCard } from "../components/BlogCard";
 import { CommentSection } from "../components/CommentSection";
 import { ShareRail } from "../components/ShareRail";
+import { useWorkspaceSite } from "../components/WorkspaceContext";
 import { useSavedBlogs } from "../hooks/useSavedBlogs";
 import { mergePosts } from "../lib/blog-posts";
+import { DEFAULT_WORKSPACE_ID } from "../lib/workspaces";
 import {
   formatDate,
   getLatestPosts,
@@ -20,15 +22,23 @@ import "./PostDetail.css";
  * R37 — a saved post opens here too. An unknown slug waits for the saved posts
  * to finish loading before it says "not found", so a deep link to a saved post
  * never shows a false 404.
+ *
+ * R43 — under `/w/<slug>` the article is read from that workspace only, and
+ * every link (breadcrumb, related cards) stays on the tenant's site.
  */
 export function PostDetail() {
   const { slug = "" } = useParams();
-  const saved = useSavedBlogs();
+  const site = useWorkspaceSite();
+  const saved = useSavedBlogs(site?.workspace.id);
 
-  const posts = useMemo(
-    () => mergePosts(getLatestPosts(), saved.posts),
-    [saved.posts],
-  );
+  const posts = useMemo(() => {
+    const seed =
+      !site || site.workspace.id === DEFAULT_WORKSPACE_ID
+        ? getLatestPosts()
+        : [];
+
+    return mergePosts(seed, saved.posts);
+  }, [site, saved.posts]);
   const post = useMemo(
     () => posts.find((item) => item.slug === slug),
     [posts, slug],
@@ -37,11 +47,16 @@ export function PostDetail() {
   useEffect(() => {
     if (!post) return undefined;
     const previous = document.title;
-    document.title = `${post.title} — AI Pulse`;
+    const siteName = site
+      ? site.workspace.branding.title || site.workspace.name
+      : "AI Pulse";
+    document.title = `${post.title} — ${siteName}`;
     return () => {
       document.title = previous;
     };
-  }, [post]);
+  }, [post, site]);
+
+  const basePath = site?.basePath ?? "";
 
   const html = useMemo(
     () => (post ? renderMarkdown(post.body) : ""),
@@ -66,10 +81,10 @@ export function PostDetail() {
           link may be mistyped.
         </p>
         <div className="post-missing__actions">
-          <Link to="/blog" className="btn btn--primary">
+          <Link to={`${basePath}/blog`} className="btn btn--primary">
             Browse all articles
           </Link>
-          <Link to="/" className="btn">
+          <Link to={basePath || "/"} className="btn">
             Back home
           </Link>
         </div>
@@ -85,9 +100,9 @@ export function PostDetail() {
     <article className="post-page">
       <header className="container post-page__header">
         <nav className="post-page__crumbs" aria-label="Breadcrumb">
-          <Link to="/">Home</Link>
+          <Link to={basePath || "/"}>Home</Link>
           <span aria-hidden="true">/</span>
-          <Link to="/blog">Blogs</Link>
+          <Link to={`${basePath}/blog`}>Blogs</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">{post.category}</span>
         </nav>
