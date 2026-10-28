@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-28T07:35:50.523Z",
+  "generatedAt": "2026-10-28T07:44:25.340Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 113,
+    "commits": 116,
     "fileChanges": {
-      "M": 506,
+      "M": 517,
       "A": 167,
       "D": 7
     },
@@ -4017,6 +4017,83 @@
         {
           "status": "M",
           "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "807cd7bdf01d5eab4205c89d0340915cf0e5643e",
+      "short": "807cd7b",
+      "date": "2026-10-28T13:08:07+05:30",
+      "subject": "chore(r46): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "6f4c2e99d8e171aa40a45f0e803b7b1d526080ba",
+      "short": "6f4c2e9",
+      "date": "2026-10-28T11:50:40+05:30",
+      "subject": "feat(r47): give the tenant admin an add-post section",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceAdmin.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceSite.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r45-workspace-writes.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "66761ea6240b27596e4a94b756aa9733b733b166",
+      "short": "66761ea",
+      "date": "2026-10-28T13:13:50+05:30",
+      "subject": "docs(r47): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
         },
         {
           "status": "M",
