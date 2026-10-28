@@ -423,7 +423,8 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 ## Phase 3ff - A public site stays public; admin is site-scoped (R48)
 
-- [x] (R48.1) The account menu takes the tenant prefix and hides **Admin**, **My site** and **My sites** on every `/w/<slug>` public page; the page keeps the site content and the identity/Sign out controls
+- [x] (R48.1) The account menu takes the tenant prefix and hides **Admin**, **My site** and **My sites** on every `/w/<slug>` public page, including for the site's owner; the page keeps the site content and the identity/Sign out controls
+- [x] (R48.7) The tenant layout renders an owner/editor bar on its own public pages, read through `fetchWorkspaceRole`, linking **Site admin** and **Add new blog**; it is absent for a stranger, another tenant, a failed read and a signed-out visitor
 - [x] (R48.2) `WorkspaceAdminGate` admits only the workspace `ownerUid` or an `editor`; no global-role read and no platform fallback
 - [x] (R48.3, R48.4) `firestore.rules` and `functions/index.js` drop the platform-admin override for tenant workspaces; the legacy `blogs` and `blog-images/` paths keep their R35/R37 admin rules
 - [x] (R48) `tests/r48-public-site.spec.ts` and `tests/rules/r48-site-ownership.test.mjs`; the R36/R41/R44/R45/R46/R47 guards updated for the site-scoped gate

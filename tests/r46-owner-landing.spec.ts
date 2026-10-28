@@ -173,7 +173,8 @@ test.describe("R46 — a real owner signs in", () => {
       page.getByRole("heading", { level: 1, name: siteName }),
     ).toBeVisible({ timeout: 30_000 });
 
-    // R48 — the public page shows no admin destination, even to its owner.
+    // R48 — the header stays public even to its owner, but R48.7 gives the
+    // owner one visible way into its own admin from the public site.
     const header = page.locator("header.site-header");
     await expect(
       header.getByRole("link", { name: "Admin", exact: true }),
@@ -184,6 +185,18 @@ test.describe("R46 — a real owner signs in", () => {
     await expect(
       header.getByRole("link", { name: "My sites", exact: true }),
     ).toHaveCount(0);
+
+    const bar = page.getByRole("complementary", {
+      name: "Site administration",
+    });
+    await expect(bar).toBeVisible({ timeout: 30_000 });
+    await expect(bar.getByRole("link", { name: "Site admin" })).toHaveAttribute(
+      "href",
+      `/w/${firstSlug}/admin`,
+    );
+    await expect(
+      bar.getByRole("link", { name: "Add new blog" }),
+    ).toHaveAttribute("href", `/w/${firstSlug}/admin/new`);
 
     // The deliberate admin address still works for the owner.
     await page.goto(`/w/${firstSlug}/admin`);

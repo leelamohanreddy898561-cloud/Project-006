@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Outlet, useParams } from "react-router-dom";
+import { SiteAdminBar } from "../components/SiteAdminBar";
 import { WorkspaceSiteProvider } from "../components/WorkspaceContext";
 import { fetchWorkspaceBySlug, type Workspace } from "../lib/workspaces";
 import "./WorkspaceSite.css";
@@ -92,6 +93,10 @@ export function WorkspaceLayout() {
 
   return (
     <WorkspaceSiteProvider value={value}>
+      {/* R48 — the site's own owner/editor gets a visible way into its admin;
+          every other signed-in visitor still sees only the public site. Keyed
+          by workspace so a role read never leaks across a site navigation. */}
+      <SiteAdminBar key={workspace.id} />
       <Outlet />
     </WorkspaceSiteProvider>
   );

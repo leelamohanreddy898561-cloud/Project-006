@@ -3093,3 +3093,24 @@ publication needs `npm run deploy:rules` and `npm run deploy:functions` before
 production verification. Nothing is merged or deployed.
 
 ---
+
+
+---
+
+### 2026-10-28 - R48 revision: a tenant owner keeps a visible way into its own admin (local, awaiting approval)
+
+**Branch:** `feature/r48-public-site-isolation`
+**Trigger:** the owner reported that the two demo tenant owners signed in and landed on their own sites but saw only the reader view: R48 had hidden every admin affordance there, so `/w/<slug>/admin` was reachable only by typing it.
+**Test cases:** TC-4801 (browser) and TC-4803 (wiring) updated; TC-4601 and TC-4604 updated; TC-4802 and TC-4804 re-run unchanged.
+
+**Commands run:**
+
+    npm.cmd run build                        # 131.61 kB JS / 8.34 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npm.cmd run test:rules                   # 7 passed (R41, R42, R48)
+    npx.cmd playwright test --reporter=dot   # 143 passed (2.3m)
+    npx.cmd playwright test tests/tmp-demo-owner.spec.ts --reporter=dot  # 2 passed (disposable walkthrough, file deleted)
+
+**Results:** both seeded demo owners sign in, land on their own site and see the owner bar; **Site admin** opens that site's admin, **Add new blog** opens its composer, and neither account sees the bar on the other tenant's site. TC-4801 proves the same for a throwaway owner on `/w/<slug>` and `/w/<slug>/blog`, with no bar on `/w/pine-and-pixel`, while the header keeps only identity and **Sign out**. The stranger view (AC48.1), the gate, `firestore.rules` and the upload function are unchanged.
+
+**Evaluation:** the defect was discoverability, not access: the site role was correct, but R48 removed every visible admin destination from a tenant's public pages. AC48.1 is narrowed to strangers (including the platform admin) and AC48.7 gives the site's own owner/editor one bar decided by the same `fetchWorkspaceRole` seam the gate uses. Nothing is merged or deployed; owner approval is still the gate.

@@ -87,6 +87,39 @@
   line-height: 1.6;
 }
 
+/* R48 — the owner/editor bar on a tenant's own public pages. It is the only
+   admin affordance a public page may carry, and it renders only when the
+   workspace role says the signed-in account may edit this site. */
+.site-admin-bar {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+}
+
+.site-admin-bar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block: 0.75rem;
+}
+
+.site-admin-bar__text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.site-admin-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.site-admin-bar__actions .btn {
+  gap: 0.4rem;
+}
+
 /* R44 � the workspace admin. */
 
 .ws-admin {

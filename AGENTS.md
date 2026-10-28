@@ -373,10 +373,12 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   R44-R47 published in stack order on top of R43.
 - **Implemented and verified, awaiting owner approval:** R48 (a public tenant
   site stays public — `/w/<slug>` shows no **Admin**, **My site** or **My
-  sites** even to a signed-in visitor — and its admin is gated by that site's
-  owner/editor only; R45's platform-admin override is gone from the gate,
-  `firestore.rules` and the upload function, while `/admin/dashboard` keeps its
-  R31 role gate for the default workspace).
+  sites** even to a signed-in visitor — while its own owner/editor gets one
+  **Site admin** / **Add new blog** bar on that site, decided by the workspace
+  role; its admin is gated by that site's owner/editor only; R45's
+  platform-admin override is gone from the gate, `firestore.rules` and the
+  upload function, while `/admin/dashboard` keeps its R31 role gate for the
+  default workspace).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

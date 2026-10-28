@@ -49,7 +49,7 @@ function blockBody(source: string, header: string): string {
   return "";
 }
 
-/** A tenant's public header: the account stays, every admin destination goes. */
+/** A tenant's public header: the account stays, every header admin link goes. */
 async function expectPublicHeader(page: import("@playwright/test").Page) {
   const header = page.locator("header.site-header");
 
@@ -65,12 +65,37 @@ async function expectPublicHeader(page: import("@playwright/test").Page) {
   await expect(
     header.getByRole("link", { name: "My sites", exact: true }),
   ).toHaveCount(0);
+}
 
-  // No write control belongs on a public page either.
+/** R48.1 — a visitor with no role on this site sees no write control at all. */
+async function expectNoAdminControls(page: import("@playwright/test").Page) {
   await expect(page.getByRole("link", { name: "Add new blog" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: /^Edit|^Delete/ })).toHaveCount(
     0,
   );
+  await expect(
+    page.getByRole("complementary", { name: "Site administration" }),
+  ).toHaveCount(0);
+}
+
+/** R48.7 — the site's own owner gets exactly one visible way into its admin. */
+async function expectSiteAdminBar(
+  page: import("@playwright/test").Page,
+  slug: string,
+) {
+  const bar = page.getByRole("complementary", {
+    name: "Site administration",
+  });
+
+  await expect(bar).toBeVisible({ timeout: 30_000 });
+  await expect(bar.getByText("Owner", { exact: true })).toBeVisible();
+  await expect(bar.getByRole("link", { name: "Site admin" })).toHaveAttribute(
+    "href",
+    `/w/${slug}/admin`,
+  );
+  await expect(
+    bar.getByRole("link", { name: "Add new blog" }),
+  ).toHaveAttribute("href", `/w/${slug}/admin/new`);
 }
 
 test.describe("R48 — a signed-in visitor still reads a public site", () => {
@@ -110,7 +135,7 @@ test.describe("R48 — a signed-in visitor still reads a public site", () => {
     }
   });
 
-  test("TC-4801: own and other public sites show no admin destination", async ({
+  test("TC-4801: the owner keeps one way into its own admin, and no way into another", async ({
     page,
   }) => {
     test.setTimeout(150_000);
@@ -156,25 +181,39 @@ test.describe("R48 — a signed-in visitor still reads a public site", () => {
       page.getByRole("heading", { level: 1, name: siteName }),
     ).toBeVisible({ timeout: 30_000 });
 
+    // R48.1 — the header stays public even for the owner.
     await expectPublicHeader(page);
+    // R48.7 — but the owner keeps one visible way into its own admin.
+    await expectSiteAdminBar(page, slug);
 
-    // The archive is public too, not an admin view.
+    // The archive is public too, and the owner bar follows the site.
     await page.goto(`/w/${slug}/blog`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({
       timeout: 30_000,
     });
     await expectPublicHeader(page);
+    await expectSiteAdminBar(page, slug);
 
     // Another tenant's public site is still a public site. `pine-and-pixel` is
-    // a seeded demo tenant the throwaway account does not own.
+    // a seeded demo tenant the throwaway account does not own: no owner bar,
+    // even though this account owns a different site.
     await page.goto("/w/pine-and-pixel");
     await expect(
       page.getByRole("heading", { level: 1, name: "Pine & Pixel" }),
     ).toBeVisible({ timeout: 30_000 });
     await expectPublicHeader(page);
+    await expectNoAdminControls(page);
 
-    // The admin is not advertised, but the deliberate address still works.
-    await page.goto(`/w/${slug}/admin`);
+    // The owner bar opens the admin rather than only advertising it.
+    await page.goto(`/w/${slug}`);
+    await expectSiteAdminBar(page, slug);
+    await page
+      .getByRole("complementary", { name: "Site administration" })
+      .getByRole("link", { name: "Site admin" })
+      .click();
+    await expect(page).toHaveURL(new RegExp(`/w/${slug}/admin$`), {
+      timeout: 30_000,
+    });
     await expect(page.getByText("Workspace admin")).toBeVisible({
       timeout: 30_000,
     });
@@ -192,6 +231,9 @@ test.describe("R48 — the public header and the site gate stay site-scoped", ()
     const header = read("src/components/Header.tsx");
     const menu = read("src/components/AccountMenu.tsx");
     const admin = read("src/pages/WorkspaceAdmin.tsx");
+    const layout = read("src/pages/WorkspaceLayout.tsx");
+    const bar = read("src/components/SiteAdminBar.tsx");
+    const roleHook = read("src/hooks/useWorkspaceRole.ts");
     const rules = read("firestore.rules");
     const functions = read("functions/index.js");
     const seam = read("src/lib/blogs.ts");
@@ -206,6 +248,19 @@ test.describe("R48 — the public header and the site gate stay site-scoped", ()
     expect(menu).toContain("useMyWorkspaces(publicSite ? null : user.uid)");
     expect(menu).toContain("!publicSite && isAdminRole(role)");
     expect(menu).toContain("{!publicSite && (");
+
+    // R48.7 — the one admin affordance a public page may carry is the owner
+    // bar, and it reads the workspace role, not the global role.
+    expect(layout).toContain("<SiteAdminBar key={workspace.id} />");
+    expect(bar).toContain("useWorkspaceRole(");
+    expect(bar).toContain("canEditWorkspace(role)");
+    expect(bar).toContain("${site.basePath}/admin");
+    expect(bar).toContain("${site.basePath}/admin/new");
+    expect(bar).toContain("Site admin");
+    expect(bar).toContain("Add new blog");
+    expect(bar).not.toContain("isAdminRole");
+    expect(bar).not.toContain("fetchUserRole");
+    expect(roleHook).toContain("fetchWorkspaceRole(");
 
     // The gate settles the site's own role and nothing else.
     expect(admin).toContain("fetchWorkspaceRole(");

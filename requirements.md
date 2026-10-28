@@ -60,6 +60,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-28 | R46 revises R29's AC29.4: Google sign-in lands the visitor on the account's own landing, not always the home page | The owner's report was that a tenant owner signing in opens the platform home — the operator's site — instead of its own. The same resolver now runs after both email and Google sign-ins, so "lands ... on the home page" is no longer true for an owner. A reader who owns no site still lands on the home page, which is why R29's other cases and R31/R36/R44 keep their expectations. |
 | 2026-10-28 | R47 replaces the tenant admin's inline **Write a post** link with a two-section nav, **All posts** and **Add new blog**, and revises the label in AC44.4/AC45.2 | The owner reported the add option as missing on a tenant site while the platform admin's **Add New Blog** section was obvious; the tenant's only control was a link inside one line of meta text. The tenant admin now has the same section shape as `/admin/dashboard`. The workspace gate and every workspace-scoped write are unchanged, so this is a discoverability fix, not a new permission. |
 | 2026-10-28 | R48 keeps a public site public and scopes its admin to that site: the header hides **Admin** / **My site(s)** on `/w/<slug>`, and R45's platform-admin override is removed from the gate, `firestore.rules` and the upload function | The owner reported that signing in once made every tenant's public site look like an admin view, and that the platform admin could edit every tenant. A public link must render a public page; admin is reachable only at that site's `/admin`, and only by its owner/editor. The platform console keeps its R31 role gate and targets the default workspace, which the operator account owns; the demo tenants stay independent. |
+| 2026-10-28 | R48 revises AC48.1 and adds AC48.7: a tenant's public pages keep every admin destination hidden from strangers (including the platform admin), but the site's own owner/editor sees a **Site admin** / **Add new blog** bar on those pages | The owner reported that the two demo tenants, signing in with their own email and password, landed on their own site but saw only the normal reader view: R48 had hidden every admin affordance there, so the only route into their admin was typing `/w/<slug>/admin`. The bar reads the site role through the same `fetchWorkspaceRole` seam the admin gate uses, so it cannot advertise admin to anyone the gate would refuse; the public-only guarantee for every other visitor is unchanged. |
 
 ## 5. Out of Scope (v1)
 
@@ -1336,7 +1337,8 @@ another company's public site with admin-looking controls after signing in once,
 and could open its admin; the public link no longer looked public. This
 requirement keeps a tenant's public pages public, and moves every admin
 affordance behind that site's own `/admin`, where only its owner or editor is
-admitted.
+admitted. The site's own owner/editor keeps one visible way in from those
+public pages (AC48.7); nobody else gets one.
 
 It reverses R45's platform-operator override on purpose; the operator's console
 for the default site is unchanged because that account owns the default
@@ -1345,14 +1347,20 @@ workspace, and the demo tenants remain independent.
 **The public surface**
 
 - **AC48.1** On every public tenant route - `/w/<slug>`, `/w/<slug>/blog` and
-  `/w/<slug>/blog/<post>` - a signed-in visitor, including a platform `admin`
-  and the site's own owner/editor, sees the public site and no admin control:
-  no **Admin**, **My site** or **My sites** link in the header, and no Edit,
-  Delete or Add control in the page. The header shows the account identity and
+  `/w/<slug>/blog/<post>` - a signed-in visitor who is neither that site's
+  `ownerUid` nor one of its `editor` members sees the public site and no admin
+  control: no **Admin**, **My site** or **My sites** link in the header, and no
+  Edit, Delete, **Site admin** or **Add new blog** control in the page. This
+  includes a platform `admin`. The header shows the account identity and
   **Sign out** (or the signed-out Sign In / Sign Up controls); the site's
-  content, navigation and links are unchanged. The site's admin remains
-  reachable at `/w/<slug>/admin` by address or from `/dashboard`, not from its
-  public pages.
+  content, navigation and links are unchanged.
+- **AC48.7** The same public routes show that site's own owner or editor a
+  single admin bar above the page content with the **Site admin** and
+  **Add new blog** destinations. The bar is decided by the workspace role seam
+  (`fetchWorkspaceRole`), never by `users/{uid}.role`, so it appears only when
+  `/w/<slug>/admin` would admit the account; it renders nothing for a stranger,
+  a signed-out visitor, a failed role read, or another tenant's site. Signing in
+  to a seeded demo tenant account lands on that site with this bar visible.
 
 **The tenant admin**
 
@@ -1386,7 +1394,9 @@ workspace, and the demo tenants remain independent.
 **Revisions:** R48 revises AC44.3 (no global fallback), AC45.4/AC45.5 (the
 override is removed), AC46.2 (**My site** is not shown inside a tenant's public
 pages) and AC47.3 (the platform admin is no longer admitted to a tenant admin).
-The reason is recorded in the decision log.
+It also revises AC48.1 and adds AC48.7 after the owner reported that the demo
+tenant owners could not see their own admin controls on their public site. The
+reason is recorded in the decision log.
 
 ---
 
