@@ -120,6 +120,10 @@
 /* Responsive -------------------------------------------------------------- */
 
 @media (max-width: 900px) {
+  .site-header__inner {
+    gap: var(--space-2);
+  }
+
   .site-header__title {
     display: none;
   }
@@ -133,8 +137,11 @@
     font-size: var(--text-xs);
   }
 
+  /* R49 — these used to be hidden here, which removed the only way into the
+     site: Sign In, Sign Up and the signed-in Sign out all disappeared on a
+     phone. They stay, compact rather than absent. */
   .site-header__actions .btn--sm {
-    display: none;
+    padding: 0.4rem 0.5rem;
   }
 }
 
@@ -144,11 +151,38 @@
     padding-block: var(--space-2);
   }
 
+  /* R49 — a tighter set of controls keeps the account row beside the brand
+     instead of wrapping the header to a third row. */
+  .site-header__actions {
+    gap: 0.25rem;
+  }
+
+  .site-header__actions .btn--sm {
+    padding: 0.4rem 0.45rem;
+    font-size: 11px;
+  }
+
   .site-header__nav {
     order: 3;
     width: 100%;
     justify-content: space-between;
     overflow-x: auto;
     scrollbar-width: none;
+  }
+}
+
+/* R49 — the narrowest phones first lose the avatar chip and then the search
+   shortcut (the Blogs link is the same destination), so Admin, My site(s) and
+   Sign out keep their place at 320px without a third header row. */
+@media (max-width: 350px) {
+  .site-header__inner {
+    padding-inline: 10px;
+    gap: 2px;
+  }
+}
+
+@media (max-width: 330px) {
+  .site-header__search {
+    display: none;
   }
 }

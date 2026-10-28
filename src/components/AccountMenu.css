@@ -83,3 +83,24 @@
     border-radius: 50%;
   }
 }
+
+/* R49 — a phone header keeps the way in and the way out, so the account
+   controls get compact instead of disappearing (they used to be hidden below
+   900px). At 375px and under the avatar chip is the first control to go, which
+   is what keeps Admin, My site(s) and Sign out on one row at 320px. */
+@media (max-width: 560px) {
+  .account {
+    gap: 0.25rem;
+  }
+
+  .account__admin {
+    padding: 0.4rem;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 375px) {
+  .account__identity {
+    display: none;
+  }
+}

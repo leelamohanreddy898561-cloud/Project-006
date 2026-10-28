@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0–R2 and R14–R47 implemented, verified and published (R15 superseded by R18); R48 in progress; R3–R13 not started**
+**Status:** In progress — **R0–R2 and R14–R48 implemented, verified and published (R15 superseded by R18); R49 in progress; R3–R13 not started**
 
 ---
 
@@ -58,6 +58,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-26 | Dark-mode `--color-text-subtle` is raised to meet AA in R40 instead of waiting for R11 | The R40 mobile audit found the 3.98:1 token under every card's meta line, in the article meta row and across the sidebar - the exact surfaces a mobile reader scans. The fix is one token and only lightens secondary text, so the recorded R11 deferral is settled early; R11 keeps the rest of its scope. |
 | 2026-10-28 | R45 revises R44's AC44.3 and AC44.4: the tenant admin now writes, and the platform admin is admitted after the workspace role says no | R44 deliberately made the page read-only until every write named its workspace. R45 makes `workspaceId` an argument to every seam function, so the controls can be offered safely; the global role is a fallback for the platform operator only, never the tenant's own answer, and the rules still refuse an `ownerUid` change and billing fields on the public document. |
 | 2026-10-28 | R46 revises R29's AC29.4: Google sign-in lands the visitor on the account's own landing, not always the home page | The owner's report was that a tenant owner signing in opens the platform home — the operator's site — instead of its own. The same resolver now runs after both email and Google sign-ins, so "lands ... on the home page" is no longer true for an owner. A reader who owns no site still lands on the home page, which is why R29's other cases and R31/R36/R44 keep their expectations. |
+| 2026-10-28 | R49 stops hiding header buttons below 900px; the auth controls compact instead | The R18 rule `.site-header__actions .btn--sm { display: none }` removed Sign In, Sign Up and Sign out on every phone, so the platform home and every tenant site had no route to sign in. Hiding a control can remove the product's only entry point; on narrow widths the right answer is a smaller control, and only the avatar chip and the redundant search shortcut are dropped, below 375px and 330px respectively. Compact padding keeps the 100px two-row header and the R40 offset accurate at 320px. |
 | 2026-10-28 | R47 replaces the tenant admin's inline **Write a post** link with a two-section nav, **All posts** and **Add new blog**, and revises the label in AC44.4/AC45.2 | The owner reported the add option as missing on a tenant site while the platform admin's **Add New Blog** section was obvious; the tenant's only control was a link inside one line of meta text. The tenant admin now has the same section shape as `/admin/dashboard`. The workspace gate and every workspace-scoped write are unchanged, so this is a discoverability fix, not a new permission. |
 | 2026-10-28 | R48 keeps a public site public and scopes its admin to that site: the header hides **Admin** / **My site(s)** on `/w/<slug>`, and R45's platform-admin override is removed from the gate, `firestore.rules` and the upload function | The owner reported that signing in once made every tenant's public site look like an admin view, and that the platform admin could edit every tenant. A public link must render a public page; admin is reachable only at that site's `/admin`, and only by its owner/editor. The platform console keeps its R31 role gate and targets the default workspace, which the operator account owns; the demo tenants stay independent. |
 | 2026-10-28 | R48 revises AC48.1 and adds AC48.7: a tenant's public pages keep every admin destination hidden from strangers (including the platform admin), but the site's own owner/editor sees a **Site admin** / **Add new blog** bar on those pages | The owner reported that the two demo tenants, signing in with their own email and password, landed on their own site but saw only the normal reader view: R48 had hidden every admin affordance there, so the only route into their admin was typing `/w/<slug>/admin`. The bar reads the site role through the same `fetchWorkspaceRole` seam the admin gate uses, so it cannot advertise admin to anyone the gate would refuse; the public-only guarantee for every other visitor is unchanged. |
@@ -1397,6 +1398,57 @@ pages) and AC47.3 (the platform admin is no longer admitted to a tenant admin).
 It also revises AC48.1 and adds AC48.7 after the owner reported that the demo
 tenant owners could not see their own admin controls on their public site. The
 reason is recorded in the decision log.
+
+---
+
+### R49 - The way in is visible on a phone
+
+R18's responsive header hid every `.btn--sm` in the header actions below
+900px. That rule was written when the menu was a wish, but the buttons it hid
+were the only way in: **Sign In**, **Sign Up**, and - once an account existed -
+**Sign out**. On a phone, a signed-out visitor to the platform home or to any
+`/w/<slug>` site saw navigation and a theme toggle but no route to
+`/signin`, so nobody could sign in to write a post. The owner reported it after
+opening both the platform site and the demo tenant sites on a phone.
+
+R49 keeps the auth controls at every width and compacts them instead. The
+header stays two rows on a phone: the brand and the account controls first,
+then the navigation. The narrowest screens drop the avatar chip and the
+redundant search shortcut (the **Blogs** nav link is the same destination)
+before they drop a way in or out.
+
+**The public header**
+
+- **AC49.1** Signed out, at 320, 360, 390, 560, 768 and 900px, the header on
+  `/`, `/w/signal-and-noise` and a tenant site `/w/<slug>` shows a visible
+  **Sign In** link to `/signin` and a visible **Sign Up** link to `/signup`.
+  Both are inside the viewport (a non-`none` display and a positive box), and
+  following each opens the matching page - **Welcome back** or **Create your
+  account**. Every seeded demo tenant renders this same header component.
+
+**The signed-in header**
+
+- **AC49.2** Signed in, the same widths show **Sign out** in the header. On
+  platform routes the header keeps **Admin** for an admin account and **My
+  site** / **My sites** for an owner or reader; inside `/w/<slug>` R48 still
+  suppresses both admin destinations. The avatar chip may be hidden at 375px
+  and under, and the search shortcut at 330px and under, but no sign-in,
+  sign-up or sign-out control is ever hidden.
+
+**Layout**
+
+- **AC49.3** At 320-560px the header renders as two rows (brand and controls,
+  then navigation) with a height no greater than the 100px
+  `--header-height-compact` offset, and the document has no horizontal scroll
+  (`scrollWidth === innerWidth`) at 320, 360, 390 and 560px, signed out or
+  signed in. At 768px and above it remains the single-row header of R18.
+
+- **AC49.4** Build and lint pass, `npm run test:rules` and the full suite stay
+  green, and the bundle stays within the R14 budgets.
+
+**Revisions:** R49 revises R18's responsive header (the buttons it hid) and
+restores AC48.1's "signed-out Sign In / Sign Up controls" on tenant routes at
+every width. Nothing changes at 901px and above.
 
 ---
 

@@ -3152,3 +3152,24 @@ production verification. Nothing is merged or deployed.
 **Results:** Firestore `changeLog` now holds all 120 entries, including `f121a76`, `e99363f`, `11833f0` and the last R47 sync commit; `changeLog.json` was committed as `c6a4f65` and pushed. `main` moved `ca18ec8..c6a4f65` as a fast-forward with no merge commit and was pushed. Exactly one generate/sync/verify cycle ran.
 
 **Evaluation:** R48 is published end to end - rules and functions released, hosting deployed, production smoke and both live demo-owner checks green, change log in sync, and `main` linear. The only expected gap is the final change-log commit itself, which cannot contain its own hash.
+
+---
+
+### 2026-10-28 - R49: the way in is visible on a phone (local, awaiting approval)
+
+**Branch:** `fix/r49-mobile-sign-in`
+**Trigger:** the owner opened the platform site and both demo tenant sites on a phone and found no Sign In or Sign Up option; nothing on the page led to `/signin` or `/signup`.
+**Test cases:** TC-4901 (signed-out phone header), TC-4902 (signed-in phone header), TC-4903 (CSS/markup guard), TC-4904 (CLI gate).
+
+**Commands run:**
+
+    npm.cmd run build                        # 131.61 kB JS / 8.42 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npm.cmd run test:rules                   # 7 passed (R41, R42, R48)
+    npx.cmd playwright test tests/r49-mobile-auth.spec.ts --reporter=line   # 3 passed
+    npx.cmd playwright test tests/r18-header.spec.ts tests/r40-mobile-featured-images.spec.ts tests/r48-public-site.spec.ts --reporter=line  # 17 passed
+    npx.cmd playwright test --reporter=dot   # 146 passed (2.0m)
+
+**Results:** before the fix, measured at 390px, the header's Sign In and Sign Up both computed to `display: none` on `/`, `/w/pine-and-pixel` and `/w/orbit-analytics`. After it, TC-4901 finds both visible and inside the viewport at 320, 390 and 900px on `/`, `/w/alpha` and `/w/signal-and-noise`, and each opens **Welcome back** / **Create your account**. TC-4902 signs a throwaway account in at 390px and finds **Sign out** and **My sites** visible at 390, 360 and 320px, a two-row header no taller than 100px, no horizontal scroll, and visible Sign In / Sign Up again after signing out. The first full run failed only TC-3002 because R49 was not yet named in AGENTS.md Section 9; the state entry and bundle figure were updated and the guard now passes.
+
+**Evaluation:** the defect was one CSS rule: R18 hid every `.btn--sm` in the header actions below 900px, which removed the only way in and the way out on a phone. R49 keeps those controls and compacts them (avatar chip dropped at 375px, redundant search shortcut at 330px) so the 100px two-row header and the R40 offset stay accurate at 320px. No rule, function or data change; nothing is merged or deployed, and owner approval is still the gate.

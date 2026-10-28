@@ -378,13 +378,16 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   **R48 is the most recent requirement published to production** - R2 was
   backfilled after R30, so requirement numbers are not publication order, and
   R44-R48 published in stack order on top of R43.
+- **Awaiting owner approval:** R49 (the way in is visible on a phone) -
+  implemented and verified on `fix/r49-mobile-sign-in`; the header no longer
+  hides Sign In, Sign Up or Sign out below 900px.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 131.61 kB JS / 8.34 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 131.61 kB JS / 8.42 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - **Five profiles carry `role: "admin"`** — three of them `@example.com`
     throwaway accounts from earlier upload probes. Only the console can change a

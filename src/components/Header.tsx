@@ -65,7 +65,7 @@ export function Header() {
         <div className="site-header__actions">
           <Link
             to={`${sitePrefix}/blog`}
-            className="icon-btn"
+            className="icon-btn site-header__search"
             aria-label="Search posts"
             title="Search posts"
           >

@@ -699,3 +699,19 @@ rather than duplicated.
 | TC-4802 | cli | Seed workspaces A and B, their owners, an editor of A, and `users/operator` with `role: "admin"`. As the operator try to create/update/delete posts in A and B, read and write members and private state, update and delete the workspace document, and create a workspace owned by a customer. Then run the owner/editor/stranger/anonymous cases. | Every operator write is refused in both tenants; public reads still succeed; the owner and editor of A keep their access; owner B cannot touch A; anonymous cannot write (AC48.3) |
 | TC-4803 | auto | Read `src/components/Header.tsx`, `src/components/AccountMenu.tsx`, `src/pages/WorkspaceAdmin.tsx`, `src/pages/WorkspaceLayout.tsx`, `src/components/SiteAdminBar.tsx`, `src/hooks/useWorkspaceRole.ts`, `firestore.rules`, `functions/index.js` and the R48 spec. | The header passes the tenant prefix to the account menu, which suppresses both admin destinations when it is set; the tenant layout renders the owner bar keyed by workspace, and the bar reads the site role through `fetchWorkspaceRole`/`canEditWorkspace` only (never `isAdminRole` or `fetchUserRole`) and links **Site admin** and **Add new blog** under the tenant's base path; the gate calls `fetchWorkspaceRole` only; no workspace rule uses `isAdmin()`; the upload function checks `CAN_EDIT` without a platform-admin fallback (AC48.1, AC48.2, AC48.3, AC48.4, AC48.7) |
 | TC-4804 | cli | Run `npm run build`, `npm run lint`, `npm run test:rules` and the full suite; compare the bundle with the R47 figure. | Build and lint pass, the rules cases pass, the full suite is green, and the bundle stays within the R14 budgets (AC48.5, AC48.6) |
+
+## R49 - The way in is visible on a phone
+
+The report is reproduced in a real browser at phone widths: the header's
+Sign In and Sign Up existed in the DOM but computed to `display: none`. The
+first case measures that on the platform home and a tenant site; the second
+signs a throwaway account in on a phone and measures the signed-in header; the
+third reads the CSS and markup back so the hiding rule cannot return; the last
+is the CLI gate.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-4901 | auto | Seed the R43 workspace fixtures, then at viewports 320, 360, 390, 560, 768 and 900 open `/`, `/w/alpha` and `/w/signal-and-noise`. Read the header's Sign In and Sign Up links, click each at 390 and read the resulting page. | Both links are visible (non-`none` display, positive box, inside the viewport) and point at `/signin` and `/signup` on the platform home and every tenant site; following them renders **Welcome back** and **Create your account** (AC49.1) |
+| TC-4902 | auto | Sign up a throwaway account in the browser at 390px, then measure the header at 900, 768, 560, 390, 360 and 320px; sign out from the header. | **Sign out** is visible at every width, **My sites** is visible on the platform, the header is two rows (no taller than 100px) at 560px and under and one row above it, and the document does not scroll horizontally; the avatar chip and search shortcut may be absent at the narrowest width; signing out restores visible **Sign In** and **Sign Up**. The account is deleted afterwards (AC49.2, AC49.3) |
+| TC-4903 | auto | Read `src/components/Header.css`, `src/components/AccountMenu.css`, `src/components/Header.tsx` and the R49 spec. | No rule hides `.site-header__actions .btn--sm`; the compact rules exist at 900/560px; only `.account__identity` (375px) and `.site-header__search` (330px) may be hidden; the header still renders Sign In/`/signin`, Sign Up/`/signup`, the search class and the account menu (AC49.1, AC49.2, AC49.3) |
+| TC-4904 | cli | Run `npm run build`, `npm run lint`, `npm run test:rules` and the full suite; compare the bundle with the R48 figure. | Build and lint pass, the rules cases pass, the full suite is green, and the bundle stays within the R14 budgets (AC49.4) |

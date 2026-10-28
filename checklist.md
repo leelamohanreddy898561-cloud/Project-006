@@ -430,3 +430,11 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R48) `tests/r48-public-site.spec.ts` and `tests/rules/r48-site-ownership.test.mjs`; the R36/R41/R44/R45/R46/R47 guards updated for the site-scoped gate
 - [x] (R48.5) Build/lint/`npm run test:rules`/full suite green; TC-4801-TC-4804 executed; evidence entries; local commit; owner approved on 2026-10-28 and R48 published
 - [x] (R48.6) `firestore.rules`, `storage.rules` and both functions released; hosting deployed; production smoke 11 passed; both demo owners verified live with the owner bar
+
+## Phase 3gg - The way in is visible on a phone (R49)
+
+- [x] (R49.1) The 900px rule no longer hides `.site-header__actions .btn--sm`; Sign In and Sign Up stay visible on `/` and every `/w/<slug>` site, signed out
+- [x] (R49.2) The signed-in header keeps Sign out and the Admin / My site(s) destinations; compact at 560px, avatar chip dropped at 375px, search shortcut at 330px
+- [x] (R49.3) Two-row header at 320-560px within the 100px compact offset, no horizontal scroll; single row at 768px and above
+- [x] (R49) `tests/r49-mobile-auth.spec.ts` (TC-4901-TC-4903) and the CSS/markup guard
+- [ ] (R49.4) Build/lint/`npm run test:rules`/full suite green; TC-4904 executed; evidence entry; local commit; **await owner approval**
