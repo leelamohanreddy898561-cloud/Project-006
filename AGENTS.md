@@ -343,14 +343,14 @@ deliberately, so a growing repository is expected rather than a leak.
   R43 (a workspace is a public site at `/w/<slug>` — resolved by slug, branded
   from its own document, showing only its own posts, with every link kept inside
   the tenant and a **Site not found** page for an unknown slug; the default
-  workspace still carries the seed archive).
-  **R43 is the most recent requirement published to production** — R2 was
-  backfilled after R30, so requirement numbers are not publication order.
-- **Implemented locally, awaiting owner approval:** R44 (the launcher at
-  `/dashboard` — one card per workspace the account owns, with **View site** and
-  **Admin** — and `/w/<slug>/admin`, gated by that workspace's owner/editor role
-  instead of the global admin role; read-only until R45 names the workspace on
-  every write).
+  workspace still carries the seed archive),
+  R44 (the launcher and a workspace's own admin — `/dashboard` lists one card
+  per owned workspace with **View site** and **Admin**, and `/w/<slug>/admin` is
+  gated by that workspace's owner/editor role instead of the global admin role;
+  read-only by design).
+  **R44 is the most recent requirement published to production** — R2 was
+  backfilled after R30, so requirement numbers are not publication order, and
+  R45-R47 were built on top of R44, so they publish after it.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

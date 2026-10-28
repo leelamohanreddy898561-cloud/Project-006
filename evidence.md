@@ -2803,3 +2803,29 @@ members rule and reported as an error. The owner check now runs first, and a
 One existing guard needed its allow-list widened (TC-3302 counts every module
 that imports Firestore): the launcher's read is the second such module and is
 documented as one. Nothing is merged or deployed: awaiting owner approval.
+
+### 2026-10-28 - R44 published (the launcher and a workspace's own admin)
+
+**Approval:** the owner approved publishing R44, R45, R46 and R47 in that order.
+**Branch merged:** `feature/r44-workspace-launcher` (fast-forward into `main`).
+
+**Commands:**
+
+    npm.cmd run build                    # 130.74 kB JS / 8.18 kB CSS gzipped
+    npm.cmd run lint                     # exit 0
+    npx.cmd playwright test --reporter=dot   # 134 passed (1.5m)
+    npm.cmd run deploy                   # hosting only (R44 changes no rule, function or script)
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** hosting released; production smoke **11 passed in 12.2 s**. The
+launcher and the tenant gate are signed-in surfaces, so their proof is the local
+full suite (TC-4401-TC-4403); the smoke subset proves the deployed artifact still
+serves every public route class.
+
+**Evaluation:** the first of the four approved requirements is live. R44 is
+read-only by design - `/w/<slug>/admin` lists a site's posts and links out - so
+`main` now serves a workspace's own admin without yet offering it a write. R45
+turns that page into a writer and adds the platform override in the rules, which
+is why it deploys separately.
+
+---
