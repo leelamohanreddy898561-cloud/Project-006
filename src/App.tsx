@@ -13,6 +13,8 @@ import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 import { WorkspaceHome } from "./pages/WorkspaceHome";
 import { WorkspaceLayout } from "./pages/WorkspaceLayout";
+import { WorkspaceAdmin } from "./pages/WorkspaceAdmin";
+import { Dashboard } from "./pages/Dashboard";
 import {
   AdminOverview,
   AdminSectionMissing,
@@ -39,6 +41,10 @@ export default function App() {
             <Route path="blog" element={<BlogList />} />
             <Route path="blog/:slug" element={<PostDetail />} />
           </Route>
+          {/* R44 — the launcher, and a workspace's admin. The admin gate is the
+              workspace role, not the global admin role (see WorkspaceAdmin). */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/w/:siteSlug/admin" element={<WorkspaceAdmin />} />
           <Route
             path="/topics"
             element={

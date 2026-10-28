@@ -1137,6 +1137,58 @@ private workspaces or members-only posts would be a different requirement.
 
 ---
 
+### R44 — The launcher, and a workspace's own admin
+
+R43 made every workspace addressable, but a signed-in account had no way to see
+which sites it owns, and the only admin gate still asked for the global `admin`
+role — so the owner of a site could not open that site's admin. This
+requirement adds the launcher and moves the admin gate onto the workspace role.
+
+It is a read-only requirement on purpose: it shows a site's posts and links out,
+and it does not offer a control that would write to the wrong workspace. Writing
+is the next requirement, where the composer and the editor name the workspace
+they act on.
+
+**The launcher**
+
+- **AC44.1** `/dashboard` requires a session: a signed-out visitor is sent to
+  `/signin` and no launcher content renders. A signed-in account sees one card
+  per workspace it owns — the site's name, its address `/w/<slug>`, its role,
+  and two actions: **View site** and **Admin**.
+- **AC44.2** An account that owns no workspace sees **No sites yet** and no
+  card. The page never invents a site, and a failed read says so rather than
+  showing an empty list.
+
+**The workspace admin**
+
+- **AC44.3** `/w/<slug>/admin` requires a session, and access is decided by that
+  workspace: its `ownerUid`, or a `members/{uid}` document with role `"editor"`
+  or `"owner"`. The global `users/{uid}.role` is not consulted. An account that
+  is neither is told **You do not have access** and sees no post data; a failed
+  role read fails closed with **Access could not be checked**; an unknown slug
+  renders **Site not found**.
+- **AC44.4** The workspace admin lists that workspace's posts only — title,
+  category, date, reading time and a link to the public article — and links back
+  to the public site and to `/dashboard`. It offers no edit, delete or create
+  control, so nothing can be written to the wrong workspace before R45 names the
+  workspace on every write.
+- **AC44.5** Ownership is resolved without reading the members document, because
+  `firestore.rules` refuses that read for an owner who has no member document;
+  a `permission-denied` answer from the members read means "not a member", while
+  any other failure is reported as a failure. (This corrects the R41 role read,
+  which read both documents in parallel and would have reported an owner as an
+  error.)
+
+**Unchanged**
+
+- **AC44.6** `/admin` and its guard behave exactly as before for the global
+  admin, and no rule is relaxed: the same `workspaces` document and `members`
+  rules decide what the admin page may read. Build and lint pass, the rules
+  tests and the full suite stay green, and the bundle stays within the R14
+  budgets.
+
+---
+
 ## 8. Open Questions
 
 - [ ] Confirm the blog name and branding (currently "Signal & Noise").

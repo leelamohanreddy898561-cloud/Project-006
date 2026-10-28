@@ -383,3 +383,14 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R43) `WorkspaceContext` keeps the Firebase seam out of the article card; `WorkspaceLayout` owns the resolve/not-found states
 - [x] (R43.5) TC-4301-TC-4303 executed; build 129.15 kB JS / 7.68 kB CSS gzipped; lint clean; full suite 131 passed
 - [x] Execute TC-4304; evidence entry; local commit; **published 2026-10-28**
+
+## Phase 3bb - The launcher and a workspace's own admin (R44)
+
+- [x] (R44.1) `/dashboard` behind a session; one card per owned workspace with its name, `/w/<slug>`, role, **View site** and **Admin**
+- [x] (R44.2) No owned workspace -> **No sites yet**, no invented card; a failed read says so
+- [x] (R44.3) `/w/:siteSlug/admin` gated by workspace ownership/membership, never the global role; viewer/stranger denied; failed read fails closed; unknown slug -> **Site not found**
+- [x] (R44.4) Workspace admin lists only that site's posts and links to the public site and the launcher; no write controls before R45
+- [x] (R44.5) `fetchWorkspaceRole` reads the workspace document first (an owner has no member document the rules would let it read), and treats `permission-denied` as "not a member"
+- [x] (R44) **My sites** link in the account menu for every signed-in account
+- [x] (R44.6) TC-4401-TC-4403 executed; build 130.74 kB JS / 8.18 kB CSS; lint clean; full suite 134 passed
+- [ ] Execute TC-4404; evidence entry; local commit; **await owner approval**

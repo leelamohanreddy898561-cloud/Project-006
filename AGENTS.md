@@ -191,6 +191,7 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/rules/r41-tenancy.test.mjs` | The tenancy boundary executed against the Firestore emulator (R41); run by `npm run test:rules` |
 | `tests/rules/r42-workspace-migration.test.mjs` | The migration executed against the emulator: copy, ids, timestamps, idempotency, dry run (R42) |
 | `tests/r43-workspace-site.spec.ts` | A tenant site at `/w/<slug>`: own posts only, links stay inside, unknown/empty/default states (R43) |
+| `tests/r44-workspace-launcher.spec.ts` | The launcher, the empty state, and the workspace-role gate (R44) |
 | `scripts/run-rules-tests.mjs` | Launcher for the rules tests: finds a JDK, starts/stops the emulator, runs `node --test` (R41) |
 | `scripts/migrate-workspace.mjs` | Copies the flat `blogs` collection into a workspace, idempotently (R42) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
@@ -207,6 +208,9 @@ necessary but never sufficient** — your visual approval is the gate.
 | `src/hooks/useSavedBlogs.ts` | Loads saved posts once per visitor page, with a bounded wait and a failure state (R37) |
 | `src/pages/WorkspaceLayout.tsx` | Resolves `/w/<slug>`: loading, **Site not found**, unavailable, then the tenant provider (R43) |
 | `src/components/WorkspaceContext.tsx` | The tenant every link-building component reads `basePath` from; deliberately Firebase-free (R43) |
+| `src/pages/Dashboard.tsx` | The launcher: a signed-in account's owned sites (R44) |
+| `src/pages/WorkspaceAdmin.tsx` | A workspace's admin, gated by its owner/editor role — never the global admin role (R44) |
+| `src/hooks/useMyWorkspaces.ts` | The launcher's read: workspaces where `ownerUid` is the signed-in account (R44) |
 | `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce (R35) |
 | `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), public-read/admin-write `blogs` (R33, R37), and the membership-gated tenant model (R41) |
 | `storage.rules` | Storage rules: featured images under `blog-images/<uid>/`, admin-only (R33) |
@@ -273,7 +277,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 129.15 kB JS / 7.91 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 130.74 kB JS / 8.18 kB CSS gzipped |
 
 ---
 
@@ -342,13 +346,18 @@ deliberately, so a growing repository is expected rather than a leak.
   workspace still carries the seed archive).
   **R43 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
+- **Implemented locally, awaiting owner approval:** R44 (the launcher at
+  `/dashboard` — one card per workspace the account owns, with **View site** and
+  **Admin** — and `/w/<slug>/admin`, gated by that workspace's owner/editor role
+  instead of the global admin role; read-only until R45 names the workspace on
+  every write).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 129.15 kB JS / 7.91 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 130.74 kB JS / 8.18 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - **Five profiles carry `role: "admin"`** — three of them `@example.com`
     throwaway accounts from earlier upload probes. Only the console can change a

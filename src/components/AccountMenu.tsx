@@ -65,6 +65,12 @@ export function AccountMenu({ user }: { user: AuthUser }) {
         </Link>
       )}
 
+      {/* R44 — every signed-in account can reach its own sites, not only an
+          admin. The page itself decides what is listed and what can be opened. */}
+      <Link to="/dashboard" className="account__admin">
+        My sites
+      </Link>
+
       <button
         type="button"
         className="btn btn--outline btn--sm"

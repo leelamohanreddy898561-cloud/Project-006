@@ -2772,3 +2772,34 @@ remaining gaps are product gaps, not architecture gaps: there is no signed-in
 launcher yet (sites are reached by URL), the admin dashboard is still gated by
 the global admin role, and the header still carries the platform brand. Those
 are R44.
+
+---
+
+### 2026-10-28 - R44 launcher and workspace-scoped admin (local, awaiting approval)
+
+**Branch:** `feature/r44-workspace-launcher`
+**Test cases:** TC-4401, TC-4402, TC-4403 (browser), TC-4404 (quality gate)
+
+**Commands run:**
+
+    npm.cmd run build                        # 130.74 kB JS / 8.18 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npx playwright test --reporter=dot       # 134 passed (1.6m)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4401 | R44.1, R44.3 | pass | `/dashboard` and `/w/alpha-labs/admin` both redirect a signed-out visitor to `/signin`; no launcher or admin content renders |
+| TC-4402 | R44.1, R44.2 | pass | a throwaway account signs up, the header shows **My sites**, the launcher renders and says **No sites yet** with zero cards; the account is deleted afterwards |
+| TC-4403 | R44.3, R44.5 | pass | the launcher queries `ownerUid` and links to `/w/<slug>/admin`; both routes are registered; the admin gate calls `fetchWorkspaceRole` and never `isAdminRole`; the owner check precedes the members read; `permission-denied` is treated as "not a member" |
+| TC-4404 | R44.6 | pass | build, lint and the full suite green; bundle +1.59 kB, well inside 150 kB |
+
+**Evaluation:** the launcher and the workspace gate work, and the R41 role read
+was corrected on the way: it read the workspace and the member document in
+parallel, so an owner without a member document would have been denied by the
+members rule and reported as an error. The owner check now runs first, and a
+`permission-denied` answer is treated as "not a member" rather than a failure.
+One existing guard needed its allow-list widened (TC-3302 counts every module
+that imports Firestore): the launcher's read is the second such module and is
+documented as one. Nothing is merged or deployed: awaiting owner approval.

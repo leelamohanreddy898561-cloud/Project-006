@@ -37,7 +37,7 @@ export interface SavedBlogsState {
  */
 const READ_TIMEOUT_MS = 4000;
 
-export function useSavedBlogs(workspaceId?: string): SavedBlogsState {
+export function useSavedBlogs(workspaceId?: string | null): SavedBlogsState {
   const [records, setRecords] = useState<SavedBlogRecord[]>([]);
   const [status, setStatus] = useState<SavedBlogsStatus>("loading");
   const [reloadToken, setReloadToken] = useState(0);
@@ -45,6 +45,9 @@ export function useSavedBlogs(workspaceId?: string): SavedBlogsState {
   const reload = useCallback(() => setReloadToken((token) => token + 1), []);
 
   useEffect(() => {
+    // R44 — `null` means "the workspace is not resolved yet": load nothing.
+    if (workspaceId === null) return undefined;
+
     let active = true;
     let settled = false;
 

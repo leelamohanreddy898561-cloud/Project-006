@@ -124,6 +124,9 @@ test.describe("R33 — the composer is wired to the right places", () => {
       // R41 — the tenancy seam. It owns workspaces, members and roles; the
       // blogs seam still owns posts. Both are documented in AGENTS.md Section 5.
       "src/lib/workspaces.ts",
+      // R44 — the launcher's read: "the workspaces this account owns". It is
+      // the only other place that queries Firestore, and it writes nothing.
+      "src/hooks/useMyWorkspaces.ts",
     ]);
     const offenders: string[] = [];
 

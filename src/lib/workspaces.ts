@@ -167,19 +167,35 @@ export async function fetchWorkspaceRole(
       import("firebase/firestore"),
     ]);
 
-    const [workspace, member] = await Promise.all([
-      getDoc(doc(db, WORKSPACES_COLLECTION, workspaceId)),
-      getDoc(doc(db, memberPath(workspaceId, uid))),
-    ]);
+    // The workspace document decides ownership, and it is public, so this read
+    // works for the owner; the member document is only readable by a member.
+    // Reading them in parallel would deny an owner who has no member document
+    // (the members rule is what refuses that read), so the owner check is
+    // settled first.
+    const workspace = await getDoc(doc(db, WORKSPACES_COLLECTION, workspaceId));
 
     if (workspace.exists() && workspace.data().ownerUid === uid) {
       return { ok: true, role: "owner" };
     }
 
-    return {
-      ok: true,
-      role: member.exists() ? normalizeMemberRole(member.data().role) : null,
-    };
+    try {
+      const member = await getDoc(doc(db, memberPath(workspaceId, uid)));
+
+      return {
+        ok: true,
+        role: member.exists()
+          ? normalizeMemberRole(member.data().role)
+          : null,
+      };
+    } catch (error) {
+      // `permission-denied` here is an answer, not a failure: the rules refuse
+      // the read precisely because this account is not a member.
+      if ((error as { code?: string })?.code === "permission-denied") {
+        return { ok: true, role: null };
+      }
+
+      throw error;
+    }
   } catch (error) {
     const detail = (error as { message?: string })?.message;
 

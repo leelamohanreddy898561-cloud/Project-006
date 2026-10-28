@@ -1,0 +1,101 @@
+/* R44 — the "My sites" launcher. */
+
+.dashboard {
+  padding-block: 2.5rem 4rem;
+}
+
+.dashboard__intro {
+  max-width: 44rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.dashboard__title {
+  margin: 0 0 0.75rem;
+  color: var(--color-text);
+}
+
+.dashboard__lead {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.dashboard__notice {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 0.5rem);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+}
+
+.dashboard__empty {
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md, 0.5rem);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.dashboard__empty-title {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+}
+
+.site-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.site-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 0.75rem);
+  background: var(--color-surface);
+}
+
+.site-card__name {
+  margin: 0 0 0.25rem;
+  font-size: 1.125rem;
+  color: var(--color-text);
+}
+
+.site-card__slug {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8125rem;
+  color: var(--color-text-subtle);
+}
+
+.site-card__role {
+  margin: 0;
+}
+
+.site-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .site-card {
+    align-items: flex-start;
+  }
+}

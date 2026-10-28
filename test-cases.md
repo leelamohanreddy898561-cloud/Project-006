@@ -622,3 +622,18 @@ by R41's TC-4101-TC-4103, so they are cited, not repeated.
 | TC-4302 | auto | Open `/w/alpha`, inspect the header, card cover/title/category/tag links, then open the card and inspect the breadcrumb | Brand, Home, Blogs and the search control point under `/w/alpha`; the card links to `/w/alpha/blog/<slug>` and its badge to `/w/alpha/blog?topic=`; the article opens at `/w/alpha/blog/<slug>` with Home and Blogs breadcrumbs inside the tenant (AC43.3) |
 | TC-4303 | auto | Open an unknown slug, an empty workspace, and the default workspace | Unknown slug renders **Site not found** with no cards; the empty workspace shows **No posts yet**; the default workspace shows the six seed articles, so it matches `/` (AC43.1, AC43.2, AC43.5) |
 | TC-4304 | cli | Run `npm run build`, `npm run lint`, `npm run test:rules` and the full suite; compare the bundle with the R42 figure | Build and lint pass, the rules cases pass, the suite is green, and the bundle stays within the R14 budgets (AC43.4, AC43.5) |
+
+## R44 - The launcher and a workspace's own admin
+
+The signed-out cases run for real. A signed-in case uses a throwaway account the
+suite creates and deletes - it owns no workspace, which is the empty state that
+must not be faked. The owner/editor path needs a workspace owned by the signed-in
+account, so its wiring is proved statically (TC-4403), the same way R32 and R38
+prove panels the suite cannot open without a promoted account.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-4401 | auto | Open `/dashboard` and `/w/alpha-labs/admin` signed out | Both redirect to `/signin`; no "My sites" heading and no "Workspace admin" content renders (AC44.1, AC44.3) |
+| TC-4402 | auto | Sign up a throwaway account, click **My sites** in the header | The header shows the link, `/dashboard` renders, the account owns nothing, so **No sites yet** is shown and there are no site cards; the account is deleted afterwards (AC44.1, AC44.2) |
+| TC-4403 | auto | Read `src/pages/Dashboard.tsx`, `src/pages/WorkspaceAdmin.tsx`, `src/hooks/useMyWorkspaces.ts`, `src/lib/workspaces.ts` and `src/App.tsx` | The launcher queries `ownerUid` and links to `/w/<slug>/admin`; both routes are registered; the workspace admin uses `fetchWorkspaceRole` and never `isAdminRole`; the owner check precedes the members read; a `permission-denied` members read is treated as "not a member" (AC44.3, AC44.5) |
+| TC-4404 | cli | Run `npm run build`, `npm run lint`, `npm run test:rules` and the full suite; compare the bundle with the R43 figure | Build and lint pass, the rules cases pass, the suite is green, and the bundle stays within the R14 budgets (AC44.6) |
