@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { savedBlogToPost, type SavedBlogRecord } from "../lib/blog-posts";
-import { listSavedBlogs } from "../lib/blogs";
+import { SITE_WORKSPACE_ID, listSavedBlogs } from "../lib/blogs";
 import type { Post } from "../types/post";
 
 /**
@@ -44,12 +44,26 @@ export function useSavedBlogs(workspaceId?: string | null): SavedBlogsState {
 
   const reload = useCallback(() => setReloadToken((token) => token + 1), []);
 
+  // R45 — `undefined` is the global site (the default workspace); `null` is
+  // "the workspace is not resolved yet". A tenant page always passes an id, so
+  // its read can never fall back to the default site's posts.
+  const target = workspaceId === undefined ? SITE_WORKSPACE_ID : workspaceId;
+
+  // A different workspace is a different archive. Clearing the previous
+  // records means a slow or failed tenant read can never leave another site's
+  // posts on screen.
+  const loadedTarget = useRef<string | null>(null);
+
   useEffect(() => {
-    // R44 — `null` means "the workspace is not resolved yet": load nothing.
-    if (workspaceId === null) return undefined;
+    if (target === null) return undefined;
 
     let active = true;
     let settled = false;
+
+    if (loadedTarget.current !== target) {
+      loadedTarget.current = target;
+      setRecords([]);
+    }
 
     setStatus("loading");
 
@@ -57,7 +71,7 @@ export function useSavedBlogs(workspaceId?: string | null): SavedBlogsState {
       if (active && !settled) setStatus("error");
     }, READ_TIMEOUT_MS);
 
-    listSavedBlogs(workspaceId).then((outcome) => {
+    listSavedBlogs(target).then((outcome) => {
       if (!active) return;
 
       settled = true;
@@ -79,7 +93,7 @@ export function useSavedBlogs(workspaceId?: string | null): SavedBlogsState {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [reloadToken, workspaceId]);
+  }, [reloadToken, target]);
 
   const posts = useMemo(() => records.map(savedBlogToPost), [records]);
 

@@ -17,8 +17,11 @@
  * that workspace's owner and members, and its image is stored under
  * `workspaces/<id>/blog-images/<uid>/`, so one customer's upload can never land
  * in another customer's folder. A caller that names no workspace keeps the
- * R35 behaviour for exactly as long as the live composer does not send one
- * (R42 switches the composer and removes this branch).
+ * R35 behaviour for the legacy path.
+ *
+ * R45 adds the platform operator: a global admin may upload to, and delete a
+ * cover from, any workspace. It is an override on top of the workspace role,
+ * not ownership — the tenant's own owner/editor check is unchanged.
  *
  * Images are stored under the caller's own folder and made publicly readable
  * with a per-object ACL (the bucket uses fine-grained ACLs, not uniform
@@ -110,11 +113,13 @@ exports.uploadBlogImage = onCall(async (request) => {
     }
 
     const role = await workspaceRole(uid, workspaceId);
+    // R45 — the platform admin may write every workspace, but is not an owner.
+    const platformAdmin = CAN_EDIT.has(role) ? false : await isGlobalAdmin(uid);
 
-    if (!CAN_EDIT.has(role)) {
+    if (!CAN_EDIT.has(role) && !platformAdmin) {
       throw new HttpsError(
         "permission-denied",
-        "Only this blog's owner or an editor can upload blog images.",
+        "Only this blog's owner, an editor, or the platform admin can upload blog images.",
       );
     }
   } else if (!(await isGlobalAdmin(uid))) {
@@ -171,8 +176,8 @@ exports.uploadBlogImage = onCall(async (request) => {
  * Removes an image the composer uploaded but could not attach to a post.
  *
  * The path decides which check applies: a workspace path needs edit rights in
- * that workspace, and the legacy path needs the global admin role. Either way
- * the object has to sit in the caller's own folder.
+ * that workspace (or the platform admin), and the legacy path needs the global
+ * admin role. A non-admin may only remove an object in its own folder.
  */
 exports.deleteBlogImage = onCall(async (request) => {
   const uid = request.auth?.uid;
@@ -185,13 +190,16 @@ exports.deleteBlogImage = onCall(async (request) => {
   const workspacePath = path.match(
     /^workspaces\/([A-Za-z0-9_-]{1,80})\/blog-images\/([^/]+)\//,
   );
+  const coverPath =
+    Boolean(workspacePath) || /^blog-images\/[^/]+\/[^/]+/.test(path);
 
   let allowed = false;
 
-  if (workspacePath && workspacePath[2] === uid) {
+  if (coverPath && (await isGlobalAdmin(uid))) {
+    // R45 — the operator may remove any cover, including one a tenant uploaded.
+    allowed = true;
+  } else if (workspacePath && workspacePath[2] === uid) {
     allowed = CAN_EDIT.has(await workspaceRole(uid, workspacePath[1]));
-  } else if (path.startsWith(`blog-images/${uid}/`)) {
-    allowed = await isGlobalAdmin(uid);
   }
 
   if (!allowed) {

@@ -637,3 +637,20 @@ prove panels the suite cannot open without a promoted account.
 | TC-4402 | auto | Sign up a throwaway account, click **My sites** in the header | The header shows the link, `/dashboard` renders, the account owns nothing, so **No sites yet** is shown and there are no site cards; the account is deleted afterwards (AC44.1, AC44.2) |
 | TC-4403 | auto | Read `src/pages/Dashboard.tsx`, `src/pages/WorkspaceAdmin.tsx`, `src/hooks/useMyWorkspaces.ts`, `src/lib/workspaces.ts` and `src/App.tsx` | The launcher queries `ownerUid` and links to `/w/<slug>/admin`; both routes are registered; the workspace admin uses `fetchWorkspaceRole` and never `isAdminRole`; the owner check precedes the members read; a `permission-denied` members read is treated as "not a member" (AC44.3, AC44.5) |
 | TC-4404 | cli | Run `npm run build`, `npm run lint`, `npm run test:rules` and the full suite; compare the bundle with the R43 figure | Build and lint pass, the rules cases pass, the suite is green, and the bundle stays within the R14 budgets (AC44.6) |
+
+## R45 - Workspace-scoped writes and tenant demo accounts
+
+The tenant boundary and the operator override live in `firestore.rules`, so they
+are executed in the emulator (TC-4501, `npm run test:rules`). The browser case
+creates a throwaway account through the public Auth endpoint, gives it a
+workspace through the deployed rules, writes a post from the real composer and
+reads it back on the public tenant site (TC-4502); its signed-out half runs even
+without Firebase. TC-4503 reads the seam and the wiring back; TC-4504 is the
+owner's live walkthrough of the two seeded demo tenants.
+
+| ID | Type | Steps | Expected |
+| --- | --- | --- | --- |
+| TC-4501 | cli | Seed workspaces A and B, their owners, an editor of A, and `users/operator` with `role: "admin"`. As the operator create/update/delete posts in A and B, write members and private state, update the workspace name, create a workspace owned by a customer, then try to change `ownerUid` and add `plan`. Then repeat the tenant cases as the editor of A, owner B, a stranger and an anonymous visitor. | Every operator write succeeds in both tenants; the ownerless create, the `ownerUid` change and the `plan` field are refused; the editor still cannot touch B; owner B cannot touch A; anonymous reads posts but writes nothing (AC45.4, AC45.5) |
+| TC-4502 | auto | (a) Open `/w/alpha-labs/admin` and `/w/alpha-labs/admin/new` signed out. (b) Create a throwaway account, create a workspace it owns through the REST API, sign in, open `/w/<slug>/admin`, click **Write a post**, fill the form and save; open `/w/<slug>` and `/blog`; then open `/w/signal-and-noise/admin`. | (a) Both redirect to `/signin` and render no admin content. (b) The gate shows the site as Owner; the save reports the document id; the tenant home shows the post and the default `/blog` does not; the other site's admin says **You do not have access** with no write control. The account, workspace and post are deleted afterwards (AC45.1, AC45.2, AC45.3) |
+| TC-4503 | auto | Read `src/lib/blogs.ts`, `src/pages/AddBlog.tsx`, `src/components/admin/ManageBlogs.tsx`, `src/pages/WorkspaceAdmin.tsx`, `src/App.tsx`, `firestore.rules`, `functions/index.js`, `scripts/seed-demo-tenants.mjs` and `.gitignore`. | Every write takes `workspaceId`; no write path uses `SITE_WORKSPACE_ID`; the tenant pages pass the resolved id; the route family shares one gate; the rules and the function allow `isAdmin()` while still refusing ownership transfer and billing; the seed is idempotent and its credentials file is ignored (AC45.1, AC45.3, AC45.4, AC45.5, AC45.6) |
+| TC-4504 | manual | Sign in at `/signin` as each account in `.demo-tenants.json`; open `/w/<slug>/admin`; write a post; open `/w/<slug>` and then the other tenant's site. | Each account lands on its own site, sees its seeded post, can write a new one that appears on that site, and cannot open the other tenant's admin. Record the result in `evidence.md` without the password (AC45.2, AC45.6) |

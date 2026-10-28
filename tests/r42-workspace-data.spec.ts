@@ -30,15 +30,15 @@ test("TC-4202 — reads, writes and covers all name the workspace", () => {
 
   // Every access to the posts goes through the workspace path, and the old
   // flat collection is no longer named by the seam.
-  expect(SEAM).toContain("workspaceBlogsPath(SITE_WORKSPACE_ID)");
+  expect(SEAM).toContain("workspaceBlogsPath(workspaceId)");
+  expect(SEAM).not.toContain("workspaceBlogsPath(SITE_WORKSPACE_ID)");
   expect(SEAM).not.toContain("collection(db, BLOGS_COLLECTION)");
   expect(SEAM).not.toContain("doc(db, BLOGS_COLLECTION");
 
-  // The upload and delete calls tell the function which workspace this is.
-  expect(
-    (SEAM.match(/workspaceId: SITE_WORKSPACE_ID/g) ?? []).length,
-    "both callables must name the workspace",
-  ).toBe(2);
+  // R45 — both callables name the workspace they act on, as an argument rather
+  // than a module constant.
+  expect(SEAM).toMatch(/dataUrl,\s*fileName: file\.name,\s*workspaceId,/);
+  expect(SEAM).toMatch(/path,\s*workspaceId,/);
 
   // The function stores and checks the workspace path.
   expect(FUNCTIONS).toContain("workspaces/${workspaceId}/blog-images/${uid}");

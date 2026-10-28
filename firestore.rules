@@ -30,6 +30,12 @@ rules_version = '2';
 //
 // The flat `blogs` collection stays for now: the live site reads it. R42 moves
 // those documents into workspaces/signal-and-noise/blogs and retires the block.
+//
+// R45 adds the platform operator's authority: `users/{uid}.role == "admin"` may
+// write any workspace's posts, covers, team and private state. It is an
+// override, not ownership — the workspace's `ownerUid` still cannot be changed
+// from the browser, a billing field is still refused on the public document,
+// and a tenant's owner or editor is still confined to its own workspace.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -61,41 +67,47 @@ service cloud.firestore {
       // signs in. Plan and billing state live in `private/`, not here.
       allow read: if true;
 
-      // Self-serve onboarding (R42) creates this document from the browser: the
+      // Self-serve onboarding creates this document from the browser: the
       // caller must be its owner, the slug must be a real slug, and no billing
-      // field may be written into the public document.
-      allow create: if isSignedIn()
-        && request.resource.data.ownerUid == request.auth.uid
+      // field may be written into the public document. R45 lets the platform
+      // admin create a workspace for a customer it is onboarding.
+      allow create: if request.resource.data.ownerUid is string
+        && request.resource.data.ownerUid.size() > 0
+        && (isSignedIn()
+          && request.resource.data.ownerUid == request.auth.uid
+          || isAdmin())
         && isSlug(request.resource.data.slug)
         && hasNoBillingFields();
 
-      // Ownership cannot be transferred from the browser in R41, and a plan
-      // field cannot be smuggled into the public document.
-      allow update: if isWorkspaceOwner(workspaceId)
+      // Ownership cannot be transferred from the browser, and a plan field
+      // cannot be smuggled into the public document — not even by the platform
+      // admin, whose authority is editorial and operational, not a rewrite of
+      // who owns the site.
+      allow update: if (isWorkspaceOwner(workspaceId) || isAdmin())
         && request.resource.data.ownerUid == resource.data.ownerUid
         && hasNoBillingFields();
 
-      allow delete: if isWorkspaceOwner(workspaceId);
+      allow delete: if isWorkspaceOwner(workspaceId) || isAdmin();
 
-      // The team list is visible to the team and to nobody else.
+      // The team list is visible to the team, and to the platform admin.
       match /members/{uid} {
-        allow read: if isWorkspaceMember(workspaceId);
-        allow create, update: if isWorkspaceOwner(workspaceId)
+        allow read: if isWorkspaceMember(workspaceId) || isAdmin();
+        allow create, update: if (isWorkspaceOwner(workspaceId) || isAdmin())
           && request.resource.data.role in ['editor', 'viewer'];
-        allow delete: if isWorkspaceOwner(workspaceId);
+        allow delete: if isWorkspaceOwner(workspaceId) || isAdmin();
       }
 
-      // Plan, subscription and usage state. Owner-only, never public.
+      // Plan, subscription and usage state. Owner and platform admin only.
       match /private/{document} {
-        allow read, write: if isWorkspaceOwner(workspaceId);
+        allow read, write: if isWorkspaceOwner(workspaceId) || isAdmin();
       }
 
-      // Published posts of this blog: public to read, written by the owner and
-      // the workspace's editors. Nothing here consults the global admin role,
-      // so one customer's account cannot touch another customer's posts.
+      // Published posts of this blog: public to read, written by the owner,
+      // the workspace's editors, or the platform admin (R45). A tenant's
+      // account is still confined to its own workspace.
       match /blogs/{blogId} {
         allow read: if true;
-        allow write: if canEditWorkspace(workspaceId);
+        allow write: if canEditWorkspace(workspaceId) || isAdmin();
       }
     }
 

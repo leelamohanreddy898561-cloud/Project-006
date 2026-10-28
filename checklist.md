@@ -394,3 +394,13 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R44) **My sites** link in the account menu for every signed-in account
 - [x] (R44.6) TC-4401-TC-4403 executed; build 130.74 kB JS / 8.18 kB CSS; lint clean; full suite 134 passed
 - [ ] Execute TC-4404; evidence entry; local commit; **await owner approval**
+
+## Phase 3cc - Workspace-scoped writes and tenant demo accounts (R45)
+
+- [x] (R45.1) Every blog write takes `workspaceId`; no write falls back to `SITE_WORKSPACE_ID`; a missing id is refused
+- [x] (R45.2, R45.3) `/w/:siteSlug/admin` is one gate with the post list and a composer; Edit, Delete and Write a post all pass the resolved workspace; the global panel keeps repository articles read-only
+- [x] (R45.4, R45.5) `firestore.rules` and `functions/index.js`: the platform admin writes every workspace; ownership transfer and billing stay refused; tenant roles stay confined
+- [x] (R45.6) `scripts/seed-demo-tenants.mjs` and the git-ignored `.demo-tenants.json`; `pine-and-pixel` and `orbit-analytics` seeded idempotently
+- [x] (R45) `tests/rules/r45-global-admin.test.mjs`, `tests/r45-workspace-writes.spec.ts`; the R38, R42 and R44 guards updated for the explicit workspace
+- [x] (R45.7) Build 131.13 kB JS / 8.17 kB CSS gzipped; lint clean; `npm run test:rules` 7 passed; full suite (recorded below)
+- [ ] Execute TC-4501-TC-4504; evidence entry; local commit; **await owner approval**

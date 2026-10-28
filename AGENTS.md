@@ -192,8 +192,11 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/rules/r42-workspace-migration.test.mjs` | The migration executed against the emulator: copy, ids, timestamps, idempotency, dry run (R42) |
 | `tests/r43-workspace-site.spec.ts` | A tenant site at `/w/<slug>`: own posts only, links stay inside, unknown/empty/default states (R43) |
 | `tests/r44-workspace-launcher.spec.ts` | The launcher, the empty state, and the workspace-role gate (R44) |
+| `tests/rules/r45-global-admin.test.mjs` | The platform operator's write authority and the surviving tenant boundary, executed against the emulator (R45) |
+| `tests/r45-workspace-writes.spec.ts` | A throwaway tenant writes a post from its own admin and reads it on its site; the signed-out gate and the seam's wiring (R45) |
 | `scripts/run-rules-tests.mjs` | Launcher for the rules tests: finds a JDK, starts/stops the emulator, runs `node --test` (R41) |
 | `scripts/migrate-workspace.mjs` | Copies the flat `blogs` collection into a workspace, idempotently (R42) |
+| `scripts/seed-demo-tenants.mjs` | Creates the two demo tenant accounts, their workspaces and one post each, idempotently, through the public APIs (R45) |
 | `scripts/generate-changelog.mjs` | Builds `changeLog.json` from git history |
 | `scripts/capture-evidence.mjs` | Runs the suite with `EVIDENCE_SCREENSHOTS=1` to refresh `evidence/screenshots/` (R25) |
 | `scripts/verify-prod.mjs` | Runs the `@smoke` subset against the deployed site — the production check (R27) |
@@ -201,7 +204,7 @@ necessary but never sufficient** — your visual approval is the gate.
 | `scripts/verify-changelog.mjs` | Reads the Firestore collection back to prove the sync |
 | `src/lib/firebase.ts` | Lazy Firebase loader (`getFirebase()`) |
 | `src/lib/users.ts` | User profile + role seam (`users/{uid}`, R31) |
-| `src/lib/blogs.ts` | The blogs' Firebase seam: admin-gated image upload, one `blogs` document per submit, and the public read (R33, R35, R37) |
+| `src/lib/blogs.ts` | The blogs' Firebase seam: admin-gated image upload, one `blogs` document per submit, the public read, and an explicit `workspaceId` on every write (R33, R35, R37, R45) |
 | `src/lib/workspaces.ts` | The tenancy seam: workspace, member and role model, slug and path helpers, the reads and the `slug → workspace` lookup (R41, R43) |
 | `src/lib/blog-draft.ts` | Draft validation and the `blogs` document shape (R33) |
 | `src/lib/blog-posts.ts` | Maps a `blogs` document to a `Post` and merges saved posts with the seed articles (R37) |
@@ -209,10 +212,10 @@ necessary but never sufficient** — your visual approval is the gate.
 | `src/pages/WorkspaceLayout.tsx` | Resolves `/w/<slug>`: loading, **Site not found**, unavailable, then the tenant provider (R43) |
 | `src/components/WorkspaceContext.tsx` | The tenant every link-building component reads `basePath` from; deliberately Firebase-free (R43) |
 | `src/pages/Dashboard.tsx` | The launcher: a signed-in account's owned sites (R44) |
-| `src/pages/WorkspaceAdmin.tsx` | A workspace's admin, gated by its owner/editor role — never the global admin role (R44) |
+| `src/pages/WorkspaceAdmin.tsx` | A workspace's admin: one gate, the post list and the composer; owner/editor first, the platform admin as the fallback override (R44, R45) |
 | `src/hooks/useMyWorkspaces.ts` | The launcher's read: workspaces where `ownerUid` is the signed-in account (R44) |
-| `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce (R35) |
-| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), public-read/admin-write `blogs` (R33, R37), and the membership-gated tenant model (R41) |
+| `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce; a tenant's owner/editor or the platform admin (R35, R45) |
+| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), public-read/admin-write `blogs` (R33, R37), the membership-gated tenant model (R41), and the platform admin's write override (R45) |
 | `storage.rules` | Storage rules: featured images under `blog-images/<uid>/`, admin-only (R33) |
 | `.env` / `.env.example` | Firebase credentials (local only) / documented template |
 
@@ -221,7 +224,8 @@ necessary but never sufficient** — your visual approval is the gate.
 without Firebase access, per R17). Neither is build output; both are kept
 deliberately, so a growing repository is expected rather than a leak.
 
-**Never committed:** `.env` (secrets), `node_modules/`, `dist/`, `playwright-report/`,
+**Never committed:** `.env` (secrets), `.demo-tenants.json` (the demo tenants'
+generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
 `test-results/`, and `.firebase/` (machine-specific CLI deploy cache).
 
 ---
@@ -351,13 +355,19 @@ deliberately, so a growing repository is expected rather than a leak.
   **R44 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order, and
   R45-R47 were built on top of R44, so they publish after it.
+- **Implemented locally, awaiting owner approval:** R45 (every blog write takes
+  an explicit `workspaceId`; `/w/<slug>/admin` is now a writer with **Write a
+  post**, Edit and Delete; the platform `admin` may write every workspace
+  without becoming its owner; and `scripts/seed-demo-tenants.mjs` seeded the
+  `pine-and-pixel` and `orbit-analytics` demo tenants). **R45 is stacked on
+  R44**, so it publishes on the updated `main`.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 130.74 kB JS / 8.18 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 131.13 kB JS / 8.17 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - **Five profiles carry `role: "admin"`** — three of them `@example.com`
     throwaway accounts from earlier upload probes. Only the console can change a

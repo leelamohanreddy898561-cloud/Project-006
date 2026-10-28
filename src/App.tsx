@@ -13,7 +13,11 @@ import { PostDetail } from "./pages/PostDetail";
 import { Placeholder } from "./pages/Placeholder";
 import { WorkspaceHome } from "./pages/WorkspaceHome";
 import { WorkspaceLayout } from "./pages/WorkspaceLayout";
-import { WorkspaceAdmin } from "./pages/WorkspaceAdmin";
+import {
+  WorkspaceAdmin,
+  WorkspaceAdminComposer,
+  WorkspaceAdminGate,
+} from "./pages/WorkspaceAdmin";
 import { Dashboard } from "./pages/Dashboard";
 import {
   AdminOverview,
@@ -42,9 +46,14 @@ export default function App() {
             <Route path="blog/:slug" element={<PostDetail />} />
           </Route>
           {/* R44 — the launcher, and a workspace's admin. The admin gate is the
-              workspace role, not the global admin role (see WorkspaceAdmin). */}
+              workspace role; R45 lets the platform admin in as well. */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/w/:siteSlug/admin" element={<WorkspaceAdmin />} />
+          {/* R45 — one gate for the site admin family: the list and the
+              composer share the resolved workspace and the same access check. */}
+          <Route path="/w/:siteSlug/admin" element={<WorkspaceAdminGate />}>
+            <Route index element={<WorkspaceAdmin />} />
+            <Route path="new" element={<WorkspaceAdminComposer />} />
+          </Route>
           <Route
             path="/topics"
             element={

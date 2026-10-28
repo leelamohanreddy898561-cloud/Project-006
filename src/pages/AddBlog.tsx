@@ -8,7 +8,11 @@ import {
 } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { BLOGS_COLLECTION, saveBlogPost } from "../lib/blogs";
+import {
+  BLOGS_COLLECTION,
+  SITE_WORKSPACE_ID,
+  saveBlogPost,
+} from "../lib/blogs";
 import {
   MAX_IMAGE_BYTES,
   categoryOptions,
@@ -32,9 +36,23 @@ import "./AddBlog.css";
  * an account whose role is `"admin"`. It reaches Firebase only through
  * `src/lib/blogs.ts`, and the rules that back the write are the ones that make
  * the guard real (AC33.10, AC33.11).
+ *
+ * R45 — the same composer also serves a tenant's admin at
+ * `/w/<slug>/admin/new`. It takes the workspace it writes to as a prop, so one
+ * form serves every site and a save can never land in the default workspace
+ * because a constant said so.
  */
 
 const CATEGORIES = categoryOptions();
+
+export interface AddBlogProps {
+  /** The workspace the post belongs to. Defaults to the global site. */
+  workspaceId?: string;
+  /** "" on the global site; `/w/<slug>` inside a tenant. */
+  basePath?: string;
+  /** The site's display name, for the copy and the saved message. */
+  workspaceName?: string;
+}
 
 function emptyDraft(): BlogDraft {
   return {
@@ -60,7 +78,11 @@ function authorFrom(user: {
   };
 }
 
-export function AddBlog() {
+export function AddBlog({
+  workspaceId = SITE_WORKSPACE_ID,
+  basePath = "",
+  workspaceName = "",
+}: AddBlogProps = {}) {
   const { user } = useAuth();
 
   const [draft, setDraft] = useState<BlogDraft>(emptyDraft);
@@ -168,7 +190,12 @@ export function AddBlog() {
     setStatus(image ? "Uploading the featured image…" : "Saving the post…");
     setSaved(null);
 
-    const outcome = await saveBlogPost(draft, authorFrom(user), image);
+    const outcome = await saveBlogPost(
+      workspaceId,
+      draft,
+      authorFrom(user),
+      image,
+    );
 
     setSaving(false);
 
@@ -178,7 +205,9 @@ export function AddBlog() {
     }
 
     setStatus(
-      `Saved to ${BLOGS_COLLECTION} as ${outcome.id}. It is live now — the home page and the blog archive read this collection.`,
+      `Saved to ${BLOGS_COLLECTION} as ${outcome.id}${
+        workspaceName ? ` for ${workspaceName}` : ""
+      }. It is live now — this site's archive reads the post.`,
     );
     setSaved({ id: outcome.id, imageUrl: outcome.imageUrl });
     setDraft(emptyDraft());
@@ -193,12 +222,16 @@ export function AddBlog() {
     <section className="admin-panel">
       <header className="admin-panel__head">
         <h1 className="admin-panel__title">Add new blog</h1>
-        <p className="admin-panel__count">Writes to Firestore</p>
+        <p className="admin-panel__count">
+          {workspaceName ? `Writes to ${workspaceName}` : "Writes to Firestore"}
+        </p>
       </header>
       <p className="admin-panel__lead">
-        Write the post, choose a featured image, and save it as a document in the{" "}
-        <code>{BLOGS_COLLECTION}</code> collection. The image is uploaded to
-        Firebase Storage and its URL is stored on the post.
+        Write the post, choose a featured image, and save it to{" "}
+        {workspaceName ? <strong>{workspaceName}</strong> : "this site"}. The
+        document goes into that workspace&apos;s{" "}
+        <code>{BLOGS_COLLECTION}</code> collection, and the image is uploaded to
+        the same workspace.
       </p>
 
       <form className="admin-form" onSubmit={handleSubmit} noValidate>
@@ -385,8 +418,11 @@ export function AddBlog() {
           >
             {saving ? "Saving…" : "Save post"}
           </button>
-          <Link to="/admin/dashboard" className="btn btn--outline">
-            Back to the dashboard
+          <Link
+            to={basePath ? `${basePath}/admin` : "/admin/dashboard"}
+            className="btn btn--outline"
+          >
+            {basePath ? "Back to the site admin" : "Back to the dashboard"}
           </Link>
         </div>
 
@@ -410,13 +446,14 @@ export function AddBlog() {
       )}
 
       <p className="admin-note">
-        <strong>Live on save.</strong> Every document in the{" "}
-        <code>{BLOGS_COLLECTION}</code> collection is part of the published
-        archive — the home page, the <Link to="/blog">blog archive</Link> and the
-        article pages read it (R37). Only an account with{" "}
-        <code>role: "admin"</code> can write here, enforced by{" "}
-        <code>firestore.rules</code> and <code>storage.rules</code> rather than
-        by this page.
+        <strong>Live on save.</strong> Every document in this workspace&apos;s{" "}
+        <code>{BLOGS_COLLECTION}</code> collection is part of its published
+        archive — the site home, the{" "}
+        <Link to={basePath ? `${basePath}/blog` : "/blog"}>blog archive</Link>{" "}
+        and the article pages read it (R37). The site&apos;s owner or an editor
+        may write here; the platform admin may write to every site. That is
+        enforced by <code>firestore.rules</code> and the image function, not by
+        this page.
       </p>
     </section>
   );

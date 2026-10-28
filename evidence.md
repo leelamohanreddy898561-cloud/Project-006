@@ -2829,3 +2829,39 @@ turns that page into a writer and adds the platform override in the rules, which
 is why it deploys separately.
 
 ---
+
+### 2026-10-28 - R45 workspace-scoped writes and tenant demo accounts (local, awaiting approval)
+
+**Branch:** `feature/r45-workspace-writes` (stacked on `feature/r44-workspace-launcher`)
+**Test cases:** TC-4501 (rules), TC-4502 (browser), TC-4503 (static), TC-4504 (manual)
+
+**Commands run:**
+
+    npm.cmd run build                        # 131.13 kB JS / 8.17 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npm.cmd run test:rules                   # 7 passed (R41, R42, R45)
+    npx playwright test --reporter=dot       # 137 passed (1.7m)
+    node --env-file=.env scripts/seed-demo-tenants.mjs --show-passwords
+    node --env-file=.env scripts/seed-demo-tenants.mjs   # second run: all "existing"
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4501 | R45.4, R45.5 | pass | the operator writes posts, members and private state in A and B; an `ownerUid` change, a `plan` field and an ownerless workspace are refused; the editor of A still cannot touch B; owner B cannot touch A; anonymous writes are refused |
+| TC-4502 | R45.1, R45.2, R45.3 | pass | signed out, both tenant admin URLs redirect to `/signin`; a throwaway owner writes a post from `/w/<slug>/admin/new`, the tenant home shows it, `/blog` does not, and `/w/signal-and-noise/admin` says **You do not have access**; the account, workspace and post are deleted afterwards |
+| TC-4503 | R45.1, R45.3, R45.4, R45.5, R45.6 | pass | every seam write takes `workspaceId`; no write path uses `SITE_WORKSPACE_ID`; the rules and the function allow `isAdmin()` while ownership transfer and billing stay refused; the seed is idempotent and `.demo-tenants.json` is git-ignored |
+| TC-4504 | R45.2, R45.6 | manual | both demo accounts sign in and each reads its own workspace as owner with 1 post (REST check). The owner's browser walkthrough is the approval step. |
+
+**Demo tenants (live, project-006-e6ae1):** `pine-and-pixel` (Pine & Pixel) and
+`orbit-analytics` (Orbit Analytics), each owned by its own demo account and
+carrying one seeded post. The second seed run reported `existing` for every
+account, workspace and post. Passwords are in the git-ignored
+`.demo-tenants.json` and are not recorded here.
+
+**Evaluation:** the write path is now explicit end to end: the page passes the
+workspace the gate resolved, the seam takes it as an argument, and the rules and
+the image function accept the platform operator without turning it into an
+owner. R44's AC44.3/AC44.4 were revised and recorded in the decision log rather
+than quietly changed. Nothing is merged or deployed: R44 must publish first,
+then R45 on the updated `main`.

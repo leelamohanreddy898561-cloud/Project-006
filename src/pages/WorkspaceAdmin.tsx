@@ -1,38 +1,58 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  Outlet,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
+import { ManageBlogs } from "../components/admin/ManageBlogs";
 import { useAuth } from "../hooks/useAuth";
-import { useSavedBlogs } from "../hooks/useSavedBlogs";
-import { savedBlogToPost } from "../lib/blog-posts";
+import { fetchUserRole, isAdminRole } from "../lib/users";
 import {
   fetchWorkspaceBySlug,
   fetchWorkspaceRole,
   type Workspace,
   type WorkspaceRole,
 } from "../lib/workspaces";
-import { formatDate } from "../data/posts";
+import { AddBlog } from "./AddBlog";
 import "./WorkspaceSite.css";
 
 /**
- * R44 — a workspace's admin, gated by that workspace's role.
+ * R44 / R45 — a workspace's admin, gated by that workspace's role.
  *
  * Access is decided by `workspaces/{id}.ownerUid` and `members/{uid}`, not by
  * the global `users/{uid}.role`: an account that runs one site has no business
- * opening another, and an account with no site has no business here at all. A
- * failed role read fails closed, and the rules enforce the same boundary for
+ * opening another. R45 adds the one exception the product asks for — the
+ * platform admin may administer every workspace — and settles the workspace
+ * role first, so an owner or editor never depends on the global profile.
+ *
+ * A failed role read fails closed, and the rules enforce the same boundary for
  * anything this page could try to write.
  *
- * R44 shows the site's posts read-only. Writing (create/edit/delete with the
- * workspace named) is R45, so this page says so rather than showing controls
- * that would write to the wrong place.
+ * The gate is the route element for the whole `/w/<slug>/admin` family, so the
+ * post list and the composer share one access decision and one resolved
+ * workspace. R45 makes the page a writer: the list edits and deletes, and
+ * **Write a post** opens the same composer the global dashboard uses.
  */
-export function WorkspaceAdmin() {
+
+/** The resolved site and role every child of the gate receives. */
+export interface WorkspaceAdminContext {
+  workspace: Workspace;
+  /** "admin" is the platform admin's override, not workspace ownership. */
+  role: WorkspaceRole | "admin";
+  /** `/w/<slug>` — the public base path for links inside this site. */
+  basePath: string;
+}
+
+type GatePhase = "loading" | "ready" | "missing" | "denied" | "error";
+
+export function WorkspaceAdminGate() {
   const { siteSlug = "" } = useParams();
   const auth = useAuth();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
-  const [role, setRole] = useState<WorkspaceRole | null>(null);
-  const [phase, setPhase] = useState<
-    "loading" | "ready" | "missing" | "denied" | "error"
-  >("loading");
+  const [role, setRole] = useState<WorkspaceRole | "admin" | null>(null);
+  const [phase, setPhase] = useState<GatePhase>("loading");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -43,6 +63,8 @@ export function WorkspaceAdmin() {
     let active = true;
 
     setPhase("loading");
+    setMessage("");
+    setRole(null);
 
     (async () => {
       const found = await fetchWorkspaceBySlug(siteSlug);
@@ -66,26 +88,46 @@ export function WorkspaceAdmin() {
 
       if (!active) return;
 
+      if (
+        access.ok &&
+        (access.role === "owner" || access.role === "editor")
+      ) {
+        setRole(access.role);
+        setPhase("ready");
+        return;
+      }
+
+      // R45 — the platform admin may administer every workspace. This is read
+      // only after the workspace role says no, so a tenant's own role always
+      // wins, and a failed global read still fails closed.
+      try {
+        const globalRole = await fetchUserRole(uid);
+
+        if (!active) return;
+
+        if (isAdminRole(globalRole)) {
+          setRole("admin");
+          setPhase("ready");
+          return;
+        }
+      } catch {
+        if (!active) return;
+        // Fall through: the workspace read's own answer decides.
+      }
+
       if (!access.ok) {
         setMessage(access.message);
         setPhase("error");
         return;
       }
 
-      setRole(access.role);
-
-      setPhase(
-        access.role === "owner" || access.role === "editor" ? "ready" : "denied",
-      );
+      setPhase("denied");
     })();
 
     return () => {
       active = false;
     };
   }, [auth.user?.uid, siteSlug]);
-
-  const canManage = phase === "ready";
-  const saved = useSavedBlogs(canManage && workspace ? workspace.id : null);
 
   if (auth.status === "loading" || (auth.user && phase === "loading")) {
     return (
@@ -124,7 +166,7 @@ export function WorkspaceAdmin() {
     );
   }
 
-  if (phase === "denied" || !workspace) {
+  if (phase === "denied" || !workspace || !role) {
     return (
       <div className="container site-state">
         <h1 className="site-state__title">You do not have access</h1>
@@ -139,8 +181,26 @@ export function WorkspaceAdmin() {
     );
   }
 
+  const value: WorkspaceAdminContext = {
+    workspace,
+    role,
+    basePath: `/w/${workspace.slug}`,
+  };
+
+  return <Outlet context={value} />;
+}
+
+/** The gate's context, typed for both children. */
+function useWorkspaceAdmin(): WorkspaceAdminContext {
+  return useOutletContext<WorkspaceAdminContext>();
+}
+
+/** The site's post list and editor. */
+export function WorkspaceAdmin() {
+  const { workspace, role, basePath } = useWorkspaceAdmin();
   const name = workspace.branding.title || workspace.name;
-  const posts = saved.records.map(savedBlogToPost);
+  const roleLabel =
+    role === "admin" ? "Platform admin" : role === "owner" ? "Owner" : "Editor";
 
   return (
     <div className="container ws-admin">
@@ -148,56 +208,38 @@ export function WorkspaceAdmin() {
         <p className="dashboard__eyebrow">Workspace admin</p>
         <h1 className="site-state__title">{name}</h1>
         <p className="ws-admin__meta">
-          <span className="badge">{role === "owner" ? "Owner" : "Editor"}</span>
+          <span className="badge">{roleLabel}</span>
           {" · "}
-          <Link to={`/w/${workspace.slug}`}>View public site</Link>
+          <Link to={basePath}>View public site</Link>
           {" · "}
           <Link to="/dashboard">All my sites</Link>
+          {" · "}
+          <Link to={`${basePath}/admin/new`} className="btn btn--primary btn--sm">
+            Write a post
+          </Link>
         </p>
       </header>
 
-      <section className="ws-admin__section" aria-labelledby="ws-posts">
-        <h2 id="ws-posts" className="ws-admin__section-title">
-          Posts
-        </h2>
+      <ManageBlogs
+        workspaceId={workspace.id}
+        basePath={basePath}
+        includeRepository={false}
+      />
+    </div>
+  );
+}
 
-        {saved.status === "error" && (
-          <p className="dashboard__notice" role="status">
-            This site&apos;s posts could not be loaded right now.
-          </p>
-        )}
+/** The composer, writing to the workspace the gate resolved. */
+export function WorkspaceAdminComposer() {
+  const { workspace, basePath } = useWorkspaceAdmin();
 
-        {posts.length === 0 && saved.status === "ready" ? (
-          <div className="dashboard__empty" role="status">
-            <h3 className="dashboard__empty-title">No posts yet</h3>
-            <p>
-              This site has not published anything. Writing and editing here is
-              the next requirement; nothing is invented on this page.
-            </p>
-          </div>
-        ) : (
-          <ul className="ws-admin__posts">
-            {posts.map((post) => (
-              <li className="ws-admin__post" key={post.slug}>
-                <div>
-                  <Link
-                    className="ws-admin__post-title"
-                    to={`/w/${workspace.slug}/blog/${post.slug}`}
-                  >
-                    {post.title}
-                  </Link>
-                  <p className="ws-admin__post-meta">
-                    {post.category}
-                    {post.date ? ` · ${formatDate(post.date)}` : ""} ·{" "}
-                    {post.readingTime} min read
-                  </p>
-                </div>
-                <span className="badge">Published</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+  return (
+    <div className="container ws-admin">
+      <AddBlog
+        workspaceId={workspace.id}
+        basePath={basePath}
+        workspaceName={workspace.branding.title || workspace.name}
+      />
     </div>
   );
 }

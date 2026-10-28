@@ -28,18 +28,23 @@ import { DEFAULT_WORKSPACE_ID, workspaceBlogsPath } from "./workspaces";
  * import nothing Firebase-related except this module. Every function resolves
  * to an outcome rather than throwing, and never reports a save that Firebase
  * did not confirm (R33 AC6).
+ *
+ * R45 — every write names its workspace. The functions below take a
+ * `workspaceId` rather than reading a module constant, so a page opened under
+ * `/w/<slug>/admin` writes to that site and can never fall back to the default
+ * one. `SITE_WORKSPACE_ID` remains the *default site's* id for the global
+ * pages (`/`, `/blog`, `/admin`), not a hidden target for a tenant write.
  */
 
 /** The collection name inside a workspace — the documents R42 migrated. */
 export const BLOGS_COLLECTION = "blogs";
 
 /**
- * R42 — the workspace this site's posts belong to.
+ * R42 — the default site's workspace id.
  *
- * There is one workspace for now; R43 makes the public site address a workspace
- * by slug and passes its id here. Until then every read, write and upload names
- * this id, which is what makes the app a tenant of R41's model rather than a
- * reader of the old flat collection.
+ * The global pages (`/`, `/blog`, `/blog/<slug>`) and the legacy `/admin`
+ * surfaces are the default tenant, so they pass this id explicitly. A tenant
+ * page passes the id it resolved from its own slug (R45).
  */
 export const SITE_WORKSPACE_ID = DEFAULT_WORKSPACE_ID;
 
@@ -104,7 +109,7 @@ export type DeleteOutcome =
  * A dev fixture short-circuits the network for Playwright (see `Window`).
  */
 export async function listSavedBlogs(
-  workspaceId: string = SITE_WORKSPACE_ID,
+  workspaceId: string,
 ): Promise<SavedBlogsOutcome> {
   if (import.meta.env.DEV) {
     const fixture =
@@ -163,7 +168,8 @@ const MESSAGES: Record<string, string> = {
     "Storage refused the upload — the account needs the admin role.",
   "permission-denied":
     "Firestore refused the request — the blogs rules must be deployed (npm run deploy:rules).",
-  "functions/permission-denied": "Only an admin account can upload blog images.",
+  "functions/permission-denied":
+    "Only this site's owner, an editor, or the platform admin can upload blog images.",
   "functions/unauthenticated": "Sign in before uploading an image.",
   "functions/unavailable":
     "The upload service is unreachable — check your connection and try again.",
@@ -226,11 +232,15 @@ async function imageDataUrl(file: File): Promise<string> {
 }
 
 /**
- * Uploads the featured image through the admin-gated function and returns its
- * public URL. The path is namespaced by the caller's uid, and the function
- * refuses a caller whose role is not "admin" (R35).
+ * Uploads the featured image through the workspace-gated function and returns
+ * its public URL. The path is namespaced by the caller's uid and the workspace,
+ * and the function refuses a caller who is neither that workspace's owner or
+ * editor nor the platform admin (R35, R45).
  */
-export async function uploadBlogImage(file: File): Promise<ImageUpload> {
+export async function uploadBlogImage(
+  file: File,
+  workspaceId: string,
+): Promise<ImageUpload> {
   const problem = validateImage({
     name: file.name,
     type: file.type,
@@ -238,6 +248,10 @@ export async function uploadBlogImage(file: File): Promise<ImageUpload> {
   });
 
   if (problem) return { ok: false, message: problem };
+
+  if (!workspaceId) {
+    return { ok: false, message: "Choose the site this post belongs to." };
+  }
 
   if (!isFirebaseConfigured()) {
     return {
@@ -258,7 +272,7 @@ export async function uploadBlogImage(file: File): Promise<ImageUpload> {
     const result = await call({
       dataUrl,
       fileName: file.name,
-      workspaceId: SITE_WORKSPACE_ID,
+      workspaceId,
     });
     const data = result.data as { url?: string; path?: string };
 
@@ -276,7 +290,7 @@ export async function uploadBlogImage(file: File): Promise<ImageUpload> {
 }
 
 /** Removes an uploaded image — used when the document write then fails. */
-async function removeBlogImage(path: string): Promise<void> {
+async function removeBlogImage(path: string, workspaceId: string): Promise<void> {
   try {
     const [{ app }, { getFunctions, httpsCallable }] = await Promise.all([
       getFirebase(),
@@ -285,7 +299,7 @@ async function removeBlogImage(path: string): Promise<void> {
 
     await httpsCallable(getFunctions(app), "deleteBlogImage")({
       path,
-      workspaceId: SITE_WORKSPACE_ID,
+      workspaceId,
     });
   } catch {
     // An orphaned image is a cost, not a failure; the write error is what the
@@ -294,18 +308,24 @@ async function removeBlogImage(path: string): Promise<void> {
 }
 
 /**
- * Writes one document to `blogs`.
+ * Writes one document to `workspaces/<workspaceId>/blogs`.
  *
  * Called only after `validateDraft` passes, so an empty form never reaches
  * Firestore (R33 AC8). The document shape comes from `blog-draft.ts`; the
- * creation timestamp is a server value, so it is added here.
+ * creation timestamp is a server value, so it is added here. R45 — the
+ * workspace is the caller's choice, never a module default.
  */
 export async function createBlogPost(
+  workspaceId: string,
   draft: BlogDraft,
   author: BlogAuthor,
   imageUrl: string,
   imagePath = "",
 ): Promise<SaveOutcome> {
+  if (!workspaceId) {
+    return { ok: false, message: "Choose the site this post belongs to." };
+  }
+
   if (!isFirebaseConfigured()) {
     return {
       ok: false,
@@ -322,7 +342,7 @@ export async function createBlogPost(
 
     const document = buildBlogDocument(draft, author, imageUrl, imagePath);
     const created = await addDoc(
-      collection(db, workspaceBlogsPath(SITE_WORKSPACE_ID)),
+      collection(db, workspaceBlogsPath(workspaceId)),
       {
         ...document,
         createdAt: serverTimestamp(),
@@ -346,6 +366,7 @@ export async function createBlogPost(
  * behind that no document points at.
  */
 export async function saveBlogPost(
+  workspaceId: string,
   draft: BlogDraft,
   author: BlogAuthor,
   file: File | null,
@@ -356,18 +377,23 @@ export async function saveBlogPost(
     return { ok: false, message: "The post is missing a required field." };
   }
 
-  const upload = file ? await uploadBlogImage(file) : null;
+  if (!workspaceId) {
+    return { ok: false, message: "Choose the site this post belongs to." };
+  }
+
+  const upload = file ? await uploadBlogImage(file, workspaceId) : null;
 
   if (upload && !upload.ok) return { ok: false, message: upload.message };
 
   const saved = await createBlogPost(
+    workspaceId,
     draft,
     author,
     upload?.url ?? "",
     upload?.path ?? "",
   );
 
-  if (!saved.ok && upload?.ok) await removeBlogImage(upload.path);
+  if (!saved.ok && upload?.ok) await removeBlogImage(upload.path, workspaceId);
 
   return saved;
 }
@@ -397,6 +423,7 @@ function authorOf(record: SavedBlogRecord): BlogAuthor {
  * selected — nothing is ever looked up by slug.
  */
 export async function updateBlogPost(
+  workspaceId: string,
   record: SavedBlogRecord,
   draft: BlogDraft,
   change: ImageChange,
@@ -407,6 +434,10 @@ export async function updateBlogPost(
 
   if (!record.id) {
     return { ok: false, message: "That post has no document id." };
+  }
+
+  if (!workspaceId) {
+    return { ok: false, message: "Choose the site this post belongs to." };
   }
 
   if (!isFirebaseConfigured()) {
@@ -423,7 +454,7 @@ export async function updateBlogPost(
   let upload: ImageUpload | null = null;
 
   if (change.kind === "replace") {
-    upload = await uploadBlogImage(change.file);
+    upload = await uploadBlogImage(change.file, workspaceId);
 
     if (!upload.ok) return { ok: false, message: upload.message };
 
@@ -447,13 +478,13 @@ export async function updateBlogPost(
       import("firebase/firestore"),
     ]);
 
-    await updateDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id), {
+    await updateDoc(doc(db, workspaceBlogsPath(workspaceId), record.id), {
       ...document,
       updatedAt: serverTimestamp(),
     });
   } catch (error) {
     // The new file has no document pointing at it, so it is removed again.
-    if (upload?.ok) await removeBlogImage(upload.path);
+    if (upload?.ok) await removeBlogImage(upload.path, workspaceId);
 
     return {
       ok: false,
@@ -464,7 +495,9 @@ export async function updateBlogPost(
   // Only after Firestore confirms the write, and only when the old object is
   // really no longer referenced. Best-effort: an orphaned file is a cost, not a
   // reason to report a save that did happen as failed.
-  if (oldPath && oldPath !== imagePath) await removeBlogImage(oldPath);
+  if (oldPath && oldPath !== imagePath) {
+    await removeBlogImage(oldPath, workspaceId);
+  }
 
   return { ok: true, id: record.id, imageUrl };
 }
@@ -477,10 +510,15 @@ export async function updateBlogPost(
  * gone, the cover is removed best-effort by the admin-gated function.
  */
 export async function deleteBlogPost(
+  workspaceId: string,
   record: SavedBlogRecord,
 ): Promise<DeleteOutcome> {
   if (!record.id) {
     return { ok: false, message: "That post has no document id." };
+  }
+
+  if (!workspaceId) {
+    return { ok: false, message: "Choose the site this post belongs to." };
   }
 
   if (!isFirebaseConfigured()) {
@@ -499,7 +537,7 @@ export async function deleteBlogPost(
       import("firebase/firestore"),
     ]);
 
-    await deleteDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id));
+    await deleteDoc(doc(db, workspaceBlogsPath(workspaceId), record.id));
   } catch (error) {
     return {
       ok: false,
@@ -507,7 +545,7 @@ export async function deleteBlogPost(
     };
   }
 
-  if (imagePath) await removeBlogImage(imagePath);
+  if (imagePath) await removeBlogImage(imagePath, workspaceId);
 
   return { ok: true, id: record.id };
 }

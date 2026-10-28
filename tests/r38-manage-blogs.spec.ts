@@ -238,20 +238,25 @@ test.describe("R38 — the panel, the seam and the rules agree", () => {
     expect(panel).toContain("deleteBlogPost");
 
     // The seam writes to the same document the composer created — now inside
-    // the workspace (R42).
+    // the workspace (R42), and R45 makes the workspace an argument so the
+    // tenant panel can never write the default site by accident.
     expect(seam).toContain("export async function updateBlogPost");
     expect(seam).toContain(
-      "updateDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id)",
+      "updateDoc(doc(db, workspaceBlogsPath(workspaceId), record.id)",
     );
     expect(seam).toContain("serverTimestamp()");
     expect(seam).toContain("export async function deleteBlogPost");
     expect(seam).toContain(
-      "deleteDoc(doc(db, workspaceBlogsPath(SITE_WORKSPACE_ID), record.id))",
+      "deleteDoc(doc(db, workspaceBlogsPath(workspaceId), record.id))",
     );
-    expect(seam).toContain("uploadBlogImage(change.file)");
+    expect(seam).toContain("uploadBlogImage(change.file, workspaceId)");
     expect(seam).toContain("storedImagePath(record)");
-    expect(seam).toContain("removeBlogImage(oldPath)");
-    expect(seam).toContain("removeBlogImage(imagePath)");
+    expect(seam).toContain("removeBlogImage(oldPath, workspaceId)");
+    expect(seam).toContain("removeBlogImage(imagePath, workspaceId)");
+
+    // The panel passes the workspace to both writes.
+    expect(panel).toContain("updateBlogPost(\n      workspaceId,");
+    expect(panel).toContain("deleteBlogPost(workspaceId, record)");
 
     // Access is unchanged: public read, admin-only write.
     expect(rules, "only an admin may write blogs").toMatch(
@@ -268,6 +273,7 @@ test.describe("R38 — the panel, the seam and the rules agree", () => {
     expect(functions).toContain("exports.deleteBlogImage");
     expect(functions).toContain("isGlobalAdmin(uid)");
     expect(functions).toContain("workspaceRole(uid, workspacePath[1])");
-    expect(functions).toContain("blog-images/${uid}/");
+    expect(functions).toContain("blog-images/${uid}");
+    expect(functions).toContain("const coverPath =");
   });
 });

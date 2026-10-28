@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { formatDate, getLatestPosts } from "../../data/posts";
 import { useSavedBlogs } from "../../hooks/useSavedBlogs";
 import {
+  SITE_WORKSPACE_ID,
   deleteBlogPost,
   updateBlogPost,
   type ImageChange,
@@ -44,9 +45,24 @@ import "./ManageBlogs.css";
  * `deleteBlogPost`, which talk to the same `blogs/<id>` document the composer
  * writes. The page is behind the R31 guard and the rules keep the write
  * admin-only; this component only shapes the request.
+ *
+ * R45 — the same panel is a tenant's post manager. It takes the workspace and
+ * the public base path as props, lists only that workspace's Firestore posts,
+ * and passes the workspace to every write, so a tenant's Edit or Delete can
+ * never reach another site. On the global site (`/admin/dashboard/blogs`) the
+ * repository articles stay in the list as read-only rows.
  */
 
 const CATEGORIES = categoryOptions();
+
+export interface ManageBlogsProps {
+  /** The workspace whose posts this panel manages. */
+  workspaceId?: string;
+  /** "" on the global site; `/w/<slug>` inside a tenant. */
+  basePath?: string;
+  /** The default site lists its repository articles too, read-only. */
+  includeRepository?: boolean;
+}
 const IMAGE_LIMIT = `${MAX_IMAGE_BYTES / (1024 * 1024)} MB`;
 
 function imageRuleMessage(file: File | null): string | null {
@@ -59,10 +75,12 @@ function imageRuleMessage(file: File | null): string | null {
 
 function ManagedBlogRow({
   item,
+  basePath,
   onEdit,
   onDelete,
 }: {
   item: ManagedBlog;
+  basePath: string;
   onEdit: (item: ManagedBlog) => void;
   onDelete: (item: ManagedBlog) => void;
 }) {
@@ -78,7 +96,7 @@ function ManagedBlogRow({
       <div className="manage-blogs__main">
         <div className="manage-blogs__heading">
           <h2 className="manage-blogs__title">
-            <Link to={`/blog/${item.post.slug}`}>{title}</Link>
+            <Link to={`${basePath}/blog/${item.post.slug}`}>{title}</Link>
           </h2>
           <span
             className={
@@ -109,7 +127,7 @@ function ManagedBlogRow({
 
       <div className="manage-blogs__actions">
         <Link
-          to={`/blog/${item.post.slug}`}
+          to={`${basePath}/blog/${item.post.slug}`}
           className="btn btn--outline btn--sm"
         >
           View
@@ -141,10 +159,12 @@ function ManagedBlogRow({
 
 function BlogEditor({
   item,
+  workspaceId,
   onCancel,
   onSaved,
 }: {
   item: ManagedBlog;
+  workspaceId: string;
   onCancel: () => void;
   onSaved: (message: string) => void;
 }) {
@@ -263,7 +283,12 @@ function BlogEditor({
         : "Saving the changes…",
     );
 
-    const outcome = await updateBlogPost(record, draft, imageChange);
+    const outcome = await updateBlogPost(
+      workspaceId,
+      record,
+      draft,
+      imageChange,
+    );
 
     setSaving(false);
 
@@ -508,8 +533,12 @@ function BlogEditor({
 
 /* The page ----------------------------------------------------------------- */
 
-export function ManageBlogs() {
-  const { records, status, reload } = useSavedBlogs();
+export function ManageBlogs({
+  workspaceId = SITE_WORKSPACE_ID,
+  basePath = "",
+  includeRepository = true,
+}: ManageBlogsProps = {}) {
+  const { records, status, reload } = useSavedBlogs(workspaceId);
 
   // A confirmed delete must leave the list immediately, even if the re-read
   // that follows is slow or fails; the id stays hidden for this session.
@@ -517,10 +546,13 @@ export function ManageBlogs() {
 
   const items = useMemo(
     () =>
-      managedBlogs(getLatestPosts(), records).filter(
+      managedBlogs(
+        includeRepository ? getLatestPosts() : [],
+        records,
+      ).filter(
         (item) => !item.record || !removedIds.includes(item.record.id),
       ),
-    [records, removedIds],
+    [includeRepository, records, removedIds],
   );
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -539,6 +571,7 @@ export function ManageBlogs() {
 
   const savedCount = items.filter((item) => item.source === "Firestore").length;
   const repositoryCount = items.length - savedCount;
+  const empty = status === "ready" && items.length === 0;
 
   function startEdit(item: ManagedBlog) {
     if (!item.record) return;
@@ -564,7 +597,7 @@ export function ManageBlogs() {
     setDeleting(true);
     setMessage("Deleting the post…");
 
-    const outcome = await deleteBlogPost(record);
+    const outcome = await deleteBlogPost(workspaceId, record);
 
     setDeleting(false);
     setConfirmId(null);
@@ -583,17 +616,32 @@ export function ManageBlogs() {
   return (
     <section className="admin-panel">
       <header className="admin-panel__head">
-        <h1 className="admin-panel__title">Manage blogs</h1>
+        <h1 className="admin-panel__title">
+          {includeRepository ? "Manage blogs" : "Posts"}
+        </h1>
         <p className="admin-panel__count">
-          {savedCount} {savedCount === 1 ? "saved post" : "saved posts"} ·{" "}
-          {repositoryCount} in the repository
+          {savedCount} {savedCount === 1 ? "saved post" : "saved posts"}
+          {includeRepository && (
+            <> · {repositoryCount} in the repository</>
+          )}
         </p>
       </header>
       <p className="admin-panel__lead">
-        Every written post, newest first. A post saved in Firestore can be
-        edited, given a new cover or deleted here — the change is written to the
-        same document the site reads. Repository articles are changed by
-        committing their file.
+        {includeRepository ? (
+          <>
+            Every written post, newest first. A post saved in Firestore can be
+            edited, given a new cover or deleted here — the change is written to
+            the same document the site reads. Repository articles are changed by
+            committing their file.
+          </>
+        ) : (
+          <>
+            Every post this site has published, newest first. Edit it, give it a
+            new cover, or delete it here — the change is written to this
+            site&apos;s own workspace and appears on its public pages on the next
+            read.
+          </>
+        )}
       </p>
 
       {status === "loading" && (
@@ -603,14 +651,25 @@ export function ManageBlogs() {
       )}
       {status === "error" && (
         <p className="manage-blogs__notice" role="status" aria-live="polite">
-          The saved posts could not be loaded, so only repository articles are
-          shown. Check the connection, then reload the page.
+          The saved posts could not be loaded
+          {includeRepository ? ", so only repository articles are shown" : ""}.
+          Check the connection, then reload the page.
         </p>
       )}
 
       <p className="admin-form__status" role="status" aria-live="polite">
         {message}
       </p>
+
+      {empty && (
+        <div className="dashboard__empty" role="status">
+          <h2 className="dashboard__empty-title">No posts yet</h2>
+          <p>
+            This site has not published anything. Write the first post from the
+            site admin.
+          </p>
+        </div>
+      )}
 
       <ul className="manage-blogs">
         {items.map((item) => {
@@ -622,6 +681,7 @@ export function ManageBlogs() {
             <li className="manage-blogs__item" key={recordId ?? item.post.slug}>
               <ManagedBlogRow
                 item={item}
+                basePath={basePath}
                 onEdit={startEdit}
                 onDelete={startDelete}
               />
@@ -630,6 +690,7 @@ export function ManageBlogs() {
                 <BlogEditor
                   key={recordId}
                   item={editing}
+                  workspaceId={workspaceId}
                   onCancel={() => setEditingId(null)}
                   onSaved={(saved) => {
                     setEditingId(null);
@@ -676,13 +737,14 @@ export function ManageBlogs() {
       </ul>
 
       <p className="admin-note">
-        <strong>Live on save.</strong> A post in the <code>blogs</code>{" "}
-        collection is published content (R37). Editing or deleting it here
-        updates that document directly, so the home page, the{" "}
-        <Link to="/blog">blog archive</Link> and the article page show the
-        change on their next read. Only an account with <code>role: "admin"</code>{" "}
-        can write, enforced by <code>firestore.rules</code> and the
-        admin-gated image function rather than by this page.
+        <strong>Live on save.</strong> A post in this workspace&apos;s{" "}
+        <code>blogs</code> collection is published content (R37). Editing or
+        deleting it here updates that document directly, so the site home, the{" "}
+        <Link to={`${basePath}/blog`}>blog archive</Link> and the article page
+        show the change on their next read. The site&apos;s owner or an editor
+        may write here; the platform admin may write to every site. That is
+        enforced by <code>firestore.rules</code> and the image function rather
+        than by this page.
       </p>
     </section>
   );

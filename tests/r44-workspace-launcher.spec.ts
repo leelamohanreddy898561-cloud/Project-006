@@ -87,7 +87,7 @@ test.describe("R44 — an account with no site sees no site", () => {
   });
 });
 
-test.describe("R44 — the gate is the workspace role, not the global one", () => {
+test.describe("R44 — the gate settles the workspace role first", () => {
   test("TC-4403: the launcher lists owned sites and the admin gate reads membership", () => {
     const dashboard = read("src/pages/Dashboard.tsx");
     const admin = read("src/pages/WorkspaceAdmin.tsx");
@@ -105,9 +105,18 @@ test.describe("R44 — the gate is the workspace role, not the global one", () =
     expect(app).toContain('path="/dashboard"');
     expect(app).toContain('path="/w/:siteSlug/admin"');
 
-    // The workspace admin decides access by the workspace role.
+    // R45 — the workspace role is settled first; the global admin role is only
+    // a fallback for the platform operator, never the tenant's own answer.
     expect(admin).toContain("fetchWorkspaceRole(");
-    expect(admin).not.toContain("isAdminRole");
+    expect(admin).toContain("fetchUserRole(");
+    expect(admin).toContain("isAdminRole(");
+
+    const workspaceRole = admin.indexOf("fetchWorkspaceRole(");
+    const globalRole = admin.indexOf("fetchUserRole(");
+
+    expect(workspaceRole).toBeGreaterThan(-1);
+    expect(globalRole).toBeGreaterThan(-1);
+    expect(workspaceRole).toBeLessThan(globalRole);
 
     // The owner is settled before the member document is read, because the
     // members rule refuses that read for an owner who has no member document.

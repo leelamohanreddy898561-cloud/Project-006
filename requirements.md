@@ -55,7 +55,8 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-26 | Blog management lives in the existing **All Blogs** dashboard section rather than a fourth sidebar item (R38) | R32.1 fixes the sidebar at exactly three items. Making All Blogs the management view satisfies "a Manage Blogs page" without reopening that criterion: the same route, the same nav label, and the list R32.5 already requires, now with Edit/Delete for the Firestore posts that can actually be changed from the browser. Repository articles stay read-only there because editing one is a commit, not a Firestore write. |
 | 2026-10-26 | Uploads move from the browser Storage SDK to an admin-gated Cloud Function (R35) | This project's Storage bucket does not apply Storage Security Rules: `allow read, write: if true` at the root still returns 403 for anonymous and Firebase-authenticated callers, and the fault survived re-provisioning the bucket through Firebase's own `defaultBucket` API, a correct rules release, billing enabled, App Check off and IAM bindings. The Admin SDK is not subject to those rules, so the write moved server-side, where the same `users/{uid}.role` check is enforceable and cannot be bypassed by the client. Covers are made public per object because a cover is meant to be public; `storage.rules` stays in the repo as the rule the client path would need once the bucket behaves. |
 | 2026-10-26 | The article featured image is rendered at its own aspect ratio, capped and contained; card thumbnails crop only at and above 640 px (R40) | `<img height={500}>` is a presentational hint, and the cover's CSS declared no `height`, so the box was 500 px tall at every width while `aspect-ratio: 8 / 5` never applied. A 16:9 cover therefore lost ~63% of its width on a 360 px phone. A fixed-ratio content image is a defect, not a design, so the article cover now shows in full everywhere; the desktop card crop is kept only where the thumbnail is a uniform preview, and only above the width at which a card stops being full width. |
-| 2026-10-26 | Dark-mode `--color-text-subtle` is raised to meet AA in R40 instead of waiting for R11 | The R40 mobile audit found the 3.98:1 token under every card's meta line, in the article meta row and across the sidebar — the exact surfaces a mobile reader scans. The fix is one token and only lightens secondary text, so the recorded R11 deferral is settled early; R11 keeps the rest of its scope. |
+| 2026-10-26 | Dark-mode `--color-text-subtle` is raised to meet AA in R40 instead of waiting for R11 | The R40 mobile audit found the 3.98:1 token under every card's meta line, in the article meta row and across the sidebar - the exact surfaces a mobile reader scans. The fix is one token and only lightens secondary text, so the recorded R11 deferral is settled early; R11 keeps the rest of its scope. |
+| 2026-10-28 | R45 revises R44's AC44.3 and AC44.4: the tenant admin now writes, and the platform admin is admitted after the workspace role says no | R44 deliberately made the page read-only until every write named its workspace. R45 makes `workspaceId` an argument to every seam function, so the controls can be offered safely; the global role is a fallback for the platform operator only, never the tenant's own answer, and the rules still refuse an `ownerUid` change and billing fields on the public document. |
 
 ## 5. Out of Scope (v1)
 
@@ -1163,15 +1164,17 @@ they act on.
 
 - **AC44.3** `/w/<slug>/admin` requires a session, and access is decided by that
   workspace: its `ownerUid`, or a `members/{uid}` document with role `"editor"`
-  or `"owner"`. The global `users/{uid}.role` is not consulted. An account that
+  or `"owner"`. The global `users/{uid}.role` is not consulted unless the
+  workspace role says no - R45 revises this sentence so the platform operator
+  (`"admin"`) may administer every site. An account that
   is neither is told **You do not have access** and sees no post data; a failed
   role read fails closed with **Access could not be checked**; an unknown slug
   renders **Site not found**.
 - **AC44.4** The workspace admin lists that workspace's posts only — title,
   category, date, reading time and a link to the public article — and links back
-  to the public site and to `/dashboard`. It offers no edit, delete or create
-  control, so nothing can be written to the wrong workspace before R45 names the
-  workspace on every write.
+  to the public site and to `/dashboard`. R44 offered no edit, delete or create
+  control; R45 supersedes that sentence now that every write names its
+  workspace, and the page offers **Write a post**, Edit and Delete.
 - **AC44.5** Ownership is resolved without reading the members document, because
   `firestore.rules` refuses that read for an owner who has no member document;
   a `permission-denied` answer from the members read means "not a member", while
@@ -1186,6 +1189,66 @@ they act on.
   rules decide what the admin page may read. Build and lint pass, the rules
   tests and the full suite stay green, and the bundle stays within the R14
   budgets.
+
+---
+
+### R45 - Workspace-scoped writes and the tenant demo accounts
+
+R44 made a workspace addressable and gated its admin, but every write still
+reached for a module constant, so the page could not safely offer a control.
+This requirement makes the workspace an argument to every blog write, turns the
+tenant admin into a writer, gives the platform operator the authority the
+product asks for, and seeds two demo tenants that prove a real owner can
+publish.
+
+**Every write names its workspace**
+
+- **AC45.1** `listSavedBlogs`, `uploadBlogImage`, `createBlogPost`,
+  `saveBlogPost`, `updateBlogPost`, `deleteBlogPost` and the image cleanup take a
+  `workspaceId`. No write falls back to `SITE_WORKSPACE_ID`; a missing id is
+  refused with **Choose the site this post belongs to.** `SITE_WORKSPACE_ID` is
+  the *default site's* id for `/`, `/blog` and `/admin`, not a hidden target for
+  a tenant write.
+
+**The tenant admin writes to its own site**
+
+- **AC45.2** `/w/<slug>/admin` keeps R44's gate and adds writing: it lists that
+  workspace's Firestore posts only (no repository articles), and **Write a post**
+  opens `/w/<slug>/admin/new`, the shared composer bound to that workspace. A
+  save writes `workspaces/<id>/blogs`, and the tenant home, archive and article
+  page show it on the next read.
+- **AC45.3** Edit, Delete and cover replace/remove in the tenant admin pass the
+  resolved workspace to the seam, so no control can reach another site. The
+  global `/admin/dashboard/blogs` keeps the repository articles as read-only rows
+  and writes to the default workspace.
+
+**The platform operator**
+
+- **AC45.4** An account whose `users/{uid}.role` is exactly `"admin"` may write
+  every workspace: posts, members (`editor`/`viewer` only), `private` state, and
+  the workspace document. It is an override, not ownership - `ownerUid` cannot
+  be changed from the browser, billing fields stay refused on the public
+  document, and a tenant's owner or editor is still confined to its own
+  workspace. The gate settles the workspace role first and consults the global
+  role only when that says no; a failed global read still fails closed.
+- **AC45.5** The image function applies the same rule: an upload needs that
+  workspace's owner/editor or the platform admin; the platform admin may delete
+  any cover; a non-admin may only remove an object in its own folder.
+
+**The demo tenants**
+
+- **AC45.6** `scripts/seed-demo-tenants.mjs` creates two accounts, each owning
+  one workspace with one post, through the public Auth and Firestore REST APIs
+  (so the deployed rules check every write). It is idempotent, never takes over a
+  workspace owned by someone else, writes credentials only to the git-ignored
+  `.demo-tenants.json`, and does not print a password unless asked. The two demo
+  tenants are `pine-and-pixel` and `orbit-analytics`.
+
+**Unchanged**
+
+- **AC45.7** The default site (`/`, `/blog`, `/blog/<slug>`, `/admin`) behaves as
+  before; build and lint pass; `npm run test:rules` and the full suite stay
+  green; the bundle stays within the R14 budgets.
 
 ---
 

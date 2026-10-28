@@ -54,18 +54,25 @@ test("TC-4104 — the tenant paths stay membership-gated and billing-free", () =
   const billing = blockBody(workspace, "match /private/{document}");
   const posts = blockBody(workspace, "match /blogs/{blogId}");
 
-  // Posts: public to read, written by this workspace's editors only.
+  // Posts: public to read, written by this workspace's editors - or by the
+  // platform operator R45 adds.
   expect(posts).toContain("allow read: if true;");
-  expect(posts).toContain("allow write: if canEditWorkspace(workspaceId);");
+  expect(posts).toContain(
+    "allow write: if canEditWorkspace(workspaceId) || isAdmin();",
+  );
 
   // Team: visible to the team, written by the owner, never handed ownership.
-  expect(members).toContain("allow read: if isWorkspaceMember(workspaceId);");
-  expect(members).toContain("if isWorkspaceOwner(workspaceId)");
+  expect(members).toContain(
+    "allow read: if isWorkspaceMember(workspaceId) || isAdmin();",
+  );
+  expect(members).toContain("if (isWorkspaceOwner(workspaceId) || isAdmin())");
   expect(members).toContain("['editor', 'viewer']");
   expect(members).not.toContain("'owner'");
 
-  // Billing state: owner-only.
-  expect(billing).toContain("if isWorkspaceOwner(workspaceId)");
+  // Billing state: owner and the platform operator only.
+  expect(billing).toContain(
+    "allow read, write: if isWorkspaceOwner(workspaceId) || isAdmin();",
+  );
 
   // The public document cannot gain a plan field or a new owner.
   expect(workspace).toContain("hasNoBillingFields()");

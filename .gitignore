@@ -18,6 +18,8 @@ blob-report/
 # Local environment / secrets
 .env
 .env.*.local
+# R45 — demo tenant passwords, written by scripts/seed-demo-tenants.mjs
+.demo-tenants.json
 
 # Logs
 *.log
