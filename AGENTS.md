@@ -362,15 +362,14 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   R46 (a sign-in lands where the account belongs — an owner of exactly one site
   opens `/w/<slug>` and the header offers **My site** straight to that site's
   admin, several sites open the launcher, and a reader or the platform operator
-  keeps `/`; a failed read fails closed to the platform home).
-  **R46 is the most recent requirement published to production** — R2 was
+  keeps `/`; a failed read fails closed to the platform home),
+  R47 (the tenant admin's add-post section — `/w/<slug>/admin` carries the same
+  **All posts** / **Add new blog** nav as the platform dashboard, so adding a
+  post is a visible destination rather than a link inside a line of meta text,
+  with one add control instead of two).
+  **R47 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order, and
-  R47 was built on top of R46, so it publishes after it.
-- **Implemented locally, awaiting owner approval:** R47 (the tenant admin's
-  add-post section: the same **All posts** / **Add new blog** nav the platform
-  dashboard has, replacing R45's inline **Write a post** link, so adding a post
-  is a visible destination on `/w/<slug>/admin` and its composer). **R47 is
-  stacked on R46**, so it publishes on the updated `main`.
+  R44-R47 published in stack order on top of R43.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

@@ -3022,3 +3022,38 @@ the discoverability fix the owner asked for, using the platform dashboard's own
 pattern. R47 revises only the control's label in AC44.4/AC45.2, recorded in the
 decision log. Publication order is now R44, R45, R46, then R47; nothing is
 merged or deployed.
+
+### 2026-10-28 - R47 published (the tenant admin's add-post section)
+
+**Approval:** the owner reviewed the section nav and composer on the tenant admin
+and approved publishing R44-R47 in order; R44, R45 and R46 were live.
+**Branch merged:** `feature/r47-tenant-add-post`, rebased onto the published R46
+tip (only R47's own commit replayed) and then fast-forwarded into `main`.
+
+**Commands:**
+
+    npm.cmd run build                    # 131.37 kB JS / 8.29 kB CSS gzipped
+    npm.cmd run lint                     # exit 0
+    npm.cmd run test:rules               # 7 passed (R41, R42, R45)
+    npx.cmd playwright test --reporter=dot   # 141 passed (1.6m)
+    npm.cmd run deploy                   # hosting only (no rule, function or script change)
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** hosting released; production smoke **11 passed in 10.8 s**. The
+section was then proved on the deployed site with a throwaway browser script
+(`test-results/live-check-r47*.mjs`, disposable - Playwright's output directory
+is cleared by the next run): signed in as the `pine-and-pixel` demo owner,
+`/w/pine-and-pixel/admin` shows **All posts** current and **Add new blog** as a
+filled link to `/w/pine-and-pixel/admin/new`, with no **Write a post** text left;
+the composer keeps the nav with **Add new blog** current, and **All posts**
+returns to the list. Label contrast measured on the live page: **6.29:1** when
+filled (white on `#4f46e5`) and **5.62:1** as the current section.
+
+**Evaluation:** adding a post is now a named destination on a tenant's own admin,
+using the platform dashboard's pattern, and the gate and workspace-scoped writes
+are untouched - a label change, not a boundary change. One observation, not a
+defect: the nav link's `color` transitions over 120 ms, so a screenshot taken in
+that frame measures ~1.15:1; the settled state is 5.62:1. With this merge the
+four approved requirements are all live and nothing is left awaiting approval.
+
+---
