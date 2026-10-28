@@ -437,4 +437,4 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R49.2) The signed-in header keeps Sign out and the Admin / My site(s) destinations; compact at 560px, avatar chip dropped at 375px, search shortcut at 330px
 - [x] (R49.3) Two-row header at 320-560px within the 100px compact offset, no horizontal scroll; single row at 768px and above
 - [x] (R49) `tests/r49-mobile-auth.spec.ts` (TC-4901-TC-4903) and the CSS/markup guard
-- [ ] (R49.4) Build/lint/`npm run test:rules`/full suite green; TC-4904 executed; evidence entry; local commit; **await owner approval**
+- [x] (R49.4) Build/lint/`npm run test:rules`/full suite green; TC-4904 executed; evidence entries; local commit; owner approved 2026-10-28 and R49 published

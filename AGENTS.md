@@ -374,13 +374,13 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   bar on that site, decided by the workspace role; its admin is gated by that
   site's owner/editor only; R45's platform-admin override is gone from the gate,
   `firestore.rules` and the upload function, while `/admin/dashboard` keeps its
-  R31 role gate for the default workspace).
-  **R48 is the most recent requirement published to production** - R2 was
+  R31 role gate for the default workspace),
+  R49 (the way in is visible on a phone — the header no longer hides **Sign In**,
+  **Sign Up** or **Sign out** below 900px; the controls compact instead, so `/`
+  and every `/w/<slug>` site keep a route to `/signin` at 320px).
+  **R49 is the most recent requirement published to production** - R2 was
   backfilled after R30, so requirement numbers are not publication order, and
-  R44-R48 published in stack order on top of R43.
-- **Awaiting owner approval:** R49 (the way in is visible on a phone) -
-  implemented and verified on `fix/r49-mobile-sign-in`; the header no longer
-  hides Sign In, Sign Up or Sign out below 900px.
+  R44-R49 published in stack order on top of R43.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

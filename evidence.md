@@ -3173,3 +3173,23 @@ production verification. Nothing is merged or deployed.
 **Results:** before the fix, measured at 390px, the header's Sign In and Sign Up both computed to `display: none` on `/`, `/w/pine-and-pixel` and `/w/orbit-analytics`. After it, TC-4901 finds both visible and inside the viewport at 320, 390 and 900px on `/`, `/w/alpha` and `/w/signal-and-noise`, and each opens **Welcome back** / **Create your account**. TC-4902 signs a throwaway account in at 390px and finds **Sign out** and **My sites** visible at 390, 360 and 320px, a two-row header no taller than 100px, no horizontal scroll, and visible Sign In / Sign Up again after signing out. The first full run failed only TC-3002 because R49 was not yet named in AGENTS.md Section 9; the state entry and bundle figure were updated and the guard now passes.
 
 **Evaluation:** the defect was one CSS rule: R18 hid every `.btn--sm` in the header actions below 900px, which removed the only way in and the way out on a phone. R49 keeps those controls and compacts them (avatar chip dropped at 375px, redundant search shortcut at 330px) so the 100px two-row header and the R40 offset stay accurate at 320px. No rule, function or data change; nothing is merged or deployed, and owner approval is still the gate.
+
+---
+
+### 2026-10-28 - R49 published (the way in is visible on a phone)
+
+**Approval:** the owner reviewed the local mobile header at 390px on `/`, `/w/pine-and-pixel` and `/w/orbit-analytics` and approved publishing R49 on 2026-10-28.
+**Branch:** `fix/r49-mobile-sign-in` (commit `b22225f`) pushed to GitHub as off-machine backup; merge to `main` follows this record.
+
+**Commands run:**
+
+    git grep -n -I -E "BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|AIza[0-9A-Za-z_-]{20,}" -- .   # only evidence.md's own recorded command text
+    git push -u origin fix/r49-mobile-sign-in
+    npm.cmd run build                           # 131.61 kB JS / 8.42 kB CSS gzipped
+    npm.cmd run deploy                          # hosting release complete
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod  # 11 passed (13.3s)
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npx.cmd playwright test tests/tmp-r49-prod.spec.ts --reporter=line  # 1 passed (spec deleted)
+
+**Results:** hosting released with no rule or function change, so `deploy:rules` and `deploy:functions` were not needed. Production smoke **11 passed**. A disposable live spec then measured the deployed header at 320px and 390px on `/`, `/w/pine-and-pixel` and `/w/orbit-analytics`: **Sign In** and **Sign Up** were displayed, non-zero and inside the viewport on every page, **1 passed in 2.9s** (spec deleted, no writes).
+
+**Evaluation:** the fix is live and proven on the deployed artifact, not only locally: the two demo tenant sites and the platform home keep the way in at phone widths. Bundle 131.61 kB JS / 8.42 kB CSS stays inside the R14 budgets. Change-log sync and the `--ff-only` merge to `main` follow in this publish cycle.
