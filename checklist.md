@@ -428,4 +428,5 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R48.2) `WorkspaceAdminGate` admits only the workspace `ownerUid` or an `editor`; no global-role read and no platform fallback
 - [x] (R48.3, R48.4) `firestore.rules` and `functions/index.js` drop the platform-admin override for tenant workspaces; the legacy `blogs` and `blog-images/` paths keep their R35/R37 admin rules
 - [x] (R48) `tests/r48-public-site.spec.ts` and `tests/rules/r48-site-ownership.test.mjs`; the R36/R41/R44/R45/R46/R47 guards updated for the site-scoped gate
-- [ ] (R48.5) Build/lint/`npm run test:rules`/full suite green; TC-4801-TC-4804 executed; evidence entry; local commit; **await owner approval**
+- [x] (R48.5) Build/lint/`npm run test:rules`/full suite green; TC-4801-TC-4804 executed; evidence entries; local commit; owner approved on 2026-10-28 and R48 published
+- [x] (R48.6) `firestore.rules`, `storage.rules` and both functions released; hosting deployed; production smoke 11 passed; both demo owners verified live with the owner bar

@@ -3114,3 +3114,25 @@ production verification. Nothing is merged or deployed.
 **Results:** both seeded demo owners sign in, land on their own site and see the owner bar; **Site admin** opens that site's admin, **Add new blog** opens its composer, and neither account sees the bar on the other tenant's site. TC-4801 proves the same for a throwaway owner on `/w/<slug>` and `/w/<slug>/blog`, with no bar on `/w/pine-and-pixel`, while the header keeps only identity and **Sign out**. The stranger view (AC48.1), the gate, `firestore.rules` and the upload function are unchanged.
 
 **Evaluation:** the defect was discoverability, not access: the site role was correct, but R48 removed every visible admin destination from a tenant's public pages. AC48.1 is narrowed to strangers (including the platform admin) and AC48.7 gives the site's own owner/editor one bar decided by the same `fetchWorkspaceRole` seam the gate uses. Nothing is merged or deployed; owner approval is still the gate.
+
+
+---
+
+### 2026-10-28 - R48 published (a public site stays public; its owner keeps one way in)
+
+**Approval:** the owner reviewed the local owner bar on both demo sites and approved publishing R48 on 2026-10-28.
+**Branch:** `feature/r48-public-site-isolation` (commit `e99363f`) pushed to GitHub as off-machine backup; merge to `main` follows this record.
+
+**Commands run:**
+
+    git grep -n "AIza" -- .                     # only this file's recorded command text
+    git push -u origin feature/r48-public-site-isolation
+    npm.cmd run build                           # 131.61 kB JS / 8.34 kB CSS gzipped
+    npm.cmd run deploy:rules                    # firestore + storage rules released
+    npm.cmd run deploy:functions                # both functions updated; exit 1 only for the cleanup-policy advisory
+    npm.cmd run deploy                          # hosting release complete
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod  # 11 passed (15.2s)
+
+**Results:** `firestore.rules` and `storage.rules` compiled and released; `uploadBlogImage` and `deleteBlogImage` updated successfully (the command's non-zero exit was the unrelated "No cleanup policy detected" advisory); hosting released; production smoke **11 passed**. A disposable live spec then signed in as both seeded demo owners against the deployed site: each landed on its own site, saw the **Owner** bar, opened **Site admin** from it, and saw no bar on the other tenant's site - **2 passed in 8.7 s** (spec deleted, no writes).
+
+**Evaluation:** the deployed owner bar closes the demo-owner gap without reopening the leak R48 fixed: the bar is driven by the workspace role, so a stranger and the platform admin still see a public page. Bundle 131.61 kB JS / 8.34 kB CSS stays inside the R14 budgets. Change-log sync and the `--ff-only` merge to `main` follow in this publish cycle.

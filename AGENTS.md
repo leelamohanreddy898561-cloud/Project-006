@@ -364,28 +364,27 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   opens `/w/<slug>` and the header offers **My site** straight to that site's
   admin, several sites open the launcher, and a reader or the platform operator
   keeps `/`; a failed read fails closed to the platform home),
-  R47 (the tenant admin's add-post section — `/w/<slug>/admin` carries the same
+  R47 (the tenant admin's add-post section - `/w/<slug>/admin` carries the same
   **All posts** / **Add new blog** nav as the platform dashboard, so adding a
   post is a visible destination rather than a link inside a line of meta text,
-  with one add control instead of two).
-  **R47 is the most recent requirement published to production** — R2 was
+  with one add control instead of two),
+  R48 (a public tenant site stays public - `/w/<slug>` shows no **Admin**, **My
+  site** or **My sites** even to a signed-in stranger, including the platform
+  admin - while its own owner/editor gets one **Site admin** / **Add new blog**
+  bar on that site, decided by the workspace role; its admin is gated by that
+  site's owner/editor only; R45's platform-admin override is gone from the gate,
+  `firestore.rules` and the upload function, while `/admin/dashboard` keeps its
+  R31 role gate for the default workspace).
+  **R48 is the most recent requirement published to production** - R2 was
   backfilled after R30, so requirement numbers are not publication order, and
-  R44-R47 published in stack order on top of R43.
-- **Implemented and verified, awaiting owner approval:** R48 (a public tenant
-  site stays public — `/w/<slug>` shows no **Admin**, **My site** or **My
-  sites** even to a signed-in visitor — while its own owner/editor gets one
-  **Site admin** / **Add new blog** bar on that site, decided by the workspace
-  role; its admin is gated by that site's owner/editor only; R45's
-  platform-admin override is gone from the gate, `firestore.rules` and the
-  upload function, while `/admin/dashboard` keeps its R31 role gate for the
-  default workspace).
+  R44-R48 published in stack order on top of R43.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 131.33 kB JS / 8.29 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 131.61 kB JS / 8.34 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - **Five profiles carry `role: "admin"`** — three of them `@example.com`
     throwaway accounts from earlier upload probes. Only the console can change a
