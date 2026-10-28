@@ -351,16 +351,15 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   R44 (the launcher and a workspace's own admin — `/dashboard` lists one card
   per owned workspace with **View site** and **Admin**, and `/w/<slug>/admin` is
   gated by that workspace's owner/editor role instead of the global admin role;
-  read-only by design).
-  **R44 is the most recent requirement published to production** — R2 was
+  read-only by design),
+  R45 (workspace-scoped writes — every blog write names its `workspaceId`, so
+  `/w/<slug>/admin` became a writer with **Write a post**, Edit and Delete; the
+  platform `admin` may write every workspace without becoming its owner; and
+  `scripts/seed-demo-tenants.mjs` seeded the `pine-and-pixel` and
+  `orbit-analytics` demo tenants through the public APIs).
+  **R45 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order, and
-  R45-R47 were built on top of R44, so they publish after it.
-- **Implemented locally, awaiting owner approval:** R45 (every blog write takes
-  an explicit `workspaceId`; `/w/<slug>/admin` is now a writer with **Write a
-  post**, Edit and Delete; the platform `admin` may write every workspace
-  without becoming its owner; and `scripts/seed-demo-tenants.mjs` seeded the
-  `pine-and-pixel` and `orbit-analytics` demo tenants). **R45 is stacked on
-  R44**, so it publishes on the updated `main`.
+  R46-R47 were built on top of R45, so they publish after it.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a

@@ -2899,3 +2899,35 @@ type by hand. The walkthrough also caught a real visual defect R45 would have
 shipped - a primary button whose label was invisible - and TC-4502 now guards it.
 Nothing is merged or deployed: R44 publishes first, then R45 on the updated
 `main`.
+
+### 2026-10-28 - R45 published (workspace-scoped writes and the tenant demo accounts)
+
+**Approval:** the owner approved R44-R47 in that order; R44 was already live.
+**Branch merged:** `feature/r45-workspace-writes`, rebased onto the published R44
+tip (docs conflicts resolved: R44 published, R45 awaiting) and then fast-forwarded
+into `main`.
+
+**Commands:**
+
+    npm.cmd run build                    # 131.13 kB JS / 8.17 kB CSS gzipped
+    npm.cmd run lint                     # exit 0
+    npm.cmd run test:rules               # 7 passed (R41, R42, R45)
+    npx.cmd playwright test --reporter=dot   # 137 passed (1.8m)
+    npm.cmd run deploy:rules             # firestore.rules + storage.rules released
+    npm.cmd run deploy:functions         # uploadBlogImage + deleteBlogImage updated
+    npm.cmd run deploy                   # hosting released
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** all three releases completed; production smoke **11 passed in
+13.9 s**. One tooling hiccup, no code change: the first `deploy:functions` run
+failed `User code failed to load ... Timeout after 10000`; re-running with
+`FUNCTIONS_DISCOVERY_TIMEOUT=60` deployed both functions successfully. The CLI
+then exited 1 on the optional artifact-registry cleanup policy
+(`--force` would set one); that step does not affect the deployed functions.
+
+**Evaluation:** the write plane is live. `main` now offers a tenant's owner and
+editor Add new blog / Edit / Delete on their own site, and the platform admin the
+same authority without becoming an owner, so the R41 boundary is unchanged while
+the rules gain one additive override. R46 and R47 remain local; R46 is next.
+
+---
