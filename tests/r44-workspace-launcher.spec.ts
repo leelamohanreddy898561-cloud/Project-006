@@ -107,18 +107,13 @@ test.describe("R44 — the gate settles the workspace role first", () => {
     expect(app).toContain('path="/dashboard"');
     expect(app).toContain('path="/w/:siteSlug/admin"');
 
-    // R45 — the workspace role is settled first; the global admin role is only
-    // a fallback for the platform operator, never the tenant's own answer.
+    // R48 — the workspace role is the only answer; a global admin has no
+    // fallback into a site it does not own or edit.
     expect(admin).toContain("fetchWorkspaceRole(");
-    expect(admin).toContain("fetchUserRole(");
-    expect(admin).toContain("isAdminRole(");
+    expect(admin).not.toContain("fetchUserRole");
+    expect(admin).not.toContain("isAdminRole");
 
-    const workspaceRole = admin.indexOf("fetchWorkspaceRole(");
-    const globalRole = admin.indexOf("fetchUserRole(");
-
-    expect(workspaceRole).toBeGreaterThan(-1);
-    expect(globalRole).toBeGreaterThan(-1);
-    expect(workspaceRole).toBeLessThan(globalRole);
+    expect(admin.indexOf("fetchWorkspaceRole(")).toBeGreaterThan(-1);
 
     // The owner is settled before the member document is read, because the
     // members rule refuses that read for an owner who has no member document.

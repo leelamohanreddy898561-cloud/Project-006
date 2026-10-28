@@ -1,21 +1,21 @@
-# Checklist: AI Blog — "Signal & Noise"
+﻿# Checklist: AI Blog â€” "Signal & Noise"
 
 Every item is tagged with the requirement ID(s) it serves (see `requirements.md`).
 Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
-**Legend:** `[ ]` not started · `[~]` in progress · `[x]` done (with evidence entry)
+**Legend:** `[ ]` not started Â· `[~]` in progress Â· `[x]` done (with evidence entry)
 
 ---
 
-## Phase 0 — Workflow foundation
+## Phase 0 â€” Workflow foundation
 
 - [x] Create `AGENTS.md` with the standing requirement loop
-- [x] Restructure `requirements.md` to ID-based format (R0–R14)
+- [x] Restructure `requirements.md` to ID-based format (R0â€“R14)
 - [x] Create `test-cases.md` mapped to requirement IDs
 - [x] Create `evidence.md` with the entry format
 - [x] (R0) Install Playwright and verify the runner executes
 - [x] (R0) Initialize git and make the initial commit
 
-## Phase 1 — Project scaffold (R0)
+## Phase 1 â€” Project scaffold (R0)
 
 - [x] (R0.1) Scaffold Vite + React + TypeScript project
 - [x] (R0.1) Enable TypeScript strict mode
@@ -25,7 +25,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R0.4) Wire Playwright config (`playwright.config.ts`, `tests/`)
 - [x] (R0.4) Enable the `webServer` block once a `dev` script exists
 
-## Phase 1b — Firebase integration (R16)
+## Phase 1b â€” Firebase integration (R16)
 
 - [x] (R16.1) Install the `firebase` SDK (v13) and approve required install scripts
 - [x] (R16.1) Create `src/lib/firebase.ts` reading config from `import.meta.env`
@@ -34,32 +34,32 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R16.6) Create `firebase.json` (serve `dist/` with SPA rewrite)
 - [x] (R16.7) Create `.firebaserc` with project `project-006-e6ae1`
 - [x] (R16.9) Add real credentials to `.env` and verify initialization (TC-1607)
-- [x] (R16.8) Deploy to Firebase Hosting — live at https://project-006-e6ae1.web.app
+- [x] (R16.8) Deploy to Firebase Hosting â€” live at https://project-006-e6ae1.web.app
 - [ ] Configure Firestore/Storage security rules before either is used with real data
 
-## Phase 1c — Change log export (R17)
+## Phase 1c â€” Change log export (R17)
 
 - [x] (R17.1) Create `scripts/generate-changelog.mjs` (builds from real git history)
 - [x] (R17.2) Generate and commit `changeLog.json`
 - [x] (R17.3, R17.4) Create `scripts/sync-changes.mjs` with a credentials guard
-- [x] (R17.3) Run `npm run sync:changes` against Firestore — 4 entries live, verified by read-back
+- [x] (R17.3) Run `npm run sync:changes` against Firestore â€” 4 entries live, verified by read-back
 
-## Phase 1d — Glassmorphism header (R18, supersedes R15)
+## Phase 1d â€” Glassmorphism header (R18, supersedes R15)
 
-- [x] (R18) Add R18 to `requirements.md`; mark R15 superseded; rename Categories→Topics, AI Updates→Blogs
-- [x] (R18) Add TC-1801–TC-1812 to `test-cases.md`
+- [x] (R18) Add R18 to `requirements.md`; mark R15 superseded; rename Categoriesâ†’Topics, AI Updatesâ†’Blogs
+- [x] (R18) Add TC-1801â€“TC-1812 to `test-cases.md`
 - [x] (R18.1) Glass treatment: translucent background, backdrop blur, subtle border, both themes
 - [x] (R18.2) Glowing AI logo + "AI Pulse" brand linking to `/`
 - [x] (R18.3) Nav: Home / Topics / Blogs / About with smooth gradient hover
-- [x] (R18.4) Search icon → `/blog`; Sign In → `/signin`; Sign Up → `/signup`
+- [x] (R18.4) Search icon â†’ `/blog`; Sign In â†’ `/signin`; Sign Up â†’ `/signup`
 - [x] (R9, R18.5, R18.6) Theme toggle: switch, persist, respect system preference
 - [x] (R18.8) Placeholder pages for `/signin`, `/signup`, `/topics`, `/blog`, `/about`
 - [x] (R18.9) Active-route highlighting
 - [x] (R18.11) `prefers-reduced-motion` disables the logo glow (and all transitions)
 - [x] (R18) Brand rename in `index.html` (title, meta, OG) and home hero copy
-- [x] (R18) Execute TC-1801–TC-1812; verify contrast in both themes
+- [x] (R18) Execute TC-1801â€“TC-1812; verify contrast in both themes
 - [x] (R18) Evidence entry + local commit; published after owner approval
-## Phase 2 — Content model (R13)
+## Phase 2 â€” Content model (R13)
 
 - [ ] (R13.1) Define the `Post` type (frontmatter fields)
 - [ ] (R13.1) Create markdown loader with frontmatter parsing
@@ -70,7 +70,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] Helpers: `getAllPosts`, `getPostBySlug`, `getCategories`, `getTags`,
       `getRelatedPosts`, `getAdjacentPosts`, `searchPosts`
 
-## Phase 3 — Design tokens & global styles (R1, R9, R10, R11)
+## Phase 3 â€” Design tokens & global styles (R1, R9, R10, R11)
 
 - [x] Define CSS custom properties: colors, spacing, typography, radii, shadows
 - [x] Light and dark theme values from the same tokens (R9)
@@ -79,31 +79,31 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] Visible `:focus-visible` styles (R11.2)
 - [ ] Reusable button, card, and badge styles (buttons done; cards/badges pending)
 
-## Phase 4 — Core components
+## Phase 4 â€” Core components
 
 - [ ] (R1, R11) `Layout` wrapper with skip link (R11.1) and landmarks (R11.3)
 - [x] (R18) Glassmorphism `Header`: brand, navigation, search, theme toggle, auth buttons
 - [x] (R9, R18) `ThemeToggle` with `localStorage` persistence and system-preference default
 - [ ] (R1) `Footer` with navigation and copyright
-- [x] (R1, R2, R19) `BlogCard` — title, excerpt, read time, category, author, bookmark; date and tags shown on `/blog`
+- [x] (R1, R2, R19) `BlogCard` â€” title, excerpt, read time, category, author, bookmark; date and tags shown on `/blog`
 - [x] (R2) `BlogList` grid with empty state (R2.5) and result count (R2.6)
-- [x] (R2) Search bar and topic/tag filter chips (R2.2–R2.4, R2.7)
+- [x] (R2) Search bar and topic/tag filter chips (R2.2â€“R2.4, R2.7)
 - [ ] (R3) `TagList`
 - [ ] (R3) `Markdown` renderer + heading anchors (R3.1)
 - [ ] (R3) `TableOfContents` (R3.3)
 - [ ] (R8) `NotFound` page component
 
-## Phase 3b — Hero section (R1.1–R1.6)
+## Phase 3b â€” Hero section (R1.1â€“R1.6)
 
-- [x] (R1.1) Hero copy: "Explore the Future of AI", description, "Start Reading" → `/blog`
+- [x] (R1.1) Hero copy: "Explore the Future of AI", description, "Start Reading" â†’ `/blog`
 - [x] (R1.2) `NetworkBackground`: canvas particle network, slow ambient drift
 - [x] (R1.3) `TopicCard`: floating popular-topic card with float animation + rotation
 - [x] (R1.4) All hero animation disabled under `prefers-reduced-motion`
 - [x] (R1.5) Mobile stacking at 360px with no overflow
-- [x] (R1.6) Hero text contrast ≥ 4.5:1 in both themes
-- [x] Execute TC-101–TC-106; evidence entry; local commit; published after owner approval
+- [x] (R1.6) Hero text contrast â‰¥ 4.5:1 in both themes
+- [x] Execute TC-101â€“TC-106; evidence entry; local commit; published after owner approval
 
-## Phase 3c — Home main content layout (R19)
+## Phase 3c â€” Home main content layout (R19)
 
 - [x] (R19.1) 70/30 two-column layout below the hero
 - [x] (R19.2) Article grid: 2 columns desktop, 1 mobile, newest first
@@ -115,21 +115,21 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R19.12) Empty state when nothing matches
 - [x] (R19.3, R19.8) Single column on mobile; AA contrast in both themes
 - [x] Seed post data + local AI-themed cover art (placeholder until R13)
-- [x] Execute TC-1901–TC-1912; evidence entry; local commit; published after owner approval (2026-10-21)
+- [x] Execute TC-1901â€“TC-1912; evidence entry; local commit; published after owner approval (2026-10-21)
 
-## Phase 3d — Footer + newsletter (R20)
+## Phase 3d â€” Footer + newsletter (R20)
 
 - [x] (R20.1) Newsletter box above the footer: email field + Subscribe + value statement
-- [x] (R20.2–R20.4) Validation, success state, live region, label + `aria-describedby`
+- [x] (R20.2â€“R20.4) Validation, success state, live region, label + `aria-describedby`
 - [x] (R20.5) Four footer columns: brand, Quick Links, AI Categories, Social Links
 - [x] (R20.6) Quick Links use the router (no full reloads)
 - [x] (R20.7) AI Categories from the shared site config
 - [x] (R20.8) X, GitHub, LinkedIn links with accessible names + `rel="noopener noreferrer"`
 - [x] (R20.9, R20.10) Bottom bar: copyright with current year + Privacy Policy route
 - [x] (R20.11, R20.12) Single column below 900px; AA contrast both themes
-- [x] Execute TC-2001–TC-2012; evidence entry; local commit; **awaiting owner approval**
+- [x] Execute TC-2001â€“TC-2012; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3e — Repository and workflow hygiene (R21)
+## Phase 3e â€” Repository and workflow hygiene (R21)
 
 - [x] (R21.1) Untrack `.firebase/` and add it to `.gitignore`
 - [x] (R21.2) Delete `tests/example.spec.ts`; document the convention in `test-cases.md`
@@ -138,9 +138,9 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R21.5) Pin `firebase-tools` as a devDependency + `npm run deploy`
 - [x] (R21.6) Distinct accessible names for the header and footer home links
 - [x] (R21.7) Document that screenshots and `changeLog.json` are retained on purpose
-- [x] Execute TC-2101–TC-2107; evidence entry; local commit; **awaiting owner approval**
+- [x] Execute TC-2101â€“TC-2107; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3f — Deploy tooling footprint (R22)
+## Phase 3f â€” Deploy tooling footprint (R22)
 
 - [x] (R22.1) `deploy` script uses `npx --yes firebase-tools@15.34.1`
 - [x] (R22.2) Remove `firebase-tools` from devDependencies
@@ -148,30 +148,30 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R22.4) Deploy target and flags unchanged
 - [x] (R22.5) Measure `node_modules`, re-run build/lint/tests; evidence entry; local commit
 
-## Phase 3g — Blog detail page (R23)
+## Phase 3g â€” Blog detail page (R23)
 
-- [x] (R23.1–R23.3) `/blog/:slug` route, not-found state, document title
-- [x] (R23.4–R23.7) Header image, markdown body, readable measure, mobile bar
-- [x] (R23.8–R23.13) Sticky left rail: Like, Share, Bookmark with a11y state
-- [x] (R23.14–R23.17) Comment section with validation + non-persistence notice
-- [x] (R23.18–R23.19) Related articles
-- [x] (R23.20–R23.21) AA contrast; build, lint, tests, budget
+- [x] (R23.1â€“R23.3) `/blog/:slug` route, not-found state, document title
+- [x] (R23.4â€“R23.7) Header image, markdown body, readable measure, mobile bar
+- [x] (R23.8â€“R23.13) Sticky left rail: Like, Share, Bookmark with a11y state
+- [x] (R23.14â€“R23.17) Comment section with validation + non-persistence notice
+- [x] (R23.18â€“R23.19) Related articles
+- [x] (R23.20â€“R23.21) AA contrast; build, lint, tests, budget
 - [x] Article body content for the six seed posts (markdown)
-- [x] Execute TC-2301–TC-2320; evidence entry; local commit; **awaiting owner approval**
+- [x] Execute TC-2301â€“TC-2320; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3h — Sign in and sign up pages (R24)
+## Phase 3h â€” Sign in and sign up pages (R24)
 
-- [x] (R24.1–R24.6) Real `/signin` and `/signup` routes, glass card, gradient glows
-- [x] (R24.7–R24.10) Field validation, error association, error clearing, autocomplete
-- [x] (R24.11–R24.14) Live-region outcomes, Google button, password reveal, cross links
+- [x] (R24.1â€“R24.6) Real `/signin` and `/signup` routes, glass card, gradient glows
+- [x] (R24.7â€“R24.10) Field validation, error association, error clearing, autocomplete
+- [x] (R24.11â€“R24.14) Live-region outcomes, Google button, password reveal, cross links
 - [x] (R24.15) Single auth seam in `src/lib/auth.ts`
-- [x] (R24.16–R24.18) Mobile overflow, AA contrast, build/lint/tests/budget
-- [x] Execute TC-2401–TC-2418; evidence entry; local commit; **awaiting owner approval**
+- [x] (R24.16â€“R24.18) Mobile overflow, AA contrast, build/lint/tests/budget
+- [x] Execute TC-2401â€“TC-2418; evidence entry; local commit; **awaiting owner approval**
 
-## Phase 3i — Test hygiene and documentation truth (R25, R26)
+## Phase 3i â€” Test hygiene and documentation truth (R25, R26)
 
-- [x] (R25.1–R25.3) Capture helper, redirect to `test-results/`, explicit `evidence:screenshots` command
-- [x] (R25.4–R25.5) Guard test against literal/`evidence/` paths; keep the proof images tracked
+- [x] (R25.1â€“R25.3) Capture helper, redirect to `test-results/`, explicit `evidence:screenshots` command
+- [x] (R25.4â€“R25.5) Guard test against literal/`evidence/` paths; keep the proof images tracked
 - [x] (R26.1-R26.4) `AGENTS.md` Section 9 lists R0-R24 with R15 still marked superseded
 
 ## Phase 3j - Production smoke subset (R27)
@@ -189,7 +189,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R28.4) Approval gate corrected: pushing a work branch is not publishing
 - [x] (R28.5) Guard test asserts every documented branch rule
 - [x] (R28.6) Full suite green; `verify:prod` unchanged
-- [ ] Execute TC-2501–TC-2604; evidence entry; local commit; await owner approval
+- [ ] Execute TC-2501â€“TC-2604; evidence entry; local commit; await owner approval
 
 ## Phase 3l - Live authentication (R29)
 
@@ -201,8 +201,8 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R29.6, R29.7) Auth-only loader keeps the SDK out of the entry chunk; seam is the only importer
 - [x] (R29.9) Smoke subset carries a real failed sign-in against the provider
 - [x] (R29.10) Suite creates a throwaway account and deletes it in `afterAll`
-- [ ] **Owner action:** enable Email/Password and Google in Firebase Console → Authentication → Sign-in method
-- [ ] Execute TC-2901–TC-2910; evidence entry; local commit; await owner approval
+- [ ] **Owner action:** enable Email/Password and Google in Firebase Console â†’ Authentication â†’ Sign-in method
+- [ ] Execute TC-2901â€“TC-2910; evidence entry; local commit; await owner approval
 
 ## Phase 3m - Lean loop and consolidated guards (R30)
 
@@ -215,95 +215,95 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 ## Phase 3n - Blogs list with search and filters (R2)
 
 - [x] (R2.1) `/blog` renders every post newest first with title, excerpt, date, read time, category, tags
-- [x] (R2.2) Search across title/excerpt/category/tags — case-insensitive, every term must match
+- [x] (R2.2) Search across title/excerpt/category/tags â€” case-insensitive, every term must match
 - [x] (R2.3, R2.7) Topic and tag chips filter; a second click (or "All") clears
 - [x] (R2.4) `q`, `topic`, `tag` live in the URL and survive a reload
 - [x] (R2.5, R2.6) Friendly empty state; the count matches the cards rendered
 - [x] Execute TC-201-TC-210; evidence entry; local commit; published (2026-10-23)
 
-## Phase 3o — User roles and the protected admin route (R31)
+## Phase 3o â€” User roles and the protected admin route (R31)
 
 - [x] (R31.1, R31.2) `src/lib/users.ts`: ensure/read the `users/{uid}` profile, default `student`, never overwrite a role
 - [x] (R31.1) Seed the profile after email/password sign-up, sign-in, and Google sign-in without blocking the session
-- [x] (R31.3–R31.6) `RequireAdmin` guard + `/admin` page: admin allowed, standard user → `/`, signed-out → `/signin`, loading status
+- [x] (R31.3â€“R31.6) `RequireAdmin` guard + `/admin` page: admin allowed, standard user â†’ `/`, signed-out â†’ `/signin`, loading status
 - [x] (R31.7) Role read failure fails closed without breaking the shell
 - [x] (R31.8) `firestore.rules` (own doc, no self-promotion), `firebase.json`, `npm run deploy:rules` (deployed at publish)
-- [x] (R31.9) Execute TC-3101–TC-3103; evidence entry; local commit; await owner approval
+- [x] (R31.9) Execute TC-3101â€“TC-3103; evidence entry; local commit; await owner approval
 
-## Phase 3p — Admin dashboard (R32)
+## Phase 3p â€” Admin dashboard (R32)
 
 - [x] (R32.1, R32.3) `AdminDashboard` shell: sidebar nav with exactly All Blogs, Add New Blog, Manage Users; exact-match `aria-current`
 - [x] (R32.4) Register `/admin/dashboard` + `blogs` + `blogs/new` + `users` + not-found behind the existing `RequireAdmin`; desktop side-by-side, stacked below 1000px
 - [x] (R32.5) All Blogs panel: every post newest first with title, category, date, read time, link to `/blog/<slug>`
 - [x] (R32.6, R32.7) Add New Blog composer: labelled fields, inline validation, markdown output + copy, live region that never claims a publish
 - [x] (R32.8) Manage Users panel: the signed-in account, the role legend, and the console-only rule stated plainly
-- [x] (R32.9, R32.10) Contrast check in both themes; execute TC-3201–TC-3204; evidence entry; local commit
+- [x] (R32.9, R32.10) Contrast check in both themes; execute TC-3201â€“TC-3204; evidence entry; local commit
 
-## Phase 3q — Admin blog composer at `/admin/add-blog` (R33)
+## Phase 3q â€” Admin blog composer at `/admin/add-blog` (R33)
 
-- [x] (R33.7, R33.8) `src/lib/blogs.ts` — the single seam: image upload to Storage under `blog-images/<uid>/`, one `blogs` document per submit, plain-English failures
-- [x] (R33.4, R33.5, R33.8) `src/lib/blog-draft.ts` — validation, tag parsing, reading time, slug and the document the form writes
-- [x] (R33.1–R33.6) `src/pages/AddBlog.tsx` + `.css` behind the R31 guard: labelled title, category, image, content; inline errors; live-region outcome
+- [x] (R33.7, R33.8) `src/lib/blogs.ts` â€” the single seam: image upload to Storage under `blog-images/<uid>/`, one `blogs` document per submit, plain-English failures
+- [x] (R33.4, R33.5, R33.8) `src/lib/blog-draft.ts` â€” validation, tag parsing, reading time, slug and the document the form writes
+- [x] (R33.1â€“R33.6) `src/pages/AddBlog.tsx` + `.css` behind the R31 guard: labelled title, category, image, content; inline errors; live-region outcome
 - [x] (R33.10, R33.11) `firestore.rules` `blogs` block (admin-only via `users/{uid}.role`), new `storage.rules`, `firebase.json` storage block, `deploy:rules` publishes both
-- [x] (R33.12) Execute TC-3301–TC-3303; evidence entry; local commit; **published 2026-10-26** (TC-3304 is the owner's manual walkthrough against the live site)
+- [x] (R33.12) Execute TC-3301â€“TC-3303; evidence entry; local commit; **published 2026-10-26** (TC-3304 is the owner's manual walkthrough against the live site)
 
-## Phase 3r — Storage rule scope fix (R34)
+## Phase 3r â€” Storage rule scope fix (R34)
 
 - [x] (R34.1) `storage.rules`: `isOwnerAdmin(uid)` takes the owner's uid as a parameter, so the function reads only variables in its own scope
 - [x] (R34.2) Scope guard over both rules files: a function may only use wildcards that are parameters or encloses it
-- [x] (R34.3) Correct TC-3302's Storage assertion to `isOwnerAdmin(uid)` — the call it asserted was the defect
+- [x] (R34.3) Correct TC-3302's Storage assertion to `isOwnerAdmin(uid)` â€” the call it asserted was the defect
 - [x] (R34.5) Build, lint and the full suite unchanged; the bundle is untouched (server-side fix)
 - [x] (R34.4) Rules deployed, deny-path probe re-run; the live save was completed through R35 and confirmed by the owner (TC-3404)
 
-## Phase 3s — Uploads through an admin-gated function (R35)
+## Phase 3s â€” Uploads through an admin-gated function (R35)
 
-- [x] (R35.1–R35.4) `functions/index.js`: `uploadBlogImage` checks `users/{uid}.role`, writes under `blog-images/<uid>/`, image-only, 5 MB cap; `deleteBlogImage` accepts only the caller's own folder
+- [x] (R35.1â€“R35.4) `functions/index.js`: `uploadBlogImage` checks `users/{uid}.role`, writes under `blog-images/<uid>/`, image-only, 5 MB cap; `deleteBlogImage` accepts only the caller's own folder
 - [x] (R35.1, R35.7) `src/lib/blogs.ts` calls the function instead of the Storage SDK; images are downscaled to 1600 px / JPEG 0.85 with a raw fallback
 - [x] (R35.5) Per-object public ACL on each cover, so a published post serves it without an expiring signed URL
 - [x] (R35.8) `firebase.json` functions codebase + `npm run deploy:functions`; both functions deployed to `us-central1`
-- [x] (R35.9) TC-3501–TC-3503; **published 2026-10-26** (TC-3504: the owner's own save, confirmed)
+- [x] (R35.9) TC-3501â€“TC-3503; **published 2026-10-26** (TC-3504: the owner's own save, confirmed)
 
-## Phase 3t — Admin link in the account menu (R36)
+## Phase 3t â€” Admin link in the account menu (R36)
 
-- [x] (R36.1–R36.3) `src/components/AccountMenu.tsx`: an **Admin** link to `/admin/dashboard`, rendered only when `isAdminRole(role)` from the existing `useUserRole` seam
+- [x] (R36.1â€“R36.3) `src/components/AccountMenu.tsx`: an **Admin** link to `/admin/dashboard`, rendered only when `isAdminRole(role)` from the existing `useUserRole` seam
 - [x] (R36.2) Fail closed: the link is absent while the role loads, when it errors, and for every role except `"admin"`
-- [x] (R36.4) `AccountMenu.css`: link visible at 360px (not a `.btn--sm`, which the header hides below 900px) and ≥ 4.5:1 in both themes
-- [x] (R36.6) Execute TC-3601–TC-3603; build, lint, full suite; evidence entry; local commit
+- [x] (R36.4) `AccountMenu.css`: link visible at 360px (not a `.btn--sm`, which the header hides below 900px) and â‰¥ 4.5:1 in both themes
+- [x] (R36.6) Execute TC-3601â€“TC-3603; build, lint, full suite; evidence entry; local commit
 
-## Phase 3u — Saved posts visible to visitors (R37)
+## Phase 3u â€” Saved posts visible to visitors (R37)
 
-- [x] (R37.1–R37.3) `src/lib/blog-posts.ts` maps a `blogs` document to a `Post`; `listSavedBlogs()` in the seam reads the collection; `useSavedBlogs` feeds the archive and detail page, merged newest first
+- [x] (R37.1â€“R37.3) `src/lib/blog-posts.ts` maps a `blogs` document to a `Post`; `listSavedBlogs()` in the seam reads the collection; `useSavedBlogs` feeds the archive and detail page, merged newest first
 - [x] (R37.4) `src/pages/BlogList.tsx`/`PostDetail.tsx`/`Home.tsx` use the merged list; filters, counts, related articles and the home grid/topics include saved posts
 - [x] (R37.5) `firestore.rules`: public read on `blogs`, write still `isAdmin()`; the rule ships in the publish step
-- [x] (R37.6–R37.8) Seed content still renders while the read is pending/failed, with a `role="status"` notice; the document drops `authorEmail`; remote Markdown is sanitised
-- [x] (R37.9) Execute TC-3701–TC-3703; build, lint, full suite (117 passed), bundle within budget; evidence entry; local commit
+- [x] (R37.6â€“R37.8) Seed content still renders while the read is pending/failed, with a `role="status"` notice; the document drops `authorEmail`; remote Markdown is sanitised
+- [x] (R37.9) Execute TC-3701â€“TC-3703; build, lint, full suite (117 passed), bundle within budget; evidence entry; local commit
 
-## Phase 3v — Manage blogs: edit, delete, replace covers (R38)
+## Phase 3v â€” Manage blogs: edit, delete, replace covers (R38)
 
-- [x] (R38.1–R38.3) `All Blogs` becomes the management view: merged repository + Firestore list, source badge, Edit/Delete only on Firestore posts, loading/failed-read states
-- [x] (R38.4, R38.6) Inline editor pre-filled from the document; validation; `updateBlogPost` → `updateDoc` on `blogs/<id>` with re-derived fields and `updatedAt`
+- [x] (R38.1â€“R38.3) `All Blogs` becomes the management view: merged repository + Firestore list, source badge, Edit/Delete only on Firestore posts, loading/failed-read states
+- [x] (R38.4, R38.6) Inline editor pre-filled from the document; validation; `updateBlogPost` â†’ `updateDoc` on `blogs/<id>` with re-derived fields and `updatedAt`
 - [x] (R38.5) Add / replace / remove cover: upload through `uploadBlogImage`, store `imageUrl` + `imagePath`, remove the stale object best-effort, clean up a new upload if the write fails
-- [x] (R38.7) Delete with inline confirmation: `deleteBlogPost` → `deleteDoc`, then best-effort cover deletion; failures reported and the post kept
-- [x] (R38.8–R38.10) Rules unchanged (admin-only write), accessible labels/contrast/360px, build + lint + full suite + bundle; execute TC-3801–TC-3803
-- [x] TC-3804: owner's live walkthrough (admin account) — approved and **published 2026-10-26**
+- [x] (R38.7) Delete with inline confirmation: `deleteBlogPost` â†’ `deleteDoc`, then best-effort cover deletion; failures reported and the post kept
+- [x] (R38.8â€“R38.10) Rules unchanged (admin-only write), accessible labels/contrast/360px, build + lint + full suite + bundle; execute TC-3801â€“TC-3803
+- [x] TC-3804: owner's live walkthrough (admin account) â€” approved and **published 2026-10-26**
 
-## Phase 3w — The dashboard's Add New Blog is the Firestore composer (R39)
+## Phase 3w â€” The dashboard's Add New Blog is the Firestore composer (R39)
 
 - [x] (R39.1, R39.4) `src/App.tsx`: `blogs/new` renders `<AddBlog />`; remove the markdown composer and its now-unused imports from `AdminPanels.tsx`
-- [x] (R39.2) `src/pages/AddBlog.tsx`: order is title, category, excerpt, featured image, tags, content — the image directly above tags
+- [x] (R39.2) `src/pages/AddBlog.tsx`: order is title, category, excerpt, featured image, tags, content â€” the image directly above tags
 - [x] (R39.3) The shared category taxonomy, the image rules and the admin-gated upload are unchanged, so both routes behave identically
 - [x] (R39.5, R39.6) Sidebar unchanged (three items, exact `aria-current`); build, lint, full suite and bundle budget; execute TC-3901/TC-3902; evidence entry; local commit
-- [x] TC-3903: owner's walkthrough — add a demo post with an image from the dashboard sidebar; approved and **published 2026-10-26**
+- [x] TC-3903: owner's walkthrough â€” add a demo post with an image from the dashboard sidebar; approved and **published 2026-10-26**
 
-## Phase 3x — Mobile blog reading (R40)
+## Phase 3x â€” Mobile blog reading (R40)
 
-- [x] (R40.1, R40.2) `PostDetail.tsx` + `PostDetail.css`: the cover renders at its own aspect ratio — the presentational `height` attribute and the forced 8/5 box are gone, tall covers are capped and contained
+- [x] (R40.1, R40.2) `PostDetail.tsx` + `PostDetail.css`: the cover renders at its own aspect ratio â€” the presentational `height` attribute and the forced 8/5 box are gone, tall covers are capped and contained
 - [x] (R40.3) `BlogCard.css`: card thumbnails show the full featured image below 640 px; the editorial thumbnail crop stays at and above it
 - [x] (R40.4, R40.5) `ShareRail.css` + tokens: the mobile rail sticks below the wrapped header; `Sidebar.tsx` / `BlogList.tsx`: the search field is one tap target
 - [x] (R40.6) `tokens.css`: dark-mode `--color-text-subtle` meets AA
-- [x] (R40.7) Execute TC-4001–TC-4004; build, lint, full suite (126 passed); evidence entry; local commit; **awaiting owner approval**
+- [x] (R40.7) Execute TC-4001â€“TC-4004; build, lint, full suite (126 passed); evidence entry; local commit; **awaiting owner approval**
 
-## Phase 5 — Routing & pages
+## Phase 5 â€” Routing & pages
 
 - [x] Configure React Router route table
 - [x] (R1) Home: hero + primary CTA button
@@ -318,24 +318,24 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] Scroll-to-top on route change
 - [ ] (R12.1) Per-page document title updates
 
-## Phase 6 — Features
+## Phase 6 â€” Features
 
 - [x] (R2.2) Client-side search over title/excerpt/category/tags
 - [x] (R2.3, R2.4) Topic and tag filters reflected in URL params
-- [ ] (R9.1–R9.4) Theme toggle, persistence, system preference, color change
+- [ ] (R9.1â€“R9.4) Theme toggle, persistence, system preference, color change
 - [ ] (R3.1) Styled markdown: headings, code, blockquotes, images
 - [ ] (R3.4, R3.5) Prev/next and related posts
 
-## Phase 7 — SEO & performance (R12, R14)
+## Phase 7 â€” SEO & performance (R12, R14)
 
 - [ ] (R12.1) Unique title + meta description per page
 - [ ] (R12.3) Open Graph tags
 - [ ] (R12.2) `sitemap.xml` and `robots.txt`
-- [x] (R14.1) JS bundle < 150 kB gzipped — **83.32 kB** after lazy-loading Firebase
-- [x] (R14.2) CSS bundle < 25 kB gzipped — **1.38 kB**
+- [x] (R14.1) JS bundle < 150 kB gzipped â€” **83.32 kB** after lazy-loading Firebase
+- [x] (R14.2) CSS bundle < 25 kB gzipped â€” **1.38 kB**
 - [ ] (R14.3) No console errors on home page
 
-## Phase 8 — Accessibility & responsive (R10, R11)
+## Phase 8 â€” Accessibility & responsive (R10, R11)
 
 - [ ] (R11.1) Skip-to-content link, visible on focus
 - [ ] (R11.2) Full keyboard operability with visible focus
@@ -344,7 +344,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [ ] (R10.1, R10.2) No horizontal overflow at 360/768/1024/1920px
 - [ ] (R10.3) Navigation and search reachable at 360px
 
-## Phase 9 — Verification & handoff
+## Phase 9 â€” Verification & handoff
 
 - [ ] Execute all `auto` test cases via Playwright
 - [ ] Execute all `manual` test cases and record results
@@ -420,3 +420,11 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R47.4) The add label keeps its AA contrast on its own fill; the header keeps the role badge, **View public site** and **All my sites**; the nav wraps on narrow widths
 - [x] (R47.5) Build 131.37 kB JS / 8.29 kB CSS gzipped; lint clean; `npm run test:rules` 7 passed; `tests/r45-workspace-writes.spec.ts` 4 passed; full suite 141 passed (TC-4502b / TC-4701, TC-4702)
 - [x] Execute TC-4703 (owner review); the owner approved and R47 is published
+
+## Phase 3ff - A public site stays public; admin is site-scoped (R48)
+
+- [x] (R48.1) The account menu takes the tenant prefix and hides **Admin**, **My site** and **My sites** on every `/w/<slug>` public page; the page keeps the site content and the identity/Sign out controls
+- [x] (R48.2) `WorkspaceAdminGate` admits only the workspace `ownerUid` or an `editor`; no global-role read and no platform fallback
+- [x] (R48.3, R48.4) `firestore.rules` and `functions/index.js` drop the platform-admin override for tenant workspaces; the legacy `blogs` and `blog-images/` paths keep their R35/R37 admin rules
+- [x] (R48) `tests/r48-public-site.spec.ts` and `tests/rules/r48-site-ownership.test.mjs`; the R36/R41/R44/R45/R46/R47 guards updated for the site-scoped gate
+- [ ] (R48.5) Build/lint/`npm run test:rules`/full suite green; TC-4801-TC-4804 executed; evidence entry; local commit; **await owner approval**

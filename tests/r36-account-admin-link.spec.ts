@@ -130,9 +130,11 @@ test.describe("R36 — the link is wired to the guard's role seam", () => {
     const app = readFileSync(path.resolve("src/App.tsx"), "utf8");
 
     // One seam: the role comes from useUserRole, and the decision is the same
-    // isAdminRole the /admin guard uses.
-    expect(menu).toContain("useUserRole(user)");
+    // isAdminRole the /admin guard uses. R48 skips the read on a tenant's
+    // public pages, where no admin link is shown at all.
+    expect(menu).toContain("useUserRole(publicSite ? null : user)");
     expect(menu).toContain("isAdminRole(role)");
+    expect(menu).toContain("publicSite?: boolean");
     expect(roleHook).toContain("ensureUserProfile");
 
     // The link, its destination, its accessible name and its class.
@@ -146,7 +148,7 @@ test.describe("R36 — the link is wired to the guard's role seam", () => {
     expect(menu).toMatch(
       /\{showAdminLink\s*&&\s*\(\s*<Link\b[\s\S]*?<\/Link>\s*\)\}/,
     );
-    expect(menu).toMatch(/const showAdminLink = isAdminRole\(role\);/);
+    expect(menu).toMatch(/const showAdminLink = !publicSite && isAdminRole\(role\);/);
 
     // AC36.5 — the shortcut still lands behind the R31 guard.
     expect(app).toMatch(

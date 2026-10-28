@@ -3057,3 +3057,39 @@ that frame measures ~1.15:1; the settled state is 5.62:1. With this merge the
 four approved requirements are all live and nothing is left awaiting approval.
 
 ---
+
+### 2026-10-28 - R48 a public site stays public; admin is site-scoped (local, awaiting approval)
+
+**Branch:** `feature/r48-public-site-isolation` (from `main` at R47)
+**Trigger:** the owner reported that signing in once made every tenant's public
+site look like an admin view: the header offered **Admin** / **My site(s)** on
+`/w/<slug>`, and the platform admin could open every tenant's admin.
+**Test cases:** TC-4801 (browser), TC-4802 (rules emulator), TC-4803 (wiring),
+TC-4804 (cli)
+
+**Commands run:**
+
+    npm.cmd run build                        # 131.33 kB JS / 8.29 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npm.cmd run test:rules                   # 7 passed (R41, R42, R48)
+    npx.cmd playwright test --reporter=dot   # 143 passed (1.8m)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4801 | R48.1, R48.2 | pass | a throwaway owner signs in and lands on its own site; on `/w/<slug>`, `/w/<slug>/blog` and `/w/pine-and-pixel` the header keeps the identity and **Sign out** and has no **Admin**, **My site** or **My sites**; `/w/<slug>/admin` still opens the owner's admin |
+| TC-4802 | R48.3 | pass | 7 rules cases green; an operator with `role: "admin"` is refused every write in workspaces A and B (posts, members, private, workspace document, create-on-behalf); its own workspace stays writable; owner/editor/viewer/stranger/anonymous keep their R41 places; public reads stay public |
+| TC-4803 | R48.1-R48.4 | pass | the header passes `publicSite`, the menu skips the role/owned-site reads and both admin links, the gate calls only `fetchWorkspaceRole`, no workspace rule uses `isAdmin()`, and the upload function checks `CAN_EDIT` without a platform fallback |
+| TC-4804 | R48.5, R48.6 | pass | build and lint clean; `npm run test:rules` 7/7; full suite 143/143; bundle 131.33 kB JS / 8.29 kB CSS, inside the R14 budgets |
+
+**Evaluation:** the leak was in the signed-in header, not in the public page
+content, plus R45's global-role override in the gate, the rules and the upload
+function. R48 removes both: a public tenant link now renders a public page for
+everyone, and a tenant admin admits only that site's owner/editor. R45's
+AC45.4/AC45.5 are revised and AC44.3, AC46.2, AC47.3 are narrowed; the decision
+log records why. `firestore.rules` and `functions/index.js` changed, so
+publication needs `npm run deploy:rules` and `npm run deploy:functions` before
+production verification. Nothing is merged or deployed.
+
+---

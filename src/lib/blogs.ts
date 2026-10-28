@@ -169,7 +169,7 @@ const MESSAGES: Record<string, string> = {
   "permission-denied":
     "Firestore refused the request — the blogs rules must be deployed (npm run deploy:rules).",
   "functions/permission-denied":
-    "Only this site's owner, an editor, or the platform admin can upload blog images.",
+    "Only this site's owner or an editor can upload blog images.",
   "functions/unauthenticated": "Sign in before uploading an image.",
   "functions/unavailable":
     "The upload service is unreachable — check your connection and try again.",

@@ -271,24 +271,21 @@ test.describe("R45 — every write names its workspace", () => {
     expect(app).toContain("<WorkspaceAdminGate />");
     expect(app).toContain('<Route path="new" element={<WorkspaceAdminComposer />} />');
 
-    // Rules: the platform admin may write any tenant, but not rewrite ownership
-    // or smuggle a billing field into the public document.
-    expect(rules).toContain(
-      "allow write: if canEditWorkspace(workspaceId) || isAdmin();",
+    // Rules: R48 makes the tenant site-scoped. No platform override, while
+    // ownership still cannot be rewritten and billing stays off the document.
+    expect(rules).toContain("allow write: if canEditWorkspace(workspaceId);");
+    expect(rules).not.toMatch(
+      /canEditWorkspace\(workspaceId\)\s*\|\|\s*isAdmin\(\)/,
     );
-    expect(rules).toContain(
-      "allow update: if (isWorkspaceOwner(workspaceId) || isAdmin())",
-    );
+    expect(rules).toContain("allow update: if isWorkspaceOwner(workspaceId)");
     expect(rules).toContain(
       "request.resource.data.ownerUid == resource.data.ownerUid",
     );
     expect(rules).toContain("hasNoBillingFields()");
 
-    // The image function applies the same override.
-    expect(functions).toContain(
-      "const platformAdmin = CAN_EDIT.has(role) ? false : await isGlobalAdmin(uid);",
-    );
-    expect(functions).toContain("if (coverPath && (await isGlobalAdmin(uid)))");
+    // The image function applies the same site-scoped rule.
+    expect(functions).not.toContain("const platformAdmin");
+    expect(functions).toContain("if (!CAN_EDIT.has(role))");
     expect(functions).toContain("workspaceRole(uid, workspacePath[1])");
 
     // The demo seed is idempotent and keeps its passwords out of git.

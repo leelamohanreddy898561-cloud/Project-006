@@ -24,16 +24,30 @@ import "./AccountMenu.css";
  * else — several sites, none, or the platform operator — keeps **My sites**.
  * Until the site list resolves the link stays on the launcher, which always
  * works, rather than pointing at a site that may not exist.
+ *
+ * R48 — inside a tenant's public pages (`/w/<slug>...`) the menu is public-only:
+ * the identity and **Sign out** stay, but the platform **Admin** shortcut and
+ * **My site(s)** do not. A signed-in visitor reading another company's blog
+ * sees that company's public site, not an admin view; the site's admin is
+ * opened deliberately at `/w/<slug>/admin`. Neither the role nor the owned-site
+ * list is read in that case, so a public page makes no admin-only request.
  */
-export function AccountMenu({ user }: { user: AuthUser }) {
+export function AccountMenu({
+  user,
+  publicSite = false,
+}: {
+  user: AuthUser;
+  /** True inside `/w/<slug>`; R48 suppresses every admin destination. */
+  publicSite?: boolean;
+}) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-  const { role } = useUserRole(user);
-  const mine = useMyWorkspaces(user.uid);
+  const { role } = useUserRole(publicSite ? null : user);
+  const mine = useMyWorkspaces(publicSite ? null : user.uid);
 
   const name = user.displayName?.trim() || user.email || "Your account";
   const initial = name.charAt(0).toUpperCase();
-  const showAdminLink = isAdminRole(role);
+  const showAdminLink = !publicSite && isAdminRole(role);
 
   const onlySite =
     !showAdminLink && mine.status === "ready" && mine.workspaces.length === 1
@@ -82,12 +96,15 @@ export function AccountMenu({ user }: { user: AuthUser }) {
         </Link>
       )}
 
-      {/* R44 / R46 — every signed-in account can reach its own site; an owner
-          of exactly one goes straight to that site's admin, everyone else to
-          the launcher. The page itself still decides what can be opened. */}
-      <Link to={siteHref} className="account__admin">
-        {siteLabel}
-      </Link>
+      {/* R44 / R46 — on platform routes every signed-in account can reach its
+          own site; an owner of exactly one goes straight to that site's admin,
+          everyone else to the launcher. R48 removes this destination inside a
+          tenant's public pages, where the site must not advertise an admin. */}
+      {!publicSite && (
+        <Link to={siteHref} className="account__admin">
+          {siteLabel}
+        </Link>
+      )}
 
       <button
         type="button"

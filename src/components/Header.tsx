@@ -74,9 +74,11 @@ export function Header() {
           <ThemeToggle />
           {/* R29: the header tells the truth about the session as soon as
               Firebase answers; until then it shows the signed-out controls,
-              which is also the correct state for a first-time visitor. */}
+              which is also the correct state for a first-time visitor.
+              R48: inside `/w/<slug>` the menu is public-only — a session alone
+              never turns another company's site into an admin view. */}
           {status === "signedIn" && user ? (
-            <AccountMenu user={user} />
+            <AccountMenu user={user} publicSite={sitePrefix !== ""} />
           ) : (
             <>
               <Link to="/signin" className="btn btn--primary btn--sm">

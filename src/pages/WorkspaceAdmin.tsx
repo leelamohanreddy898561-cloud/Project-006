@@ -10,7 +10,6 @@ import {
 import { ManageBlogs } from "../components/admin/ManageBlogs";
 import { DocsIcon, PlusIcon } from "../components/icons";
 import { useAuth } from "../hooks/useAuth";
-import { fetchUserRole, isAdminRole } from "../lib/users";
 import {
   fetchWorkspaceBySlug,
   fetchWorkspaceRole,
@@ -21,13 +20,14 @@ import { AddBlog } from "./AddBlog";
 import "./WorkspaceSite.css";
 
 /**
- * R44 / R45 — a workspace's admin, gated by that workspace's role.
+ * R44 / R45 / R48 — a workspace's admin, gated by that workspace's role.
  *
- * Access is decided by `workspaces/{id}.ownerUid` and `members/{uid}`, not by
+ * Access is decided by `workspaces/{id}.ownerUid` and `members/{uid}`, never by
  * the global `users/{uid}.role`: an account that runs one site has no business
- * opening another. R45 adds the one exception the product asks for — the
- * platform admin may administer every workspace — and settles the workspace
- * role first, so an owner or editor never depends on the global profile.
+ * opening another. R48 removed R45's platform-admin exception, so a global
+ * `admin` that is neither this site's owner nor an editor is denied exactly like
+ * any other stranger. The global role still gates the platform console at
+ * `/admin/dashboard`, which targets the default workspace.
  *
  * A failed role read fails closed, and the rules enforce the same boundary for
  * anything this page could try to write.
@@ -44,8 +44,8 @@ import "./WorkspaceSite.css";
 /** The resolved site and role every child of the gate receives. */
 export interface WorkspaceAdminContext {
   workspace: Workspace;
-  /** "admin" is the platform admin's override, not workspace ownership. */
-  role: WorkspaceRole | "admin";
+  /** The site's own role: owner or editor. R48 has no platform override. */
+  role: WorkspaceRole;
   /** `/w/<slug>` — the public base path for links inside this site. */
   basePath: string;
 }
@@ -56,7 +56,7 @@ export function WorkspaceAdminGate() {
   const { siteSlug = "" } = useParams();
   const auth = useAuth();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
-  const [role, setRole] = useState<WorkspaceRole | "admin" | null>(null);
+  const [role, setRole] = useState<WorkspaceRole | null>(null);
   const [phase, setPhase] = useState<GatePhase>("loading");
   const [message, setMessage] = useState("");
 
@@ -93,36 +93,17 @@ export function WorkspaceAdminGate() {
 
       if (!active) return;
 
-      if (
-        access.ok &&
-        (access.role === "owner" || access.role === "editor")
-      ) {
-        setRole(access.role);
-        setPhase("ready");
-        return;
-      }
-
-      // R45 — the platform admin may administer every workspace. This is read
-      // only after the workspace role says no, so a tenant's own role always
-      // wins, and a failed global read still fails closed.
-      try {
-        const globalRole = await fetchUserRole(uid);
-
-        if (!active) return;
-
-        if (isAdminRole(globalRole)) {
-          setRole("admin");
-          setPhase("ready");
-          return;
-        }
-      } catch {
-        if (!active) return;
-        // Fall through: the workspace read's own answer decides.
-      }
-
+      // R48 — the site's own role is the only answer. A failed read is a
+      // failure, not a denial; a viewer or a stranger is denied.
       if (!access.ok) {
         setMessage(access.message);
         setPhase("error");
+        return;
+      }
+
+      if (access.role === "owner" || access.role === "editor") {
+        setRole(access.role);
+        setPhase("ready");
         return;
       }
 
@@ -211,8 +192,7 @@ function useWorkspaceAdmin(): WorkspaceAdminContext {
 function WorkspaceAdminShell({ value }: { value: WorkspaceAdminContext }) {
   const { workspace, role, basePath } = value;
   const name = workspace.branding.title || workspace.name;
-  const roleLabel =
-    role === "admin" ? "Platform admin" : role === "owner" ? "Owner" : "Editor";
+  const roleLabel = role === "owner" ? "Owner" : "Editor";
 
   return (
     <div className="container ws-admin">

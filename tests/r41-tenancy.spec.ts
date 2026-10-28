@@ -54,25 +54,24 @@ test("TC-4104 — the tenant paths stay membership-gated and billing-free", () =
   const billing = blockBody(workspace, "match /private/{document}");
   const posts = blockBody(workspace, "match /blogs/{blogId}");
 
-  // Posts: public to read, written by this workspace's editors - or by the
-  // platform operator R45 adds.
+  // Posts: public to read, written by this workspace's owner or editors. R48
+  // removed R45's platform-operator override.
   expect(posts).toContain("allow read: if true;");
-  expect(posts).toContain(
-    "allow write: if canEditWorkspace(workspaceId) || isAdmin();",
-  );
+  expect(posts).toContain("allow write: if canEditWorkspace(workspaceId);");
+  expect(posts).not.toContain("isAdmin()");
 
   // Team: visible to the team, written by the owner, never handed ownership.
-  expect(members).toContain(
-    "allow read: if isWorkspaceMember(workspaceId) || isAdmin();",
-  );
-  expect(members).toContain("if (isWorkspaceOwner(workspaceId) || isAdmin())");
+  expect(members).toContain("allow read: if isWorkspaceMember(workspaceId);");
+  expect(members).toContain("allow create, update: if isWorkspaceOwner(workspaceId)");
   expect(members).toContain("['editor', 'viewer']");
   expect(members).not.toContain("'owner'");
+  expect(members).not.toContain("isAdmin()");
 
-  // Billing state: owner and the platform operator only.
+  // Billing state: the owner only.
   expect(billing).toContain(
-    "allow read, write: if isWorkspaceOwner(workspaceId) || isAdmin();",
+    "allow read, write: if isWorkspaceOwner(workspaceId);",
   );
+  expect(billing).not.toContain("isAdmin()");
 
   // The public document cannot gain a plan field or a new owner.
   expect(workspace).toContain("hasNoBillingFields()");
@@ -83,7 +82,8 @@ test("TC-4104 — the tenant paths stay membership-gated and billing-free", () =
   // Nothing inside the tenant paths is an unconditional write.
   expect(workspace).not.toMatch(/allow\s+(write|create|update|delete)[^;]*if\s+true/);
 
-  // R41 is additive: the legacy single-tenant collection is still there.
+  // R41 is additive: the legacy single-tenant collection is still there. It is
+  // not tenant data, so it keeps its R37 admin write after R48.
   expect(RULES).toContain("match /blogs/{blogId}");
   expect(RULES).toContain("allow write: if isAdmin();");
 

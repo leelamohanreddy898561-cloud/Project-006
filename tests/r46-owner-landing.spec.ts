@@ -83,6 +83,10 @@ test.describe("R46 — the landing decision", () => {
     expect(menu).toContain('"My site"');
     expect(menu).toContain('"My sites"');
     expect(menu).toContain('!showAdminLink && mine.status === "ready"');
+    // R48 — those links exist on platform routes only.
+    expect(menu).toContain("publicSite?: boolean");
+    expect(menu).toContain("!publicSite && isAdminRole(role)");
+    expect(menu).toContain("{!publicSite && (");
   });
 });
 
@@ -169,11 +173,20 @@ test.describe("R46 — a real owner signs in", () => {
       page.getByRole("heading", { level: 1, name: siteName }),
     ).toBeVisible({ timeout: 30_000 });
 
-    const mySite = page.getByRole("link", { name: "My site", exact: true });
-    await expect(mySite).toBeVisible();
-    await expect(mySite).toHaveAttribute("href", `/w/${firstSlug}/admin`);
+    // R48 — the public page shows no admin destination, even to its owner.
+    const header = page.locator("header.site-header");
+    await expect(
+      header.getByRole("link", { name: "Admin", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      header.getByRole("link", { name: "My site", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      header.getByRole("link", { name: "My sites", exact: true }),
+    ).toHaveCount(0);
 
-    await mySite.click();
+    // The deliberate admin address still works for the owner.
+    await page.goto(`/w/${firstSlug}/admin`);
     await expect(page).toHaveURL(new RegExp(`/w/${firstSlug}/admin$`));
     await expect(
       page.getByRole("heading", { level: 1, name: siteName }),

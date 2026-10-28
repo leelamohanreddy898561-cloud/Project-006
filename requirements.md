@@ -2,7 +2,7 @@
 
 **Version:** 2.1 (ID-based format)
 **Date:** 2026-10-23
-**Status:** In progress — **R0–R2 and R14–R39 implemented, verified and published (R15 superseded by R18); R3–R13 not started**
+**Status:** In progress — **R0–R2 and R14–R47 implemented, verified and published (R15 superseded by R18); R48 in progress; R3–R13 not started**
 
 ---
 
@@ -59,6 +59,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-28 | R45 revises R44's AC44.3 and AC44.4: the tenant admin now writes, and the platform admin is admitted after the workspace role says no | R44 deliberately made the page read-only until every write named its workspace. R45 makes `workspaceId` an argument to every seam function, so the controls can be offered safely; the global role is a fallback for the platform operator only, never the tenant's own answer, and the rules still refuse an `ownerUid` change and billing fields on the public document. |
 | 2026-10-28 | R46 revises R29's AC29.4: Google sign-in lands the visitor on the account's own landing, not always the home page | The owner's report was that a tenant owner signing in opens the platform home — the operator's site — instead of its own. The same resolver now runs after both email and Google sign-ins, so "lands ... on the home page" is no longer true for an owner. A reader who owns no site still lands on the home page, which is why R29's other cases and R31/R36/R44 keep their expectations. |
 | 2026-10-28 | R47 replaces the tenant admin's inline **Write a post** link with a two-section nav, **All posts** and **Add new blog**, and revises the label in AC44.4/AC45.2 | The owner reported the add option as missing on a tenant site while the platform admin's **Add New Blog** section was obvious; the tenant's only control was a link inside one line of meta text. The tenant admin now has the same section shape as `/admin/dashboard`. The workspace gate and every workspace-scoped write are unchanged, so this is a discoverability fix, not a new permission. |
+| 2026-10-28 | R48 keeps a public site public and scopes its admin to that site: the header hides **Admin** / **My site(s)** on `/w/<slug>`, and R45's platform-admin override is removed from the gate, `firestore.rules` and the upload function | The owner reported that signing in once made every tenant's public site look like an admin view, and that the platform admin could edit every tenant. A public link must render a public page; admin is reachable only at that site's `/admin`, and only by its owner/editor. The platform console keeps its R31 role gate and targets the default workspace, which the operator account owns; the demo tenants stay independent. |
 
 ## 5. Out of Scope (v1)
 
@@ -1166,12 +1167,10 @@ they act on.
 
 - **AC44.3** `/w/<slug>/admin` requires a session, and access is decided by that
   workspace: its `ownerUid`, or a `members/{uid}` document with role `"editor"`
-  or `"owner"`. The global `users/{uid}.role` is not consulted unless the
-  workspace role says no - R45 revises this sentence so the platform operator
-  (`"admin"`) may administer every site. An account that
-  is neither is told **You do not have access** and sees no post data; a failed
-  role read fails closed with **Access could not be checked**; an unknown slug
-  renders **Site not found**.
+  or `"owner"`. The global `users/{uid}.role` is never consulted (R48 supersedes
+  R45's platform-operator fallback). An account that is neither is told **You do
+  not have access** and sees no post data; a failed role read fails closed with
+  **Access could not be checked**; an unknown slug renders **Site not found**.
 - **AC44.4** The workspace admin lists that workspace's posts only — title,
   category, date, reading time and a link to the public article — and links back
   to the public site and to `/dashboard`. R44 offered no edit, delete or create
@@ -1226,18 +1225,20 @@ publish.
   global `/admin/dashboard/blogs` keeps the repository articles as read-only rows
   and writes to the default workspace.
 
-**The platform operator**
+**The platform operator (superseded by R48)**
 
-- **AC45.4** An account whose `users/{uid}.role` is exactly `"admin"` may write
-  every workspace: posts, members (`editor`/`viewer` only), `private` state, and
-  the workspace document. It is an override, not ownership - `ownerUid` cannot
-  be changed from the browser, billing fields stay refused on the public
-  document, and a tenant's owner or editor is still confined to its own
-  workspace. The gate settles the workspace role first and consults the global
-  role only when that says no; a failed global read still fails closed.
-- **AC45.5** The image function applies the same rule: an upload needs that
-  workspace's owner/editor or the platform admin; the platform admin may delete
-  any cover; a non-admin may only remove an object in its own folder.
+- **AC45.4** *(R48 removed R45's platform-operator override.)* An account whose
+  `users/{uid}.role` is exactly `"admin"` has no workspace authority: it may not
+  write another tenant's posts, members, `private` state or workspace document.
+  It still owns the workspace its own uid owns, and the default site's console
+  keeps its R31 role gate. `ownerUid` cannot be changed from the browser,
+  billing fields stay refused on the public document, and the gate consults only
+  the workspace role.
+- **AC45.5** *(R48 removed the platform-admin branch.)* The image function needs
+  that workspace's owner/editor for a workspace upload or cover delete; a
+  non-member may only remove an object in its own folder. The legacy
+  `blog-images/` path keeps its R35 global-admin check because it is not tenant
+  data.
 
 **The demo tenants**
 
@@ -1270,9 +1271,10 @@ an account with several sites still needs to choose one.
   workspace's public home, `/w/<slug>`, and `/` is never shown on the way. The
   navigation replaces the sign-in entry in history, so Back does not return to
   the form.
-- **AC46.2** That account's header offers **My site**, linking straight to
-  `/w/<slug>/admin`. The launcher remains reachable from the admin's **All my
-  sites** link.
+- **AC46.2** On platform routes (`/`, `/blog`, `/dashboard`, `/admin/...`), that
+  account's header offers **My site**, linking straight to `/w/<slug>/admin`.
+  Inside the tenant's public pages the header shows no admin link (R48); the
+  launcher remains reachable from the admin's **All my sites** link.
 - **AC46.3** An account that owns more than one workspace lands on `/dashboard`
   and sees **My sites**. The platform admin (`users/{uid}.role` is exactly
   `"admin"`) and an account that owns no site keep the platform home `/`, as
@@ -1310,9 +1312,10 @@ the gate or the workspace-scoped writes.
   bound to that workspace; the nav is present there too, with **Add new blog**
   current, and **All posts** returns to the list. A save still writes
   `workspaces/<id>/blogs` (AC45.1, AC45.2).
-- **AC47.3** The nav exists only behind the R44 gate: an owner, an editor and
-  the platform admin see it; a denied, unknown, signed-out or public-site
-  visitor does not. Its links stay inside the resolved site.
+- **AC47.3** The nav exists only behind the R44 gate: an owner or an editor sees
+  it; the platform admin no longer has blanket access (R48), and a denied,
+  unknown, signed-out or public-site visitor does not. Its links stay inside the
+  resolved site.
 - **AC47.4** The add label stays legible on its own fill (at least 4.5:1) in
   both themes, and the header keeps the role badge, **View public site** and
   **All my sites**. The nav wraps rather than overflowing at narrow widths.
@@ -1322,6 +1325,68 @@ the gate or the workspace-scoped writes.
 **Naming revision:** R47 revises the label in AC44.4 and AC45.2 from **Write a
 post** to **Add new blog** because the control becomes a section. The gate and
 the write boundary those criteria describe are unchanged.
+
+---
+
+### R48 - A public site stays public; admin is site-scoped
+
+R45 let a global `admin` administer every workspace, and the account menu
+rendered **Admin** and **My site(s)** on every route. The owner therefore saw
+another company's public site with admin-looking controls after signing in once,
+and could open its admin; the public link no longer looked public. This
+requirement keeps a tenant's public pages public, and moves every admin
+affordance behind that site's own `/admin`, where only its owner or editor is
+admitted.
+
+It reverses R45's platform-operator override on purpose; the operator's console
+for the default site is unchanged because that account owns the default
+workspace, and the demo tenants remain independent.
+
+**The public surface**
+
+- **AC48.1** On every public tenant route - `/w/<slug>`, `/w/<slug>/blog` and
+  `/w/<slug>/blog/<post>` - a signed-in visitor, including a platform `admin`
+  and the site's own owner/editor, sees the public site and no admin control:
+  no **Admin**, **My site** or **My sites** link in the header, and no Edit,
+  Delete or Add control in the page. The header shows the account identity and
+  **Sign out** (or the signed-out Sign In / Sign Up controls); the site's
+  content, navigation and links are unchanged. The site's admin remains
+  reachable at `/w/<slug>/admin` by address or from `/dashboard`, not from its
+  public pages.
+
+**The tenant admin**
+
+- **AC48.2** `/w/<slug>/admin` and `/w/<slug>/admin/new` admit only that
+  workspace's `ownerUid` or a `members/{uid}` document with role `"editor"`.
+  `users/{uid}.role` is never consulted, so a global `"admin"` account that is
+  neither is told **You do not have access** and sees no post data, no **All
+  posts**, no **Add new blog** and no Edit/Delete. A signed-out visitor is sent
+  to `/signin`; a failed role read fails closed with **Access could not be
+  checked**; an unknown slug renders **Site not found**.
+
+**The enforced boundary**
+
+- **AC48.3** `firestore.rules` grants no workspace authority to the global
+  `admin` role: such an account cannot create, update or delete another
+  workspace's document, cannot read or write its `members` or `private` state,
+  and cannot create, update or delete its `blogs` posts. The owner/editor path
+  is unchanged, and public reads of the workspace document and its posts stay
+  public. The legacy flat `blogs` collection keeps R37's public-read /
+  admin-write rule because it is not tenant data.
+- **AC48.4** `functions/index.js` applies the same boundary: a workspace upload
+  or cover delete needs that workspace's owner/editor, and the global `admin`
+  role is not an override. The legacy `blog-images/` path keeps its R35 admin
+  check.
+- **AC48.5** The platform console `/admin/dashboard` keeps its R31 role gate and
+  continues to target the default workspace only; no console screen lists or
+  writes another tenant.
+- **AC48.6** Build and lint pass, `npm run test:rules` and the full suite stay
+  green, and the bundle stays within the R14 budgets.
+
+**Revisions:** R48 revises AC44.3 (no global fallback), AC45.4/AC45.5 (the
+override is removed), AC46.2 (**My site** is not shown inside a tenant's public
+pages) and AC47.3 (the platform admin is no longer admitted to a tenant admin).
+The reason is recorded in the decision log.
 
 ---
 

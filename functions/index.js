@@ -19,9 +19,11 @@
  * in another customer's folder. A caller that names no workspace keeps the
  * R35 behaviour for the legacy path.
  *
- * R45 adds the platform operator: a global admin may upload to, and delete a
- * cover from, any workspace. It is an override on top of the workspace role,
- * not ownership — the tenant's own owner/editor check is unchanged.
+ * R48 removes the platform operator's workspace override: a global admin may
+ * not upload to, or delete a cover from, a workspace it does not own or edit.
+ * The tenant's own owner/editor check is the only answer. The legacy
+ * `blog-images/` path keeps its R35 global-admin check because it is not
+ * tenant data.
  *
  * Images are stored under the caller's own folder and made publicly readable
  * with a per-object ACL (the bucket uses fine-grained ACLs, not uniform
@@ -112,14 +114,14 @@ exports.uploadBlogImage = onCall(async (request) => {
       throw new HttpsError("invalid-argument", "That workspace id is not valid.");
     }
 
+    // R48 — the workspace role is the only answer; a global admin is not a
+    // member unless it is that workspace's owner or an editor.
     const role = await workspaceRole(uid, workspaceId);
-    // R45 — the platform admin may write every workspace, but is not an owner.
-    const platformAdmin = CAN_EDIT.has(role) ? false : await isGlobalAdmin(uid);
 
-    if (!CAN_EDIT.has(role) && !platformAdmin) {
+    if (!CAN_EDIT.has(role)) {
       throw new HttpsError(
         "permission-denied",
-        "Only this blog's owner, an editor, or the platform admin can upload blog images.",
+        "Only this blog's owner or an editor can upload blog images.",
       );
     }
   } else if (!(await isGlobalAdmin(uid))) {
@@ -176,8 +178,8 @@ exports.uploadBlogImage = onCall(async (request) => {
  * Removes an image the composer uploaded but could not attach to a post.
  *
  * The path decides which check applies: a workspace path needs edit rights in
- * that workspace (or the platform admin), and the legacy path needs the global
- * admin role. A non-admin may only remove an object in its own folder.
+ * that workspace (R48: no platform-admin override), and the legacy path needs
+ * the global admin role. A caller may only remove an object in its own folder.
  */
 exports.deleteBlogImage = onCall(async (request) => {
   const uid = request.auth?.uid;
@@ -190,16 +192,19 @@ exports.deleteBlogImage = onCall(async (request) => {
   const workspacePath = path.match(
     /^workspaces\/([A-Za-z0-9_-]{1,80})\/blog-images\/([^/]+)\//,
   );
-  const coverPath =
-    Boolean(workspacePath) || /^blog-images\/[^/]+\/[^/]+/.test(path);
+  const legacyPath = /^blog-images\/[^/]+\/[^/]+/.test(path);
+  const coverPath = Boolean(workspacePath) || legacyPath;
 
   let allowed = false;
 
-  if (coverPath && (await isGlobalAdmin(uid))) {
-    // R45 — the operator may remove any cover, including one a tenant uploaded.
-    allowed = true;
-  } else if (workspacePath && workspacePath[2] === uid) {
-    allowed = CAN_EDIT.has(await workspaceRole(uid, workspacePath[1]));
+  if (workspacePath) {
+    // R48 — the workspace role decides, and only in the caller's own folder.
+    allowed =
+      workspacePath[2] === uid &&
+      CAN_EDIT.has(await workspaceRole(uid, workspacePath[1]));
+  } else if (coverPath) {
+    // R35 legacy path: not tenant data, so the global admin still owns it.
+    allowed = await isGlobalAdmin(uid);
   }
 
   if (!allowed) {

@@ -192,8 +192,9 @@ necessary but never sufficient** — your visual approval is the gate.
 | `tests/rules/r42-workspace-migration.test.mjs` | The migration executed against the emulator: copy, ids, timestamps, idempotency, dry run (R42) |
 | `tests/r43-workspace-site.spec.ts` | A tenant site at `/w/<slug>`: own posts only, links stay inside, unknown/empty/default states (R43) |
 | `tests/r44-workspace-launcher.spec.ts` | The launcher, the empty state, and the workspace-role gate (R44) |
-| `tests/rules/r45-global-admin.test.mjs` | The platform operator's write authority and the surviving tenant boundary, executed against the emulator (R45) |
+| `tests/rules/r48-site-ownership.test.mjs` | The site-scoped boundary, executed against the emulator: a global admin has no authority in a tenant it does not own or edit, while the owner/editor path and public reads survive (R48; supersedes R45's operator case) |
 | `tests/r45-workspace-writes.spec.ts` | A throwaway tenant writes a post from its own admin and reads it on its site; the signed-out gate and the seam's wiring (R45) |
+| `tests/r48-public-site.spec.ts` | A signed-in owner reads its own and another tenant's public site with no admin destination, and the header/gate/rules/function wiring is read back (R48) |
 | `scripts/run-rules-tests.mjs` | Launcher for the rules tests: finds a JDK, starts/stops the emulator, runs `node --test` (R41) |
 | `scripts/migrate-workspace.mjs` | Copies the flat `blogs` collection into a workspace, idempotently (R42) |
 | `scripts/seed-demo-tenants.mjs` | Creates the two demo tenant accounts, their workspaces and one post each, idempotently, through the public APIs (R45) |
@@ -212,12 +213,12 @@ necessary but never sufficient** — your visual approval is the gate.
 | `src/pages/WorkspaceLayout.tsx` | Resolves `/w/<slug>`: loading, **Site not found**, unavailable, then the tenant provider (R43) |
 | `src/components/WorkspaceContext.tsx` | The tenant every link-building component reads `basePath` from; deliberately Firebase-free (R43) |
 | `src/pages/Dashboard.tsx` | The launcher: a signed-in account's owned sites (R44) |
-| `src/pages/WorkspaceAdmin.tsx` | A workspace's admin: one gate and one shell, with the **All posts** / **Add new blog** section nav, the post list and the composer; owner/editor first, the platform admin as the fallback override (R44, R45, R47) |
+| `src/pages/WorkspaceAdmin.tsx` | A workspace's admin: one gate and one shell, with the **All posts** / **Add new blog** section nav, the post list and the composer; that site's owner/editor only — no platform fallback (R44, R45, R47, R48) |
 | `src/hooks/useMyWorkspaces.ts` | The launcher's read: workspaces where `ownerUid` is the signed-in account (R44) |
 | `src/lib/landing.ts` | Where a sign-in lands, as a pure function: one site opens that site, several open the launcher, none (or the platform operator) keeps `/` (R46) |
 | `src/lib/sign-in-landing.ts` | Resolves that landing through the real seam — role and owned sites in parallel — and fails closed to `/` (R46) |
-| `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce; a tenant's owner/editor or the platform admin (R35, R45) |
-| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), public-read/admin-write `blogs` (R33, R37), the membership-gated tenant model (R41), and the platform admin's write override (R45) |
+| `functions/index.js` | `uploadBlogImage` / `deleteBlogImage` — the admin check and the Storage write that the bucket's rules cannot enforce; a tenant's owner/editor only (R35, R45, R48) |
+| `firestore.rules` | Firestore rules: own user document, no self-promotion (R31), public-read/admin-write `blogs` (R33, R37), the membership-gated tenant model (R41), and no platform-admin override on tenant data (R48) |
 | `storage.rules` | Storage rules: featured images under `blog-images/<uid>/`, admin-only (R33) |
 | `.env` / `.env.example` | Firebase credentials (local only) / documented template |
 
@@ -370,13 +371,19 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   **R47 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order, and
   R44-R47 published in stack order on top of R43.
+- **Implemented and verified, awaiting owner approval:** R48 (a public tenant
+  site stays public — `/w/<slug>` shows no **Admin**, **My site** or **My
+  sites** even to a signed-in visitor — and its admin is gated by that site's
+  owner/editor only; R45's platform-admin override is gone from the gate,
+  `firestore.rules` and the upload function, while `/admin/dashboard` keeps its
+  R31 role gate for the default workspace).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 131.37 kB JS / 8.29 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 131.33 kB JS / 8.29 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - **Five profiles carry `role: "admin"`** — three of them `@example.com`
     throwaway accounts from earlier upload probes. Only the console can change a
