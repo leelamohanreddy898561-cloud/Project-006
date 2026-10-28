@@ -3193,3 +3193,18 @@ production verification. Nothing is merged or deployed.
 **Results:** hosting released with no rule or function change, so `deploy:rules` and `deploy:functions` were not needed. Production smoke **11 passed**. A disposable live spec then measured the deployed header at 320px and 390px on `/`, `/w/pine-and-pixel` and `/w/orbit-analytics`: **Sign In** and **Sign Up** were displayed, non-zero and inside the viewport on every page, **1 passed in 2.9s** (spec deleted, no writes).
 
 **Evaluation:** the fix is live and proven on the deployed artifact, not only locally: the two demo tenant sites and the platform home keep the way in at phone widths. Bundle 131.61 kB JS / 8.42 kB CSS stays inside the R14 budgets. Change-log sync and the `--ff-only` merge to `main` follow in this publish cycle.
+
+---
+
+### 2026-10-28 - R49 change log synced and main fast-forwarded
+
+**Commands run:**
+
+    npm.cmd run changelog        # 124 entries written
+    npm.cmd run sync:changes     # 4 new, 120 already present
+    npm.cmd run verify:changes   # 124 documents; every entry present
+    git checkout main && git merge --ff-only fix/r49-mobile-sign-in && git push origin main
+
+**Results:** Firestore `changeLog` now holds all 124 entries, including `c6a4f65`, `471e476`, `b22225f` and `269241c`; `changeLog.json` was committed as `47b7d8e` and pushed. `main` moved `471e476..47b7d8e` as a fast-forward with no merge commit and was pushed. Exactly one generate/sync/verify cycle ran.
+
+**Evaluation:** R49 is published end to end - hosting deployed, production smoke **11 passed**, a disposable live mobile check passed at 320px and 390px on `/` and both demo tenant sites, the change log is in sync, and `main` is linear. As always, the final change-log commit itself (`47b7d8e`) and this record cannot appear in the collection they describe.
