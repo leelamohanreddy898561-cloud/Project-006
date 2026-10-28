@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-28T07:14:58.896Z",
+  "generatedAt": "2026-10-28T07:27:28.644Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 106,
+    "commits": 110,
     "fileChanges": {
-      "M": 464,
-      "A": 160,
+      "M": 491,
+      "A": 164,
       "D": 7
     },
     "latestVerification": null,
@@ -3737,6 +3737,174 @@
       "short": "a5769b0",
       "date": "2026-10-28T12:44:10+05:30",
       "subject": "docs(r44): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "dd2faff89f2cb58c997f930b96f299527f2a520e",
+      "short": "dd2faff",
+      "date": "2026-10-28T12:47:18+05:30",
+      "subject": "chore(r44): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "7b244db11a4adfb5ca135fed63d65558c48cfb1c",
+      "short": "7b244db",
+      "date": "2026-10-28T09:23:31+05:30",
+      "subject": "feat(r45): workspace-scoped writes and tenant demo accounts",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": ".gitignore"
+        },
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "firestore.rules"
+        },
+        {
+          "status": "M",
+          "path": "functions/index.js"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "scripts/seed-demo-tenants.mjs"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/admin/ManageBlogs.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/hooks/useSavedBlogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/AddBlog.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceAdmin.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/helpers/auth-account.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r38-manage-blogs.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r41-tenancy.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r42-workspace-data.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r44-workspace-launcher.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r45-workspace-writes.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/rules/r45-global-admin.test.mjs"
+        }
+      ]
+    },
+    {
+      "commit": "9b1eca5af5b46f1381964c983a446468056df3b7",
+      "short": "9b1eca5",
+      "date": "2026-10-28T10:24:19+05:30",
+      "subject": "fix(r45): keep the Write a post label legible and the demo login usable",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "A",
+          "path": "evidence/screenshots/r45-tenant-admin-pine.png"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceSite.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r45-workspace-writes.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "7ac0e16c47ae4922dc9ee2ccfd6794e82699eae6",
+      "short": "7ac0e16",
+      "date": "2026-10-28T12:56:55+05:30",
+      "subject": "docs(r45): record the publish and update current state",
       "requirements": [],
       "verification": null,
       "notes": "",
