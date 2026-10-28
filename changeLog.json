@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-28T02:21:04.087Z",
+  "generatedAt": "2026-10-28T07:14:58.896Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 103,
+    "commits": 106,
     "fileChanges": {
-      "M": 450,
-      "A": 155,
+      "M": 464,
+      "A": 160,
       "D": 7
     },
     "latestVerification": null,
@@ -3635,6 +3635,115 @@
         {
           "status": "M",
           "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "373588cf0f617aa96e60629febe876dee15d961c",
+      "short": "373588c",
+      "date": "2026-10-28T07:53:18+05:30",
+      "subject": "chore(r43): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "f2d6acfce4d2ba55c4699084bef3071757920f26",
+      "short": "f2d6acf",
+      "date": "2026-10-28T08:00:02+05:30",
+      "subject": "feat(r44): my sites launcher and workspace-scoped admin gate",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/App.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/AccountMenu.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/hooks/useMyWorkspaces.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/hooks/useSavedBlogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/workspaces.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Dashboard.css"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/Dashboard.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/pages/WorkspaceAdmin.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceSite.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r33-add-blog.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r44-workspace-launcher.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "a5769b0982b990cce43b78c65b824c07d3891f27",
+      "short": "a5769b0",
+      "date": "2026-10-28T12:44:10+05:30",
+      "subject": "docs(r44): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
         },
         {
           "status": "M",
