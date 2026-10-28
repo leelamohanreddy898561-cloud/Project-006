@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-28T13:15:22.837Z",
+  "generatedAt": "2026-10-28T14:25:35.534Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 120,
+    "commits": 124,
     "fileChanges": {
-      "M": 546,
-      "A": 170,
+      "M": 559,
+      "A": 171,
       "R051": 1,
       "D": 7
     },
@@ -4260,6 +4260,106 @@
       "short": "11833f0",
       "date": "2026-10-28T18:44:47+05:30",
       "subject": "docs(r48): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "c6a4f65b0301b6677b59c21df1ff0887f576cc56",
+      "short": "c6a4f65",
+      "date": "2026-10-28T18:47:39+05:30",
+      "subject": "chore(r48): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "471e47677b94f64105ce5f298f4e25347d0e2c13",
+      "short": "471e476",
+      "date": "2026-10-28T18:48:08+05:30",
+      "subject": "docs(r48): record the change-log sync and merge",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "b22225f61f977f4bb6f793ea8c66d30f7a4d0a39",
+      "short": "b22225f",
+      "date": "2026-10-28T19:50:01+05:30",
+      "subject": "fix(r49): keep the way in visible on a phone",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/components/AccountMenu.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Header.css"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Header.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "A",
+          "path": "tests/r49-mobile-auth.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "269241ce851f9da479ec4af0aa084cc8ed454fac",
+      "short": "269241c",
+      "date": "2026-10-28T19:54:59+05:30",
+      "subject": "docs(r49): record the publish and update current state",
       "requirements": [],
       "verification": null,
       "notes": "",
