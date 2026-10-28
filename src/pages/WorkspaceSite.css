@@ -87,7 +87,7 @@
   line-height: 1.6;
 }
 
-/* R44 — the workspace admin. */
+/* R44 ï¿½ the workspace admin. */
 
 .ws-admin {
   padding-block: 2.5rem 4rem;
@@ -103,7 +103,9 @@
   color: var(--color-text-muted);
 }
 
-.ws-admin__meta a {
+/* Plain links only: a `.btn` in this row keeps its own contrast colour, or the
+   primary button's label would be drawn in the same indigo as its background. */
+.ws-admin__meta a:not(.btn) {
   color: var(--color-accent);
 }
 

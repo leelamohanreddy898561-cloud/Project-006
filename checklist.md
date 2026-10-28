@@ -403,4 +403,5 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R45.6) `scripts/seed-demo-tenants.mjs` and the git-ignored `.demo-tenants.json`; `pine-and-pixel` and `orbit-analytics` seeded idempotently
 - [x] (R45) `tests/rules/r45-global-admin.test.mjs`, `tests/r45-workspace-writes.spec.ts`; the R38, R42 and R44 guards updated for the explicit workspace
 - [x] (R45.7) Build 131.13 kB JS / 8.17 kB CSS gzipped; lint clean; `npm run test:rules` 7 passed; full suite (recorded below)
+- [x] (R45.2, R45.6) Owner follow-up: the demo passwords were reset to short, typeable values and both accounts signed in through `/signin`; the **Write a post** label was drawn in the same indigo as its fill and now passes 4.5:1
 - [ ] Execute TC-4501-TC-4504; evidence entry; local commit; **await owner approval**

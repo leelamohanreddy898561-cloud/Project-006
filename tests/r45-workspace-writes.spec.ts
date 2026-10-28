@@ -12,6 +12,7 @@ import {
   writeTestDocument,
   type TestSession,
 } from "./helpers/auth-account";
+import { contrastRatio } from "./helpers/contrast";
 
 /**
  * R45 — workspace-scoped writes and the demo tenants.
@@ -142,7 +143,22 @@ test.describe("R45 — a site owner writes only to its own workspace", () => {
     ).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("Owner", { exact: true })).toBeVisible();
 
-    await page.getByRole("link", { name: "Write a post" }).click();
+    const writePost = page.getByRole("link", { name: "Write a post" });
+    await expect(writePost).toBeVisible();
+
+    // A button-shaped link inside the meta row keeps its own text colour.
+    // `.ws-admin__meta a` once painted this label the same indigo as its fill.
+    const label = await writePost.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { color: style.color, background: style.backgroundColor };
+    });
+
+    expect(
+      contrastRatio(label.color, label.background),
+      "the Write a post label is legible on its own fill",
+    ).toBeGreaterThanOrEqual(4.5);
+
+    await writePost.click();
     await expect(page).toHaveURL(new RegExp(`/w/${slug}/admin/new$`));
 
     await page.getByLabel("Blog title").fill("A tenant post");

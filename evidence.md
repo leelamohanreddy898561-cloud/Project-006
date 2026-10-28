@@ -2865,3 +2865,37 @@ the image function accept the platform operator without turning it into an
 owner. R44's AC44.3/AC44.4 were revised and recorded in the decision log rather
 than quietly changed. Nothing is merged or deployed: R44 must publish first,
 then R45 on the updated `main`.
+
+---
+
+### 2026-10-28 - R45 follow-up: the demo sign-in and an invisible button label (local, awaiting approval)
+
+**Branch:** eature/r45-workspace-writes
+**Trigger:** the owner's report that /signin answers "Email or password is incorrect" for the demo credentials.
+
+**Commands run:**
+
+    node reset-demo-passwords.mjs            # old passwords still signed in; reset; new ones signed in
+    npm.cmd run build                        # 131.13 kB JS / 8.18 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npx playwright test tests/r45-workspace-writes.spec.ts --reporter=dot   # 3 passed (26.7s)
+    npx playwright test --reporter=dot       # 137 passed (2.6m)
+
+**Results:**
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| The recorded passwords at the Auth API | pass | both accounts signed in with the 29-character passwords, so neither account nor password was broken |
+| The owner's screenshot | diagnosis | the password field held 21 characters, not 29: the value was typed or pasted short. Both passwords were reset to short, typeable values, kept only in the git-ignored `.demo-tenants.json` |
+| Browser walkthrough (localhost:5173) | pass | pine signs in, **My sites** lists Pine & Pixel, `/w/pine-and-pixel/admin` lists its one post, `/w/pine-and-pixel/admin/new` opens the composer bound to that site; orbit signs in and its admin lists **The First Orbit Report** |
+| **Write a post** label | fixed | `.ws-admin__meta a` (0,1,1) beat `.btn--primary` (0,1,0), so the label was drawn in the same indigo as its fill. Scoped to `a:not(.btn)`; the label now measures white on indigo |
+| TC-4502 | pass | now measures the label against its own fill (>=4.5:1) before clicking it, so the regression cannot return unnoticed |
+
+**Artifacts:** evidence/screenshots/r45-tenant-admin-pine.png (the tenant admin as its owner).
+
+**Evaluation:** the credentials were valid all along and the sign-in form was
+right to refuse a 21-character password; the demo values are now short enough to
+type by hand. The walkthrough also caught a real visual defect R45 would have
+shipped - a primary button whose label was invisible - and TC-4502 now guards it.
+Nothing is merged or deployed: R44 publishes first, then R45 on the updated
+`main`.
