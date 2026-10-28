@@ -1,13 +1,14 @@
 {
-  "generatedAt": "2026-10-28T07:44:25.340Z",
+  "generatedAt": "2026-10-28T13:15:22.837Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 116,
+    "commits": 120,
     "fileChanges": {
-      "M": 517,
-      "A": 167,
+      "M": 546,
+      "A": 170,
+      "R051": 1,
       "D": 7
     },
     "latestVerification": null,
@@ -4094,6 +4095,182 @@
         {
           "status": "M",
           "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "ca18ec89ca3a58d8f4132c353c48073c98881e36",
+      "short": "ca18ec8",
+      "date": "2026-10-28T13:16:36+05:30",
+      "subject": "chore(r47): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "f121a7697efbf70a32bced219f937e8f209b8309",
+      "short": "f121a76",
+      "date": "2026-10-28T14:36:18+05:30",
+      "subject": "feat(r48): keep public tenant sites public and scope their admin",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "firestore.rules"
+        },
+        {
+          "status": "M",
+          "path": "functions/index.js"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/components/AccountMenu.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/components/Header.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/blogs.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceAdmin.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r36-account-admin-link.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r41-tenancy.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r44-workspace-launcher.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r45-workspace-writes.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r46-owner-landing.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r48-public-site.spec.ts"
+        },
+        {
+          "status": "R051",
+          "path": "tests/rules/r45-global-admin.test.mjs\ttests/rules/r48-site-ownership.test.mjs"
+        }
+      ]
+    },
+    {
+      "commit": "e99363f9bf929b1e9f9affbdaa3e8bd02610dcbf",
+      "short": "e99363f",
+      "date": "2026-10-28T18:35:11+05:30",
+      "subject": "fix(r48): give tenant owners a visible way into their admin",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "A",
+          "path": "src/components/SiteAdminBar.tsx"
+        },
+        {
+          "status": "A",
+          "path": "src/hooks/useWorkspaceRole.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceLayout.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/WorkspaceSite.css"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r46-owner-landing.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r48-public-site.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "11833f0d9873bebe0398b58340bb3c9e8f093de4",
+      "short": "11833f0",
+      "date": "2026-10-28T18:44:47+05:30",
+      "subject": "docs(r48): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
         },
         {
           "status": "M",
