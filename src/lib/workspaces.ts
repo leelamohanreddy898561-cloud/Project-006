@@ -208,6 +208,55 @@ export async function fetchWorkspaceRole(
   }
 }
 
+export type WorkspacesOutcome =
+  | { ok: true; workspaces: Workspace[] }
+  | { ok: false; message: string };
+
+/**
+ * R44 / R46 — the workspaces an account owns.
+ *
+ * One query, by the field ownership is stored in: `ownerUid`. The workspace
+ * document is publicly readable (a site's name and slug are public), so this
+ * needs no rule change and no index beyond the automatic single-field one.
+ *
+ * Memberships (R41's `members` subcollection) are deliberately not merged yet:
+ * listing them needs a collection-group query, and the product has no invite
+ * flow to create them.
+ */
+export async function listWorkspacesOwnedBy(
+  uid: string,
+): Promise<WorkspacesOutcome> {
+  if (!isFirebaseConfigured()) {
+    return {
+      ok: false,
+      message:
+        "Firebase is not configured — copy .env.example to .env and add the project values.",
+    };
+  }
+
+  try {
+    const [{ db }, { collection, getDocs, query, where }] = await Promise.all([
+      getFirebase(),
+      import("firebase/firestore"),
+    ]);
+
+    const snapshot = await getDocs(
+      query(collection(db, WORKSPACES_COLLECTION), where("ownerUid", "==", uid)),
+    );
+
+    return { ok: true, workspaces: snapshot.docs.map(toWorkspace) };
+  } catch (error) {
+    const detail = (error as { message?: string })?.message;
+
+    return {
+      ok: false,
+      message: detail
+        ? `Your sites could not be loaded (${detail}).`
+        : "Your sites could not be loaded.",
+    };
+  }
+}
+
 /** Reads one workspace's public document. */
 export async function fetchWorkspace(
   workspaceId: string,

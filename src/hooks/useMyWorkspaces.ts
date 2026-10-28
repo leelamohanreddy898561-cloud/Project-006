@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { getFirebase, isFirebaseConfigured } from "../lib/firebase";
-import type { Workspace } from "../lib/workspaces";
+import { isFirebaseConfigured } from "../lib/firebase";
+import {
+  listWorkspacesOwnedBy,
+  type Workspace,
+} from "../lib/workspaces";
 
 /**
  * R44 — the workspaces an account can open.
  *
- * One query, by the field ownership is stored in: `ownerUid`. The workspace
- * document is publicly readable (a site's name and slug are public), so this
- * needs no rule change and no index beyond the automatic single-field one.
- *
- * Memberships (R41's `members` subcollection) are deliberately not merged yet:
- * listing them needs a collection-group query, and the product has no invite
- * flow to create them. Ownership is what onboarding will write (R45).
+ * The read itself lives in `listWorkspacesOwnedBy` (R46 needs the same answer
+ * outside React, at sign-in), so this hook is only the state around it: one
+ * query per session, keyed by `uid`.
  */
 
 export type MyWorkspacesStatus = "loading" | "ready" | "error";
@@ -46,56 +45,18 @@ export function useMyWorkspaces(uid: string | null): MyWorkspacesState {
 
     setStatus("loading");
 
-    (async () => {
-      try {
-        const [{ db }, { collection, getDocs, query, where }] =
-          await Promise.all([getFirebase(), import("firebase/firestore")]);
+    listWorkspacesOwnedBy(uid).then((outcome) => {
+      if (!active) return;
 
-        const snapshot = await getDocs(
-          query(
-            collection(db, "workspaces"),
-            where("ownerUid", "==", uid),
-          ),
-        );
-
-        if (!active) return;
-
-        setWorkspaces(
-          snapshot.docs.map((document) => {
-            const data = document.data();
-
-            return {
-              id: document.id,
-              name: String(data.name ?? ""),
-              slug: String(data.slug ?? ""),
-              ownerUid: String(data.ownerUid ?? ""),
-              branding: {
-                title: String(
-                  (data.branding as { title?: unknown } | undefined)?.title ??
-                    data.name ??
-                    "",
-                ),
-                tagline: String(
-                  (data.branding as { tagline?: unknown } | undefined)
-                    ?.tagline ?? "",
-                ),
-              },
-              createdAt: data.createdAt,
-            };
-          }),
-        );
-        setStatus("ready");
-      } catch (error) {
-        if (!active) return;
-
-        setMessage(
-          error instanceof Error
-            ? `Your sites could not be loaded (${error.message}).`
-            : "Your sites could not be loaded.",
-        );
+      if (!outcome.ok) {
+        setMessage(outcome.message);
         setStatus("error");
+        return;
       }
-    })();
+
+      setWorkspaces(outcome.workspaces);
+      setStatus("ready");
+    });
 
     return () => {
       active = false;

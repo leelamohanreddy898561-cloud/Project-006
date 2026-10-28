@@ -14,6 +14,8 @@ import {
   signUpWithEmail,
 } from "../lib/auth";
 import { useAuth } from "../hooks/useAuth";
+import { PLATFORM_HOME } from "../lib/landing";
+import { resolveSignInLanding } from "../lib/sign-in-landing";
 import "./AuthPage.css";
 
 export type AuthMode = "signin" | "signup";
@@ -57,9 +59,9 @@ type FieldErrors = {
  *
  * Every authentication call goes through `src/lib/auth.ts`; this page never
  * imports `firebase/auth` directly (R24.15, R29.7). On success the real session
- * exists, so the page leaves for the home page and the header shows the
- * account. On failure the provider's error arrives as a plain-English sentence
- * in the live region.
+ * exists and the page leaves for the account's own landing (R46): its site when
+ * it owns exactly one, the launcher otherwise. On failure the provider's error
+ * arrives as a plain-English sentence in the live region.
  */
 export function AuthPage({ mode }: { mode: AuthMode }) {
   const copy = COPY[mode];
@@ -70,6 +72,9 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
+  // R46 — a sign-in that is being routed to its landing; the form stays put
+  // until the decision is made.
+  const [landing, setLanding] = useState(false);
 
   const navigate = useNavigate();
   const { status: sessionStatus, user } = useAuth();
@@ -146,12 +151,20 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
     setPending(false);
 
     if (outcome.ok) {
-      // R29 — the session is real. Leave the form; the header now shows who
-      // is signed in, which is the confirmation.
-      navigate("/", { replace: true });
+      // R46 — the session is real; go where this account belongs rather than
+      // to the platform home. The form stays pending until the decision is
+      // made, so a tenant owner never sees the operator's site on the way.
+      setLanding(true);
+      navigate(
+        outcome.user
+          ? await resolveSignInLanding(outcome.user)
+          : PLATFORM_HOME,
+        { replace: true },
+      );
       return;
     }
 
+    setPending(false);
     setStatus(outcome.message);
   }
 
@@ -161,19 +174,25 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
 
     const outcome = await signInWithGoogle();
 
-    setPending(false);
-
     if (outcome.ok) {
-      navigate("/", { replace: true });
+      setLanding(true);
+      navigate(
+        outcome.user
+          ? await resolveSignInLanding(outcome.user)
+          : PLATFORM_HOME,
+        { replace: true },
+      );
       return;
     }
 
+    setPending(false);
     setStatus(outcome.message);
   }
 
   // R29 — a signed-in visitor gets the session, not a form that would try to
-  // sign them in a second time.
-  if (sessionStatus === "signedIn" && user) {
+  // sign them in a second time. R46 — not while a sign-in is being routed, or
+  // the "You are signed in" card would flash before the site opens.
+  if (sessionStatus === "signedIn" && user && !landing) {
     return (
       <div className="auth">
         <div className="auth__glow auth__glow--indigo" aria-hidden="true" />

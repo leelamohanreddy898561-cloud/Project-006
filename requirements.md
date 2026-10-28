@@ -57,6 +57,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-26 | The article featured image is rendered at its own aspect ratio, capped and contained; card thumbnails crop only at and above 640 px (R40) | `<img height={500}>` is a presentational hint, and the cover's CSS declared no `height`, so the box was 500 px tall at every width while `aspect-ratio: 8 / 5` never applied. A 16:9 cover therefore lost ~63% of its width on a 360 px phone. A fixed-ratio content image is a defect, not a design, so the article cover now shows in full everywhere; the desktop card crop is kept only where the thumbnail is a uniform preview, and only above the width at which a card stops being full width. |
 | 2026-10-26 | Dark-mode `--color-text-subtle` is raised to meet AA in R40 instead of waiting for R11 | The R40 mobile audit found the 3.98:1 token under every card's meta line, in the article meta row and across the sidebar - the exact surfaces a mobile reader scans. The fix is one token and only lightens secondary text, so the recorded R11 deferral is settled early; R11 keeps the rest of its scope. |
 | 2026-10-28 | R45 revises R44's AC44.3 and AC44.4: the tenant admin now writes, and the platform admin is admitted after the workspace role says no | R44 deliberately made the page read-only until every write named its workspace. R45 makes `workspaceId` an argument to every seam function, so the controls can be offered safely; the global role is a fallback for the platform operator only, never the tenant's own answer, and the rules still refuse an `ownerUid` change and billing fields on the public document. |
+| 2026-10-28 | R46 revises R29's AC29.4: Google sign-in lands the visitor on the account's own landing, not always the home page | The owner's report was that a tenant owner signing in opens the platform home — the operator's site — instead of its own. The same resolver now runs after both email and Google sign-ins, so "lands ... on the home page" is no longer true for an owner. A reader who owns no site still lands on the home page, which is why R29's other cases and R31/R36/R44 keep their expectations. |
 
 ## 5. Out of Scope (v1)
 
@@ -491,7 +492,7 @@ password — locally and on the deployed site.
 - **AC29.1** Email/Password is enabled for the project, and an account created through `/signup` produces a real session: the header shows the account, and a reload keeps the visitor signed in.
 - **AC29.2** An unknown email or wrong password on `/signin` returns the provider's own error as a plain-English sentence in the live region, and no session is created.
 - **AC29.3** Signing out — from the header account menu or from the auth page — ends the session, and a reload does not restore it.
-- **AC29.4** Google sign-in completes with a real Google account and lands the visitor signed in on the home page; a pop-up closed before it finishes leaves them signed out with an explanation. *(Manual: a Google account and a consent screen cannot be automated.)*
+- **AC29.4** Google sign-in completes with a real Google account and lands the visitor signed in on the account's own landing (R46: its site when it owns exactly one, the platform home otherwise); a pop-up closed before it finishes leaves them signed out with an explanation. *(Manual: a Google account and a consent screen cannot be automated.)*
 - **AC29.5** A signed-in visitor who opens `/signin` or `/signup` sees the session and a way out, not a form that would sign them in a second time.
 - **AC29.6** The initial JS bundle stays inside the R14 budgets — the auth SDK is loaded on demand and the entry chunk never contains it.
 - **AC29.7** `firebase/auth` is imported only by `src/lib/auth.ts` and `src/lib/firebase.ts`; every page and component reaches authentication through the seam.
@@ -1249,6 +1250,39 @@ publish.
 - **AC45.7** The default site (`/`, `/blog`, `/blog/<slug>`, `/admin`) behaves as
   before; build and lint pass; `npm run test:rules` and the full suite stay
   green; the bundle stays within the R14 budgets.
+
+---
+
+### R46 - A single-site owner lands on their own site
+
+A tenant owner who signs in should arrive at the site they own. The platform
+home is the operator's site; opening it for a customer is a wrong first
+impression and hides the site they came to manage. The launcher stays, because
+an account with several sites still needs to choose one.
+
+**The landing**
+
+- **AC46.1** After a successful sign-in (email/password and Google), an account
+  that owns exactly one workspace and is not the platform admin is taken to that
+  workspace's public home, `/w/<slug>`, and `/` is never shown on the way. The
+  navigation replaces the sign-in entry in history, so Back does not return to
+  the form.
+- **AC46.2** That account's header offers **My site**, linking straight to
+  `/w/<slug>/admin`. The launcher remains reachable from the admin's **All my
+  sites** link.
+- **AC46.3** An account that owns more than one workspace lands on `/dashboard`
+  and sees **My sites**. The platform admin (`users/{uid}.role` is exactly
+  `"admin"`) and an account that owns no site keep the platform home `/`, as
+  before: a reader is returned to the site it was reading, and the operator's
+  own page is the platform. The platform admin keeps **My sites** in the header
+  even when it owns exactly one workspace, because its work spans every site.
+- **AC46.4** The decision fails closed: a workspace read that fails, or a
+  session whose sites cannot be resolved, lands on the platform home and never
+  on a guessed site. `/` stays the platform site and is reachable deliberately;
+  tenant pages keep R43's in-tenant navigation; signed-out visitors see no
+  change.
+- **AC46.5** Build and lint pass, `npm run test:rules` and the full suite stay
+  green, and the bundle stays within the R14 budgets.
 
 ---
 

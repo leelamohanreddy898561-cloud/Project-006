@@ -2931,3 +2931,35 @@ same authority without becoming an owner, so the R41 boundary is unchanged while
 the rules gain one additive override. R46 and R47 remain local; R46 is next.
 
 ---
+
+### 2026-10-28 - R46 a single-site owner lands on their own site (local, awaiting approval)
+
+**Branch:** `feature/r46-owner-landing` (stacked on `feature/r45-workspace-writes`)
+**Trigger:** the owner signed in as the Orbit Analytics demo tenant and opened the platform home � the operator's site � instead of Orbit's own.
+**Test cases:** TC-4601, TC-4602 (browser), TC-4603 (pure function + wiring), TC-4604 (manual)
+
+**Commands run:**
+
+    npm.cmd run build                        # 131.24 kB JS / 8.18 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npm.cmd run test:rules                   # 7 passed (R41, R42, R45)
+    npx playwright test --reporter=dot       # 140 passed (1.9m)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4601 | R46.1, R46.2 | pass | a throwaway owner with one site signs in at `/signin` and the address becomes `/w/<slug>` with that site's own heading; the header's **My site** points at `/w/<slug>/admin` and opens the gate |
+| TC-4602 | R46.3 | pass | the same account, given a second site, signs in to `/dashboard`; both cards render and the header says **My sites** |
+| TC-4603 | R46.1, R46.3, R46.4 | pass | `landingPath`: one site -> `/w/<slug>`, two -> `/dashboard`, none -> `/`, platform admin with one site -> `/`, blank slug -> `/`; email and Google both resolve the landing; an unreadable site list resolves to `/` |
+| TC-4604 | R46.1, R46.2 | manual | in the browser at `localhost:5173`, orbit signed in to `/w/orbit-analytics` and pine to `/w/pine-and-pixel`; **My site** opened each site's admin |
+
+**Evaluation:** the defect was the destination of a successful sign-in, not the
+tenant boundary: `AuthPage` navigated to `/` unconditionally. One pure
+function now decides, so a reader who owns nothing and the platform operator keep
+the home page they had, while a tenant owner opens its own site and gets **My
+site** instead of a launcher that lists one card. R29's AC29.4 was revised in the
+decision log because a Google sign-in no longer always lands on the home page,
+and R44's static guard now reads the query where it lives (the seam, not the
+hook). Nothing is merged or deployed: publication order is R44, then R45, then
+R46.

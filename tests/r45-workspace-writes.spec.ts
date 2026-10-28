@@ -132,7 +132,11 @@ test.describe("R45 — a site owner writes only to its own workspace", () => {
     await form.getByLabel("Password", { exact: true }).fill(PASSWORD);
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
-    await expect(page).toHaveURL(/\/$/, { timeout: 30_000 });
+    // R46 — one owned site means the owner lands on that site, not the
+    // platform home. That landing is the first thing this case now proves.
+    await expect(page).toHaveURL(new RegExp(`/w/${slug}$`), {
+      timeout: 30_000,
+    });
 
     // The site's admin opens because this account owns the workspace.
     await page.goto(`/w/${slug}/admin`);

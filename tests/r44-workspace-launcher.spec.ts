@@ -96,8 +96,10 @@ test.describe("R44 — the gate settles the workspace role first", () => {
     const app = read("src/App.tsx");
 
     // The launcher asks for the account's own workspaces only, and links to the
-    // site and to that site's admin.
-    expect(hook).toContain('where("ownerUid", "==", uid)');
+    // site and to that site's admin. R46 moved the query itself into the seam
+    // so the sign-in landing can ask the same question; the hook wraps it.
+    expect(seam).toContain('where("ownerUid", "==", uid)');
+    expect(hook).toContain("listWorkspacesOwnedBy(uid)");
     expect(dashboard).toContain("/w/${workspace.slug}/admin");
     expect(dashboard).toContain("No sites yet");
 
