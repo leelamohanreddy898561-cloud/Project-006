@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-28T07:27:28.644Z",
+  "generatedAt": "2026-10-28T07:35:50.523Z",
   "project": "signal-and-noise",
   "firebaseProjectId": "project-006-e6ae1",
   "targetCollection": "changeLog",
   "summary": {
-    "commits": 110,
+    "commits": 113,
     "fileChanges": {
-      "M": 491,
-      "A": 164,
+      "M": 506,
+      "A": 167,
       "D": 7
     },
     "latestVerification": null,
@@ -3912,6 +3912,111 @@
         {
           "status": "M",
           "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        }
+      ]
+    },
+    {
+      "commit": "01335b8ad4cd02f2fa6a01ab5c7a0b7985c5b499",
+      "short": "01335b8",
+      "date": "2026-10-28T12:59:39+05:30",
+      "subject": "chore(r45): sync change log",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "changeLog.json"
+        }
+      ]
+    },
+    {
+      "commit": "bcfb5d7f0a7cd0b19e06abf777aa7855017ba1bf",
+      "short": "bcfb5d7",
+      "date": "2026-10-28T11:13:51+05:30",
+      "subject": "feat(r46): a single-site owner lands on their own site",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
+        },
+        {
+          "status": "M",
+          "path": "evidence.md"
+        },
+        {
+          "status": "M",
+          "path": "requirements.md"
+        },
+        {
+          "status": "M",
+          "path": "src/components/AccountMenu.tsx"
+        },
+        {
+          "status": "M",
+          "path": "src/hooks/useMyWorkspaces.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/landing.ts"
+        },
+        {
+          "status": "A",
+          "path": "src/lib/sign-in-landing.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/lib/workspaces.ts"
+        },
+        {
+          "status": "M",
+          "path": "src/pages/AuthPage.tsx"
+        },
+        {
+          "status": "M",
+          "path": "test-cases.md"
+        },
+        {
+          "status": "M",
+          "path": "tests/r44-workspace-launcher.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "tests/r45-workspace-writes.spec.ts"
+        },
+        {
+          "status": "A",
+          "path": "tests/r46-owner-landing.spec.ts"
+        }
+      ]
+    },
+    {
+      "commit": "e79c626622350fa22fe347fdf15e4ef6f7dbb3b1",
+      "short": "e79c626",
+      "date": "2026-10-28T13:05:18+05:30",
+      "subject": "docs(r46): record the publish and update current state",
+      "requirements": [],
+      "verification": null,
+      "notes": "",
+      "files": [
+        {
+          "status": "M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": "M",
+          "path": "checklist.md"
         },
         {
           "status": "M",
