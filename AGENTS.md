@@ -212,7 +212,7 @@ necessary but never sufficient** — your visual approval is the gate.
 | `src/pages/WorkspaceLayout.tsx` | Resolves `/w/<slug>`: loading, **Site not found**, unavailable, then the tenant provider (R43) |
 | `src/components/WorkspaceContext.tsx` | The tenant every link-building component reads `basePath` from; deliberately Firebase-free (R43) |
 | `src/pages/Dashboard.tsx` | The launcher: a signed-in account's owned sites (R44) |
-| `src/pages/WorkspaceAdmin.tsx` | A workspace's admin: one gate, the post list and the composer; owner/editor first, the platform admin as the fallback override (R44, R45) |
+| `src/pages/WorkspaceAdmin.tsx` | A workspace's admin: one gate and one shell, with the **All posts** / **Add new blog** section nav, the post list and the composer; owner/editor first, the platform admin as the fallback override (R44, R45, R47) |
 | `src/hooks/useMyWorkspaces.ts` | The launcher's read: workspaces where `ownerUid` is the signed-in account (R44) |
 | `src/lib/landing.ts` | Where a sign-in lands, as a pure function: one site opens that site, several open the launcher, none (or the platform operator) keeps `/` (R46) |
 | `src/lib/sign-in-landing.ts` | Resolves that landing through the real seam — role and owned sites in parallel — and fails closed to `/` (R46) |
@@ -366,13 +366,18 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   **R46 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order, and
   R47 was built on top of R46, so it publishes after it.
+- **Implemented locally, awaiting owner approval:** R47 (the tenant admin's
+  add-post section: the same **All posts** / **Add new blog** nav the platform
+  dashboard has, replacing R45's inline **Write a post** link, so adding a post
+  is a visible destination on `/w/<slug>/admin` and its composer). **R47 is
+  stacked on R46**, so it publishes on the updated `main`.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 131.24 kB JS / 8.18 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 131.37 kB JS / 8.29 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - **Five profiles carry `role: "admin"`** — three of them `@example.com`
     throwaway accounts from earlier upload probes. Only the console can change a

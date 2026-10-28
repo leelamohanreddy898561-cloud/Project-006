@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import {
   Link,
   Navigate,
+  NavLink,
   Outlet,
   useOutletContext,
   useParams,
 } from "react-router-dom";
 import { ManageBlogs } from "../components/admin/ManageBlogs";
+import { DocsIcon, PlusIcon } from "../components/icons";
 import { useAuth } from "../hooks/useAuth";
 import { fetchUserRole, isAdminRole } from "../lib/users";
 import {
@@ -32,8 +34,11 @@ import "./WorkspaceSite.css";
  *
  * The gate is the route element for the whole `/w/<slug>/admin` family, so the
  * post list and the composer share one access decision and one resolved
- * workspace. R45 makes the page a writer: the list edits and deletes, and
- * **Write a post** opens the same composer the global dashboard uses.
+ * workspace. R45 makes the page a writer: the list edits and deletes, and the
+ * composer writes a new post. R47 gives those two sections the same shape the
+ * platform dashboard has — a section nav with **All posts** and
+ * **Add new blog** — so adding a post is a visible destination of its own, not
+ * a link buried in a line of meta text.
  */
 
 /** The resolved site and role every child of the gate receives. */
@@ -187,7 +192,7 @@ export function WorkspaceAdminGate() {
     basePath: `/w/${workspace.slug}`,
   };
 
-  return <Outlet context={value} />;
+  return <WorkspaceAdminShell value={value} />;
 }
 
 /** The gate's context, typed for both children. */
@@ -195,9 +200,16 @@ function useWorkspaceAdmin(): WorkspaceAdminContext {
   return useOutletContext<WorkspaceAdminContext>();
 }
 
-/** The site's post list and editor. */
-export function WorkspaceAdmin() {
-  const { workspace, role, basePath } = useWorkspaceAdmin();
+/**
+ * R47 — the site's admin shell.
+ *
+ * It carries the identity every section needs (the site, the role, the public
+ * base path) and the two section links. The pattern mirrors
+ * `/admin/dashboard`: the section a page belongs to is always one click away,
+ * and adding a post is a named section rather than a one-off link.
+ */
+function WorkspaceAdminShell({ value }: { value: WorkspaceAdminContext }) {
+  const { workspace, role, basePath } = value;
   const name = workspace.branding.title || workspace.name;
   const roleLabel =
     role === "admin" ? "Platform admin" : role === "owner" ? "Owner" : "Editor";
@@ -213,19 +225,50 @@ export function WorkspaceAdmin() {
           <Link to={basePath}>View public site</Link>
           {" · "}
           <Link to="/dashboard">All my sites</Link>
-          {" · "}
-          <Link to={`${basePath}/admin/new`} className="btn btn--primary btn--sm">
-            Write a post
-          </Link>
         </p>
+
+        <nav className="ws-admin__nav" aria-label="Workspace admin sections">
+          <NavLink
+            to={`${basePath}/admin`}
+            end
+            className={({ isActive }) =>
+              isActive
+                ? "ws-admin__nav-link is-current"
+                : "ws-admin__nav-link"
+            }
+          >
+            <DocsIcon size={16} />
+            <span>All posts</span>
+          </NavLink>
+          <NavLink
+            to={`${basePath}/admin/new`}
+            className={({ isActive }) =>
+              isActive
+                ? "ws-admin__nav-link ws-admin__nav-link--add is-current"
+                : "ws-admin__nav-link ws-admin__nav-link--add"
+            }
+          >
+            <PlusIcon size={16} />
+            <span>Add new blog</span>
+          </NavLink>
+        </nav>
       </header>
 
-      <ManageBlogs
-        workspaceId={workspace.id}
-        basePath={basePath}
-        includeRepository={false}
-      />
+      <Outlet context={value} />
     </div>
+  );
+}
+
+/** The site's post list and editor. */
+export function WorkspaceAdmin() {
+  const { workspace, basePath } = useWorkspaceAdmin();
+
+  return (
+    <ManageBlogs
+      workspaceId={workspace.id}
+      basePath={basePath}
+      includeRepository={false}
+    />
   );
 }
 
@@ -234,12 +277,10 @@ export function WorkspaceAdminComposer() {
   const { workspace, basePath } = useWorkspaceAdmin();
 
   return (
-    <div className="container ws-admin">
-      <AddBlog
-        workspaceId={workspace.id}
-        basePath={basePath}
-        workspaceName={workspace.branding.title || workspace.name}
-      />
-    </div>
+    <AddBlog
+      workspaceId={workspace.id}
+      basePath={basePath}
+      workspaceName={workspace.branding.title || workspace.name}
+    />
   );
 }

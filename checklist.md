@@ -398,7 +398,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 ## Phase 3cc - Workspace-scoped writes and tenant demo accounts (R45)
 
 - [x] (R45.1) Every blog write takes `workspaceId`; no write falls back to `SITE_WORKSPACE_ID`; a missing id is refused
-- [x] (R45.2, R45.3) `/w/:siteSlug/admin` is one gate with the post list and a composer; Edit, Delete and Write a post all pass the resolved workspace; the global panel keeps repository articles read-only
+- [x] (R45.2, R45.3) `/w/:siteSlug/admin` is one gate with the post list and a composer; Edit, Delete and Add new blog all pass the resolved workspace; the global panel keeps repository articles read-only
 - [x] (R45.4, R45.5) `firestore.rules` and `functions/index.js`: the platform admin writes every workspace; ownership transfer and billing stay refused; tenant roles stay confined
 - [x] (R45.6) `scripts/seed-demo-tenants.mjs` and the git-ignored `.demo-tenants.json`; `pine-and-pixel` and `orbit-analytics` seeded idempotently
 - [x] (R45) `tests/rules/r45-global-admin.test.mjs`, `tests/r45-workspace-writes.spec.ts`; the R38, R42 and R44 guards updated for the explicit workspace
@@ -412,3 +412,11 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R46.1, R46.2) `AuthPage` sends both email and Google sign-ins through the resolver; the header offers **My site** to a single-site owner and **My sites** otherwise
 - [x] (R46.3, R46.4) A multi-site account lands on `/dashboard`; the platform admin and a site-less reader keep `/`; R43's in-tenant nav is unchanged
 - [x] (R46.5) Build 131.24 kB JS / 8.18 kB CSS gzipped; lint clean; `npm run test:rules` 7 passed; full suite 140 passed; deployed; approved by the owner and published
+
+## Phase 3ee - The tenant admin's add-post section (R47)
+
+- [x] (R47.1, R47.3) `WorkspaceAdminGate` renders one `WorkspaceAdminShell` behind the R44 gate; the shell carries **All posts** and **Add new blog** and only renders for an admitted owner, editor or platform admin
+- [x] (R47.1, R47.2) The inline **Write a post** link is gone; **Add new blog** is a filled primary section link to `${basePath}/admin/new`, the composer keeps the same nav, and **All posts** returns to the list
+- [x] (R47.4) The add label keeps its AA contrast on its own fill; the header keeps the role badge, **View public site** and **All my sites**; the nav wraps on narrow widths
+- [x] (R47.5) Build 131.37 kB JS / 8.29 kB CSS gzipped; lint clean; `npm run test:rules` 7 passed; `tests/r45-workspace-writes.spec.ts` 4 passed; full suite 141 passed (TC-4502b / TC-4701, TC-4702)
+- [x] Execute TC-4703 (owner review); the owner approved and R47 is published

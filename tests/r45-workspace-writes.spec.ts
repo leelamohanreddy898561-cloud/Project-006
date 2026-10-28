@@ -89,7 +89,7 @@ test.describe("R45 — a site owner writes only to its own workspace", () => {
     }
   });
 
-  test("TC-4502b: the owner writes a post into its workspace and the tenant site shows it", async ({
+  test("TC-4502b / TC-4701: the owner writes a post into its workspace and the tenant site shows it", async ({
     page,
   }) => {
     test.setTimeout(150_000);
@@ -147,23 +147,38 @@ test.describe("R45 — a site owner writes only to its own workspace", () => {
     ).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("Owner", { exact: true })).toBeVisible();
 
-    const writePost = page.getByRole("link", { name: "Write a post" });
-    await expect(writePost).toBeVisible();
+    // R47 — the tenant admin has the platform dashboard's shape: a section
+    // list with the post list and the composer, not a single inline link.
+    const allPosts = page.getByRole("link", { name: "All posts" });
+    const addPost = page.getByRole("link", { name: "Add new blog" });
 
-    // A button-shaped link inside the meta row keeps its own text colour.
-    // `.ws-admin__meta a` once painted this label the same indigo as its fill.
-    const label = await writePost.evaluate((element) => {
+    await expect(allPosts).toBeVisible();
+    await expect(allPosts).toHaveAttribute("aria-current", "page");
+    await expect(addPost).toBeVisible();
+    await expect(addPost).not.toHaveAttribute("aria-current", "page");
+
+    // R45's label guard, now on the section nav: the accent-tinted Add new blog
+    // label must stay legible on its own fill. `.ws-admin__meta a` once painted
+    // a primary button's label the same indigo as its background.
+    const label = await addPost.evaluate((element) => {
       const style = getComputedStyle(element);
       return { color: style.color, background: style.backgroundColor };
     });
 
     expect(
       contrastRatio(label.color, label.background),
-      "the Write a post label is legible on its own fill",
+      "the Add new blog label is legible on its own fill",
     ).toBeGreaterThanOrEqual(4.5);
 
-    await writePost.click();
+    await addPost.click();
     await expect(page).toHaveURL(new RegExp(`/w/${slug}/admin/new$`));
+    await expect(
+      page.getByRole("link", { name: "Add new blog" }),
+      "the composer is the current section",
+    ).toHaveAttribute("aria-current", "page");
+    await expect(
+      page.getByRole("heading", { name: "Add new blog" }),
+    ).toBeVisible();
 
     await page.getByLabel("Blog title").fill("A tenant post");
     await page
@@ -199,9 +214,10 @@ test.describe("R45 — a site owner writes only to its own workspace", () => {
     await expect(
       page.getByRole("heading", { name: "You do not have access" }),
     ).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByRole("link", { name: "Write a post" })).toHaveCount(
+    await expect(page.getByRole("link", { name: "Add new blog" })).toHaveCount(
       0,
     );
+    await expect(page.getByRole("link", { name: "All posts" })).toHaveCount(0);
   });
 });
 
@@ -281,5 +297,28 @@ test.describe("R45 — every write names its workspace", () => {
     expect(seed).toContain("writeFileSync(");
     expect(seed).not.toMatch(/password\s*=\s*["'][^"']+["']/i);
     expect(gitignore).toContain(".demo-tenants.json");
+  });
+});
+
+test.describe("R47 — the tenant admin offers Add new blog as its own section", () => {
+  test("TC-4702: the gate's shell carries both sections and the composer route", () => {
+    const admin = read("src/pages/WorkspaceAdmin.tsx");
+    const css = read("src/pages/WorkspaceSite.css");
+
+    // One shell wraps both children, so the section nav is on the list and on
+    // the composer, the same shape as the platform dashboard.
+    expect(admin).toContain("function WorkspaceAdminShell(");
+    expect(admin).toContain("return <WorkspaceAdminShell value={value} />");
+    expect(admin).toContain('<nav className="ws-admin__nav"');
+    expect(admin).toContain("All posts");
+    expect(admin).toContain("Add new blog");
+    expect(admin).toContain("to={`${basePath}/admin/new`}");
+    expect(admin).toContain("<Outlet context={value} />");
+
+    // The add action is a named section, not R45's one-off line in the meta
+    // row, and the accent tint on its label keeps the AA contrast guard.
+    expect(admin).not.toContain("Write a post");
+    expect(css).toContain(".ws-admin__nav-link--add");
+    expect(css).toContain(".ws-admin__nav-link.is-current");
   });
 });

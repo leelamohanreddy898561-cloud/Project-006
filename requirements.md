@@ -58,6 +58,7 @@ category/tag index pages). Simple and content-focused.
 | 2026-10-26 | Dark-mode `--color-text-subtle` is raised to meet AA in R40 instead of waiting for R11 | The R40 mobile audit found the 3.98:1 token under every card's meta line, in the article meta row and across the sidebar - the exact surfaces a mobile reader scans. The fix is one token and only lightens secondary text, so the recorded R11 deferral is settled early; R11 keeps the rest of its scope. |
 | 2026-10-28 | R45 revises R44's AC44.3 and AC44.4: the tenant admin now writes, and the platform admin is admitted after the workspace role says no | R44 deliberately made the page read-only until every write named its workspace. R45 makes `workspaceId` an argument to every seam function, so the controls can be offered safely; the global role is a fallback for the platform operator only, never the tenant's own answer, and the rules still refuse an `ownerUid` change and billing fields on the public document. |
 | 2026-10-28 | R46 revises R29's AC29.4: Google sign-in lands the visitor on the account's own landing, not always the home page | The owner's report was that a tenant owner signing in opens the platform home — the operator's site — instead of its own. The same resolver now runs after both email and Google sign-ins, so "lands ... on the home page" is no longer true for an owner. A reader who owns no site still lands on the home page, which is why R29's other cases and R31/R36/R44 keep their expectations. |
+| 2026-10-28 | R47 replaces the tenant admin's inline **Write a post** link with a two-section nav, **All posts** and **Add new blog**, and revises the label in AC44.4/AC45.2 | The owner reported the add option as missing on a tenant site while the platform admin's **Add New Blog** section was obvious; the tenant's only control was a link inside one line of meta text. The tenant admin now has the same section shape as `/admin/dashboard`. The workspace gate and every workspace-scoped write are unchanged, so this is a discoverability fix, not a new permission. |
 
 ## 5. Out of Scope (v1)
 
@@ -1175,7 +1176,8 @@ they act on.
   category, date, reading time and a link to the public article — and links back
   to the public site and to `/dashboard`. R44 offered no edit, delete or create
   control; R45 supersedes that sentence now that every write names its
-  workspace, and the page offers **Write a post**, Edit and Delete.
+  workspace, and the page offers **Add new blog** (R47's section; R45 called it
+  **Write a post**), Edit and Delete.
 - **AC44.5** Ownership is resolved without reading the members document, because
   `firestore.rules` refuses that read for an owner who has no member document;
   a `permission-denied` answer from the members read means "not a member", while
@@ -1214,8 +1216,9 @@ publish.
 **The tenant admin writes to its own site**
 
 - **AC45.2** `/w/<slug>/admin` keeps R44's gate and adds writing: it lists that
-  workspace's Firestore posts only (no repository articles), and **Write a post**
-  opens `/w/<slug>/admin/new`, the shared composer bound to that workspace. A
+  workspace's Firestore posts only (no repository articles), and **Add new blog**
+  (R47's section; R45 called it **Write a post**) opens `/w/<slug>/admin/new`,
+  the shared composer bound to that workspace. A
   save writes `workspaces/<id>/blogs`, and the tenant home, archive and article
   page show it on the next read.
 - **AC45.3** Edit, Delete and cover replace/remove in the tenant admin pass the
@@ -1283,6 +1286,42 @@ an account with several sites still needs to choose one.
   change.
 - **AC46.5** Build and lint pass, `npm run test:rules` and the full suite stay
   green, and the bundle stays within the R14 budgets.
+
+---
+
+### R47 - The tenant admin's add-post section
+
+A tenant owner reviewing its own site reported that adding a post was not
+visible: the only control was a link inside a line of meta text, while the
+platform admin has a named **Add New Blog** section. The write path existed
+(R45) but the action was easy to miss. This requirement gives the tenant admin
+the same two-section shape the platform dashboard already has, without changing
+the gate or the workspace-scoped writes.
+
+**The section nav**
+
+- **AC47.1** `/w/<slug>/admin` renders a section nav with **All posts** and
+  **Add new blog**, both links inside that site's admin. The current section
+  carries `aria-current="page"`; on the post list **All posts** is current, and
+  **Add new blog** is a filled primary action visible without opening a menu.
+  The old inline **Write a post** link in the meta line is gone: there is one
+  add control, not two.
+- **AC47.2** **Add new blog** opens `/w/<slug>/admin/new`, the shared composer
+  bound to that workspace; the nav is present there too, with **Add new blog**
+  current, and **All posts** returns to the list. A save still writes
+  `workspaces/<id>/blogs` (AC45.1, AC45.2).
+- **AC47.3** The nav exists only behind the R44 gate: an owner, an editor and
+  the platform admin see it; a denied, unknown, signed-out or public-site
+  visitor does not. Its links stay inside the resolved site.
+- **AC47.4** The add label stays legible on its own fill (at least 4.5:1) in
+  both themes, and the header keeps the role badge, **View public site** and
+  **All my sites**. The nav wraps rather than overflowing at narrow widths.
+- **AC47.5** Build and lint pass, `npm run test:rules` and the full suite stay
+  green, and the bundle stays within the R14 budgets.
+
+**Naming revision:** R47 revises the label in AC44.4 and AC45.2 from **Write a
+post** to **Add new blog** because the control becomes a section. The gate and
+the write boundary those criteria describe are unchanged.
 
 ---
 

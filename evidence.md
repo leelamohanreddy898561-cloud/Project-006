@@ -2994,3 +2994,31 @@ not a permission change, and the live proof used an ordinary demo owner, not an
 admin.
 
 ---
+
+### 2026-10-28 - R47 the tenant admin's add-post section (local, awaiting approval)
+
+**Branch:** `feature/r47-tenant-add-post` (stacked on `feature/r46-owner-landing`)
+**Trigger:** the owner reported the tenant admin had no visible add-blog option; the only control was R45's inline **Write a post** link, while the platform admin has a named **Add New Blog** section.
+**Test cases:** TC-4701 (browser, run with TC-4502), TC-4702 (static), TC-4703 (manual)
+
+**Commands run:**
+
+    npm.cmd run build                        # 131.37 kB JS / 8.29 kB CSS gzipped
+    npm.cmd run lint                         # exit 0
+    npm.cmd run test:rules                   # 7 passed
+    npx.cmd playwright test tests/r45-workspace-writes.spec.ts --reporter=dot   # 4 passed (28.3s)
+    npx.cmd playwright test --reporter=dot   # 141 passed (2.3m)
+
+**Results:**
+
+| Test case | AC | Result | Notes |
+| --- | --- | --- | --- |
+| TC-4701 | R47.1-R47.4 | pass | the tenant e2e now asserts the nav on the list and on the composer: **All posts** is current on the list, **Add new blog** opens `/w/<slug>/admin/new`, is current there, its label measures >= 4.5:1 on its fill, and neither link exists on the denied admin |
+| TC-4702 | R47.1, R47.2 | pass | one `WorkspaceAdminShell` behind the gate, both destinations and the `<Outlet context>`, the old inline **Write a post** gone, the nav styles present |
+| TC-4703 | R47.1, R47.2, R47.4 | manual | Orbit signed in at `localhost:5173/w/orbit-analytics/admin`: the nav shows **All posts** plus a filled **Add new blog**; the composer keeps the nav and is bound to Orbit Analytics; no tracked evidence file changed |
+
+**Evaluation:** the gate and every workspace-scoped write are untouched; this is
+the discoverability fix the owner asked for, using the platform dashboard's own
+pattern. R47 revises only the control's label in AC44.4/AC45.2, recorded in the
+decision log. Publication order is now R44, R45, R46, then R47; nothing is
+merged or deployed.

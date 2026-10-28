@@ -109,6 +109,56 @@
   color: var(--color-accent);
 }
 
+/* R47 — the site's two sections, the same shape as the platform dashboard:
+   the post list and the composer are destinations, not inline links. */
+.ws-admin__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.ws-admin__nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 0.5rem);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ws-admin__nav-link:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+.ws-admin__nav-link.is-current {
+  background: var(--color-accent-soft);
+  border-color: var(--color-border);
+  color: var(--color-accent);
+}
+
+/* Add new blog is the site's one write action, so it is a filled primary
+   destination whenever it is not the current section. On the composer itself
+   `.is-current` above gives it the quieter current-section tint. */
+.ws-admin__nav-link--add {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.ws-admin__nav-link--add:not(.is-current):hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: var(--color-accent-contrast);
+}
+
 .ws-admin__section-title {
   margin: 0 0 1rem;
   color: var(--color-text);
