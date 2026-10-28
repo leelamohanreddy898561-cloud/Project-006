@@ -273,7 +273,7 @@ deliberately, so a growing repository is expected rather than a leak.
 | Testing | Playwright | |
 | Hosting | Firebase Hosting | `firebase.json`, SPA rewrite |
 | Source control | GitHub | Push only after approval |
-| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 127.91 kB JS / 7.68 kB CSS gzipped |
+| Bundle budget | JS < 150 kB, CSS < 25 kB gzipped | Currently 129.15 kB JS / 7.91 kB CSS gzipped |
 
 ---
 
@@ -335,20 +335,20 @@ deliberately, so a growing repository is expected rather than a leak.
   R42 (the data-plane switch — `scripts/migrate-workspace.mjs` copied the three
   live posts into `workspaces/signal-and-noise/blogs` keeping their document
   ids, and every read, write and upload now goes through that workspace; the
-  deployed site renders all 9 posts with no read failure).
-  **R42 is the most recent requirement published to production** — R2 was
+  deployed site renders all 9 posts with no read failure),
+  R43 (a workspace is a public site at `/w/<slug>` — resolved by slug, branded
+  from its own document, showing only its own posts, with every link kept inside
+  the tenant and a **Site not found** page for an unknown slug; the default
+  workspace still carries the seed archive).
+  **R43 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order.
-- **Implemented locally, awaiting owner approval:** R43 (a workspace is a public
-  site at `/w/<slug>` — resolves the workspace by slug, renders its own name and
-  posts only, keeps every link inside it, and gives an unknown slug a **Site not
-  found** page; the default workspace still carries the seed archive).
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
   table of contents, prev/next navigation and tag links are still open.
 - **Live:** https://project-006-e6ae1.web.app
 - **Repository:** https://github.com/leelamohanreddy898561-cloud/Project-006
-- **Current bundle:** 127.91 kB JS / 7.68 kB CSS gzipped (budgets 150 / 25).
+- **Current bundle:** 129.15 kB JS / 7.91 kB CSS gzipped (budgets 150 / 25).
 - **Known open items:**
   - **Five profiles carry `role: "admin"`** — three of them `@example.com`
     throwaway accounts from earlier upload probes. Only the console can change a

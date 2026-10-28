@@ -382,4 +382,4 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 - [x] (R43.4) Public read needs no account and no rule was relaxed; `members`/`private` remain closed and writes remain membership-gated
 - [x] (R43) `WorkspaceContext` keeps the Firebase seam out of the article card; `WorkspaceLayout` owns the resolve/not-found states
 - [x] (R43.5) TC-4301-TC-4303 executed; build 129.15 kB JS / 7.68 kB CSS gzipped; lint clean; full suite 131 passed
-- [ ] Execute TC-4304; evidence entry; local commit; **await owner approval**
+- [x] Execute TC-4304; evidence entry; local commit; **published 2026-10-28**

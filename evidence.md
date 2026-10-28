@@ -2740,3 +2740,35 @@ every page renders did not pull the tenancy code into the entry chunk beyond the
 1.24 kB the routes themselves cost. Two states that were previously impossible
 are now reachable and tested: a site that exists with no posts, and an address
 that names no site. Nothing is merged or deployed: awaiting owner approval.
+
+---
+
+### 2026-10-28 - R43 published (a workspace is a public site at `/w/<slug>`)
+
+**Approval:** the owner approved publishing R43.
+**Branch merged:** `feature/r43-workspace-site` (fast-forward into `main`).
+
+**Commands:**
+
+    npm.cmd run build                    # 129.15 kB JS / 7.91 kB CSS gzipped
+    npm.cmd run deploy                   # hosting only (no rules/functions change in R43)
+    `="https://project-006-e6ae1.web.app"`; npm.cmd run verify:prod
+
+**Results:** hosting released; production smoke **11 passed in 17.6 s**. Verified
+in a real browser against the deployed site:
+`/w/alpha-labs` renders **Alpha Labs** with its 1 post, `/w/northwind`
+renders **Northwind Studio** with its own post, and `/w/does-not-exist` renders
+the **Site not found** page with no cards. `/blog` still renders the archive.
+
+**Demo data:** two workspaces were created for the review and are live:
+`alpha-labs` (Alpha Labs) and `northwind` (Northwind Studio), each with one
+post, both owned by `XdPDuEfJLkbyn6c9VHkyG7eORjQ2`. They are ordinary
+workspace documents and can be deleted in the console whenever they stop being
+useful; nothing in the code depends on them.
+
+**Evaluation:** the multi-site layer is live on production, on the same project,
+with no rule change - the tenant boundary was already enforced in R41. The
+remaining gaps are product gaps, not architecture gaps: there is no signed-in
+launcher yet (sites are reached by URL), the admin dashboard is still gated by
+the global admin role, and the header still carries the platform brand. Those
+are R44.
