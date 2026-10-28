@@ -3136,3 +3136,19 @@ production verification. Nothing is merged or deployed.
 **Results:** `firestore.rules` and `storage.rules` compiled and released; `uploadBlogImage` and `deleteBlogImage` updated successfully (the command's non-zero exit was the unrelated "No cleanup policy detected" advisory); hosting released; production smoke **11 passed**. A disposable live spec then signed in as both seeded demo owners against the deployed site: each landed on its own site, saw the **Owner** bar, opened **Site admin** from it, and saw no bar on the other tenant's site - **2 passed in 8.7 s** (spec deleted, no writes).
 
 **Evaluation:** the deployed owner bar closes the demo-owner gap without reopening the leak R48 fixed: the bar is driven by the workspace role, so a stranger and the platform admin still see a public page. Bundle 131.61 kB JS / 8.34 kB CSS stays inside the R14 budgets. Change-log sync and the `--ff-only` merge to `main` follow in this publish cycle.
+
+
+---
+
+### 2026-10-28 - R48 change log synced and main fast-forwarded
+
+**Commands run:**
+
+    npm.cmd run changelog        # 120 entries written
+    npm.cmd run sync:changes     # 4 new, 116 already present
+    npm.cmd run verify:changes   # 120 documents; every entry present
+    git checkout main && git merge --ff-only feature/r48-public-site-isolation && git push origin main
+
+**Results:** Firestore `changeLog` now holds all 120 entries, including `f121a76`, `e99363f`, `11833f0` and the last R47 sync commit; `changeLog.json` was committed as `c6a4f65` and pushed. `main` moved `ca18ec8..c6a4f65` as a fast-forward with no merge commit and was pushed. Exactly one generate/sync/verify cycle ran.
+
+**Evaluation:** R48 is published end to end - rules and functions released, hosting deployed, production smoke and both live demo-owner checks green, change log in sync, and `main` linear. The only expected gap is the final change-log commit itself, which cannot contain its own hash.
