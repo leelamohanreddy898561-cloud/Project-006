@@ -408,7 +408,7 @@ Test cases live in `test-cases.md`; proof of completion lives in `evidence.md`.
 
 ## Phase 3dd - A single-site owner lands on their own site (R46)
 
-- [ ] (R46.1, R46.4) `src/lib/landing.ts` decides the landing as a pure function; `src/lib/sign-in-landing.ts` resolves it through the workspace seam and fails closed to `/`
-- [ ] (R46.1, R46.2) `AuthPage` sends both email and Google sign-ins through the resolver; the header offers **My site** to a single-site owner and **My sites** otherwise
-- [ ] (R46.3, R46.4) A multi-site account lands on `/dashboard`; the platform admin and a site-less reader keep `/`; R43's in-tenant nav is unchanged
-- [ ] (R46.5) Build, lint, `npm run test:rules` and the full suite green; bundle inside the R14 budgets; evidence entry; local commit; **await owner approval**
+- [x] (R46.1, R46.4) `src/lib/landing.ts` decides the landing as a pure function; `src/lib/sign-in-landing.ts` resolves it through the workspace seam and fails closed to `/`
+- [x] (R46.1, R46.2) `AuthPage` sends both email and Google sign-ins through the resolver; the header offers **My site** to a single-site owner and **My sites** otherwise
+- [x] (R46.3, R46.4) A multi-site account lands on `/dashboard`; the platform admin and a site-less reader keep `/`; R43's in-tenant nav is unchanged
+- [x] (R46.5) Build 131.24 kB JS / 8.18 kB CSS gzipped; lint clean; `npm run test:rules` 7 passed; full suite 140 passed; deployed; approved by the owner and published

@@ -2963,3 +2963,34 @@ decision log because a Google sign-in no longer always lands on the home page,
 and R44's static guard now reads the query where it lives (the seam, not the
 hook). Nothing is merged or deployed: publication order is R44, then R45, then
 R46.
+
+### 2026-10-28 - R46 published (a single-site owner lands on their own site)
+
+**Approval:** the owner approved R44-R47 in that order; R44 and R45 were live.
+**Branch merged:** `feature/r46-owner-landing`, rebased onto the published R45
+tip (only R46's own commit replayed) and then fast-forwarded into `main`.
+
+**Commands:**
+
+    npm.cmd run build                    # 131.24 kB JS / 8.18 kB CSS gzipped
+    npm.cmd run lint                     # exit 0
+    npm.cmd run test:rules               # 7 passed (R41, R42, R45)
+    npx.cmd playwright test --reporter=dot   # 140 passed (1.8m)
+    npm.cmd run deploy                   # hosting only (no rule, function or script change)
+    $env:PLAYWRIGHT_BASE_URL="https://project-006-e6ae1.web.app"; npm.cmd run verify:prod
+
+**Results:** hosting released; production smoke **11 passed in 12.9 s**. The
+landing itself was then proved against the deployed site with a throwaway browser
+script (`test-results/live-check-r46.mjs`, git-ignored): the `orbit-analytics`
+demo owner signed in at `/signin` and the address became `/w/orbit-analytics`
+with the heading **Orbit Analytics**; the header's **My site** pointed at
+`/w/orbit-analytics/admin`; **My sites** was absent; going Back left the app
+rather than returning to the form.
+
+**Evaluation:** a successful sign-in now lands where the account belongs and
+still fails closed - a reader, the platform operator and any unreadable site
+list keep `/`. The tenant boundary is untouched: this is a destination decision,
+not a permission change, and the live proof used an ordinary demo owner, not an
+admin.
+
+---

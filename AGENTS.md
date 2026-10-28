@@ -358,15 +358,14 @@ generated passwords, R45), `node_modules/`, `dist/`, `playwright-report/`,
   `/w/<slug>/admin` became a writer with **Write a post**, Edit and Delete; the
   platform `admin` may write every workspace without becoming its owner; and
   `scripts/seed-demo-tenants.mjs` seeded the `pine-and-pixel` and
-  `orbit-analytics` demo tenants through the public APIs).
-  **R45 is the most recent requirement published to production** — R2 was
+  `orbit-analytics` demo tenants through the public APIs),
+  R46 (a sign-in lands where the account belongs — an owner of exactly one site
+  opens `/w/<slug>` and the header offers **My site** straight to that site's
+  admin, several sites open the launcher, and a reader or the platform operator
+  keeps `/`; a failed read fails closed to the platform home).
+  **R46 is the most recent requirement published to production** — R2 was
   backfilled after R30, so requirement numbers are not publication order, and
-  R46-R47 were built on top of R45, so they publish after it.
-- **Implemented locally, awaiting owner approval:** R46 (a sign-in lands where
-  the account belongs: a single-site owner opens `/w/<slug>` and the header
-  offers **My site** straight to that site's admin; several sites open the
-  launcher; a reader and the platform operator keep `/`). **R46 is stacked on
-  R45**, so it publishes on the updated `main`.
+  R47 was built on top of R46, so it publishes after it.
 - **Not yet built:** R3–R13 (topic index, topic detail, tag detail, about, 404,
   theme toggle wiring, responsive pass, accessibility pass, SEO, content model).
   *Note:* R3's reading page landed as R23, but R3's own acceptance criteria for a
